@@ -46,6 +46,7 @@
     box-sizing: border-box;
 }
 
+
 html, body {
     font-family: 'Roboto', sans-serif;
     background-color: var(--background);
@@ -418,6 +419,16 @@ html, body {
     padding: var(--spacing-sm) var(--spacing-md);
     border-top: 1px solid var(--border);
     box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    
+    right: 0;
+    z-index: 10;
+}
+
+.content{
+    padding-bottom: 60px !important ;
 }
 
 .nav-item {

@@ -1,0 +1,55 @@
+.orders-tabs {
+    display: flex;
+    background-color: white;
+    padding: var(--spacing-md);
+    border-bottom: 1px solid var(--border);
+    gap: var(--spacing-md);
+}
+
+.orders-tab {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-full);
+    font-size: var(--font-caption);
+    font-weight: 500;
+    background-color: var(--background);
+    border: none;
+    color: var(--text-secondary);
+}
+
+.orders-tab.active {
+    background-color: var(--primary-blue);
+    color: white;
+}
+
+.order-list {
+    padding-top: var(--spacing-md);
+}
+
+.order-list .order-card {
+    cursor: pointer;
+}
+
+.empty-orders {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 0;
+    text-align: center;
+}
+
+.empty-orders i {
+    font-size: 64px;
+    color: var(--border);
+    margin-bottom: 16px;
+}
+
+.empty-orders h3 {
+    font-size: 20px;
+    margin-bottom: 8px;
+}
+
+.empty-orders p {
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+}
