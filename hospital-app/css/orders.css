@@ -23,6 +23,10 @@
 
 .order-list {
     padding-top: var(--spacing-md);
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
 }
 
 .order-list .order-card {
