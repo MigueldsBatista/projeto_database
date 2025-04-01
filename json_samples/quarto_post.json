@@ -1,0 +1,7 @@
+[
+  {"endpoint": "{{host}}/api/quartos"},
+  {
+    "numero": 101,
+    "tipo": "Apartamento"
+  }
+]

@@ -51,7 +51,7 @@ Regras: Uma fatura por paciente, uma nova fatura
 só pode ser gerada após o pagamento da anterior.
 
 
-ENFERMEIRO
+CAMAREIRA
 CRE (PK)
 nome
 cargo

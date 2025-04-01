@@ -1,0 +1,11 @@
+[
+  {
+    "endpoint": "{{host}}/api/estadias"
+  },
+  {
+    "pacienteId": 1,
+    "quartoId": 1,
+    "dataEntrada": "2023-06-01T10:00:00",
+    "dataSaida": null
+  }
+]

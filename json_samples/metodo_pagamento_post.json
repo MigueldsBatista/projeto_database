@@ -1,0 +1,6 @@
+[
+  {"endpoint": "{{host}}/api/metodos-pagamento"},
+  {
+    "tipo": "Cartão de Crédito"
+  }
+]

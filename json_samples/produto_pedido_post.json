@@ -1,0 +1,8 @@
+[
+  {"endpoint": "{{host}}/api/pedidos/items"},
+  {
+    "produtoId": 1,
+    "pedidoId": 1,
+    "quantidade": 2
+  }
+]

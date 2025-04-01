@@ -1,0 +1,9 @@
+[
+  {"endpoint": "{{host}}/api/pacientes"},
+  {
+    "nome": "João Silva",
+    "cpf": "12345678901",
+    "dataNascimento": "1980-05-15",
+    "status": "INTERNADO"
+  }
+]

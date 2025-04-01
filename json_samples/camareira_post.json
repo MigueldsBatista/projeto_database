@@ -1,0 +1,9 @@
+[{"endpoint": "{{host}}/api/camareiras"},
+
+{
+  "cre": "CRE12345",
+  "nome": "Maria Santos",
+  "cargo": "Camareira Sênior",
+  "setor": "Apartamentos"
+}
+]
