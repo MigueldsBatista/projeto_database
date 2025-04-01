@@ -6,35 +6,36 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class Fatura {
-    private Long id; // Primary Key
-    private Long pacienteId;
+    private Long id;
+    private Long estadiaId;
     private BigDecimal valorTotal;
-    private StatusPagamento statusPagamento; // Default: Pendente
-    private LocalDateTime dataPagamento; // Optional when creating a new Fatura
-    private Long idMetodoPagamento; // Foreign Key to MetodoPagamento. Optional when creating a new Fatura
-    
+    private StatusPagamento statusPagamento;
+    private LocalDateTime dataPagamento;
+    private Long idMetodoPagamento;
+    private LocalDateTime dataEmissao;
+
     // Enum for status_pagamento
     public enum StatusPagamento {
         Pendente, Pago
     }
 
-    public Fatura(Long pacienteId, BigDecimal valorTotal, StatusPagamento statusPagamento) {
-        this.pacienteId = pacienteId;
+    public Fatura(Long estadiaId, BigDecimal valorTotal, StatusPagamento statusPagamento, Long idMetodoPagamento) {
+        this.estadiaId = estadiaId;
         this.valorTotal = valorTotal;
         this.statusPagamento = statusPagamento;
+        this.idMetodoPagamento = idMetodoPagamento;
     }
     
-    public Fatura(Long id, Long pacienteId, BigDecimal valorTotal, StatusPagamento statusPagamento) {
-        this.id = id;
-        this.pacienteId = pacienteId;
+    public Fatura(Long estadiaId, BigDecimal valorTotal, StatusPagamento statusPagamento, 
+                 LocalDateTime dataPagamento, Long idMetodoPagamento) {
+        this.estadiaId = estadiaId;
         this.valorTotal = valorTotal;
         this.statusPagamento = statusPagamento;
+        this.dataPagamento = dataPagamento;
+        this.idMetodoPagamento = idMetodoPagamento;
     }
-    
-   
 }

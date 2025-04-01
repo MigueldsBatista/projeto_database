@@ -13,15 +13,13 @@ import lombok.NoArgsConstructor;
 public class Pedido {
     
     private Long id;
-    private LocalDateTime dataHora;
-    private Long pacienteId;
-    private Long quartoId;
+    private Long estadiaId;
+    private Long camareiraId;
     private StatusPedido status;
+    private LocalDateTime dataPedido;
     
-    public Pedido(LocalDateTime dataHora, Long pacienteId, Long quartoId, StatusPedido status) {
-        this.dataHora = dataHora;
-        this.pacienteId = pacienteId;
-        this.quartoId = quartoId;
+    public Pedido(LocalDateTime dataPedido, StatusPedido status) {
+        this.dataPedido = dataPedido;
         this.status = status;
     }
 

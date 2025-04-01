@@ -3,9 +3,6 @@ package com.hospital.santajoana.domain.repository;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Timestamp;
-import java.util.Optional;
-
 import com.hospital.santajoana.domain.entity.Pedido;
 import com.hospital.santajoana.domain.entity.Pedido.StatusPedido;
 
@@ -15,37 +12,27 @@ public class PedidoRepository extends BaseRepository<Pedido> {
     public PedidoRepository(JdbcTemplate jdbcTemplate) {
         super("PEDIDO","ID_PEDIDO", jdbcTemplate, (rs, rowNum) -> new Pedido(
             rs.getLong("ID_PEDIDO"),
-            rs.getTimestamp("DATA_HORA").toLocalDateTime(),
-            rs.getLong("PACIENTE_ID"),
-            rs.getLong("quartoId"),
-            StatusPedido.valueOf(rs.getString("STATUS"))
+            rs.getLong("ID_ESTADIA"),
+            rs.getLong("ID_CAMAREIRA"),
+            StatusPedido.valueOf(rs.getString("STATUS")),
+            rs.getTimestamp("DATA_PEDIDO").toLocalDateTime()
         ));
     }
 
     public Pedido save(Pedido pedido) {
-        String insertSql = "INSERT INTO PEDIDO (DATA_HORA, PACIENTE_ID, quartoId, STATUS) VALUES (?, ?, ?, ?)";
+        String insertSql = "INSERT INTO PEDIDO (ID_ESTADIA, ID_CAMAREIRA, STATUS) VALUES (?, ?, ?)";
         jdbcTemplate.update(insertSql,
-            Timestamp.valueOf(pedido.getDataHora()),
-            pedido.getPacienteId(),
-            pedido.getQuartoId(),
+            pedido.getEstadiaId(),
+            pedido.getCamareiraId(),
             pedido.getStatus().name());
         return pedido;
     }
 
-    public Optional<Pedido> findById(Long id) {
-        return super.findById(id);
-    }
-
-    public void deleteById(Long id) {
-        super.deleteById(id);
-    }
-
     public Pedido update(Pedido pedido) {
-        String updateSql = "UPDATE PEDIDO SET DATA_HORA = ?, PACIENTE_ID = ?, quartoId = ?, STATUS = ? WHERE ID_PEDIDO = ?";
+        String updateSql = "UPDATE PEDIDO SET ID_ESTADIA = ?, ID_CAMAREIRA = ?, STATUS = ? WHERE ID_PEDIDO = ?";
         jdbcTemplate.update(updateSql,
-            Timestamp.valueOf(pedido.getDataHora()),
-            pedido.getPacienteId(),
-            pedido.getQuartoId(),
+            pedido.getEstadiaId(),
+            pedido.getCamareiraId(),
             pedido.getStatus().name(),
             pedido.getId()
         );

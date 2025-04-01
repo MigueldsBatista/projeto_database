@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Enfermeiro {
+public class Camareira {
     
     private Long id; // Primary Key
     private String cre;
@@ -15,7 +15,7 @@ public class Enfermeiro {
     private String cargo;
     private String setor;
 
-    public Enfermeiro(String cre, String nome, String cargo, String setor) {
+    public Camareira(String cre, String nome, String cargo, String setor) {
         this.cre = cre;
         this.nome = nome;
         this.cargo = cargo;

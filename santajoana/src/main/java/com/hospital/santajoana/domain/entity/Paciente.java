@@ -16,14 +16,30 @@ public class Paciente {
     private String cpf;
     private LocalDate dataNascimento;
     private Long quartoId; // Foreign Key to Quarto
-    private String status; // Internado/Alta
+    private StatusPaciente status; // Internado/Alta
     
-    public Paciente(String nome, String cpf, LocalDate dataNascimento, Long quartoId, String status) {
+    public Paciente(String nome, String cpf, LocalDate dataNascimento, StatusPaciente status) {
         this.nome = nome;
         this.cpf = cpf;
         this.dataNascimento = dataNascimento;
-        this.quartoId = quartoId;
         this.status = status;
+        this.quartoId = null; // Default value
+
+    }
+
+    public enum StatusPaciente {
+        INTERNADO("Internado"),
+        ALTA("Alta");
+        
+        private final String descricao;
+        
+        StatusPaciente(String descricao) {
+            this.descricao = descricao;
+        }
+        
+        public String getDescricao() {
+            return descricao;
+        }
     }
 
 }
