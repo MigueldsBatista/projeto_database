@@ -1,5 +1,5 @@
 [
-  {"endpoint": "{{host}}/api/pacientes"},
+  {"endpoint": "http://localhost:8080/api/pacientes"},
   {
     "nome": "João Silva",
     "cpf": "12345678901",

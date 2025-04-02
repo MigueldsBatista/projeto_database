@@ -1,4 +1,4 @@
-[{"endpoint": "{{host}}/api/camareiras"},
+[{"endpoint": "http://localhost:8080/api/camareiras"},
 
 {
   "cre": "CRE12345",
@@ -6,4 +6,5 @@
   "cargo": "Camareira Sênior",
   "setor": "Apartamentos"
 }
+
 ]

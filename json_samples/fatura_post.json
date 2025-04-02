@@ -1,5 +1,5 @@
 [
-  {"endpoint": "{{host}}/api/faturas"},
+  {"endpoint": "http://localhost:8080/api/faturas"},
   {
     "estadiaId": 1,
     "statusPagamento": "Pendente",

@@ -1,12 +1,12 @@
 [
   {
-    "endpoint": "{{host}}/api/produtos"
+    "endpoint": "http://localhost:8080/api/produtos"
   },
   {
     "nome": "Sopa de Legumes",
     "descricao": "Sopa de legumes frescos com baixo teor de sódio",
     "preco": 15.50,
-    "tempoPreparo": 20,
+    "tempoPreparoMinutos": 20,
     "categoria": "ALMOCO",
     "caloriasKcal": 120,
     "proteinasG": 5,

@@ -1,5 +1,5 @@
 [
-  {"endpoint": "{{host}}/api/pedidos"},
+  {"endpoint": "http://localhost:8080/api/pedidos"},
   {
     "estadiaId": 1,
     "camareiraId": 1,

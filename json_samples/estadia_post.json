@@ -1,6 +1,6 @@
 [
   {
-    "endpoint": "{{host}}/api/estadias"
+    "endpoint": "http://localhost:8080/api/estadias"
   },
   {
     "pacienteId": 1,

@@ -1,5 +1,5 @@
 [
-  {"endpoint": "{{host}}/api/metodos-pagamento"},
+  {"endpoint": "http://localhost:8080/api/metodos-pagamento"},
   {
     "tipo": "Cartão de Crédito"
   }

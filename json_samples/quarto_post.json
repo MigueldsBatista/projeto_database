@@ -1,5 +1,5 @@
 [
-  {"endpoint": "{{host}}/api/quartos"},
+  {"endpoint": "http://localhost:8080/api/quartos"},
   {
     "numero": 101,
     "tipo": "Apartamento"
