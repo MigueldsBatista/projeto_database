@@ -21,8 +21,8 @@ public class FaturaRepository extends BaseRepository<Fatura> {
                 rs.getLong("ID_ESTADIA"),
                 rs.getBigDecimal("VALOR_TOTAL"),
                 StatusPagamento.valueOf(rs.getString("STATUS_PAGAMENTO")),
-                dataPagamento != null ? dataPagamento.toLocalDateTime() : null,
                 rs.getLong("ID_METODO_PAGAMENTO"),
+                dataPagamento != null ? dataPagamento.toLocalDateTime() : null,
                 dataEmissao != null ? dataEmissao.toLocalDateTime() : null
             );
         });
@@ -36,7 +36,7 @@ public class FaturaRepository extends BaseRepository<Fatura> {
             fatura.getValorTotal(),
             fatura.getStatusPagamento().name(),
             fatura.getDataPagamento() != null ? Timestamp.valueOf(fatura.getDataPagamento()) : null,
-            fatura.getIdMetodoPagamento());
+            fatura.getMetodoPagamentoId());
         return fatura;
     }
 
@@ -48,7 +48,7 @@ public class FaturaRepository extends BaseRepository<Fatura> {
             fatura.getValorTotal(),
             fatura.getStatusPagamento().name(),
             fatura.getDataPagamento() != null ? Timestamp.valueOf(fatura.getDataPagamento()) : null,
-            fatura.getIdMetodoPagamento(),
+            fatura.getMetodoPagamentoId(),
             fatura.getId()
         );
         return fatura;

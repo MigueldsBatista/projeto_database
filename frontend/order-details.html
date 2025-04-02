@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes do Pedido - Hospital Santa Joana</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/order-details.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+</head>
+<body>
+    <div id="app">
+        <div class="screen active" id="order-details-screen">
+            <header class="app-header">
+                <div class="header-left">
+                    <button class="back-button" onclick="window.location.href='orders.html'">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <h2>Detalhes do Pedido</h2>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <div class="order-header">
+                    <h3 class="order-number">Pedido #<span id="order-id">1001</span></h3>
+                    <p class="order-date" id="order-date">12/10/2023, 10:30</p>
+                    <span class="order-status-large pending" id="order-status">Pendente</span>
+                </div>
+                
+                <div class="tracking-status">
+                    <h3 class="order-section-title">Status do Pedido</h3>
+                    <div class="tracking-timeline" id="order-timeline">
+                        <!-- Timeline items will be loaded dynamically -->
+                    </div>
+                </div>
+                
+                <div class="order-items-list">
+                    <h3 class="order-section-title">Itens do Pedido</h3>
+                    <div id="order-items-container">
+                        <!-- Order items will be loaded dynamically -->
+                    </div>
+                </div>
+                
+                <div id="order-notes-container" class="order-notes-section">
+                    <h3 class="order-section-title">Observações</h3>
+                    <p class="order-notes" id="order-notes">Sem observações</p>
+                </div>
+                
+                <div class="order-total-section">
+                    <h3 class="order-section-title">Resumo</h3>
+                    <div class="order-total-row">
+                        <span>Subtotal</span>
+                        <span id="order-subtotal">R$ 0,00</span>
+                    </div>
+                    <div class="order-total-row">
+                        <span>Taxa de serviço</span>
+                        <span id="order-service-fee">R$ 0,00</span>
+                    </div>
+                    <div class="order-total-row final">
+                        <span>Total</span>
+                        <span id="order-total">R$ 0,00</span>
+                    </div>
+                </div>
+                
+                <div class="order-actions">
+                    <button class="btn-secondary" id="contact-support-btn">
+                        <i class="fas fa-headset"></i> Suporte
+                    </button>
+                    <button class="btn-primary" id="reorder-btn">
+                        <i class="fas fa-redo"></i> Repetir Pedido
+                    </button>
+                </div>
+            </div>
+
+            <nav class="bottom-nav">
+                <a href="dashboard.html" class="nav-item">
+                    <i class="fas fa-home"></i>
+                    <span>Início</span>
+                </a>
+                <a href="menu.html" class="nav-item">
+                    <i class="fas fa-utensils"></i>
+                    <span>Cardápio</span>
+                </a>
+                <a href="cart.html" class="nav-item">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Carrinho</span>
+                    <span class="badge cart-badge">0</span>
+                </a>
+                <a href="orders.html" class="nav-item active">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Pedidos</span>
+                </a>
+                <a href="invoice.html" class="nav-item">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    <span>Fatura</span>
+                </a>
+            </nav>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script src="js/order-details.js"></script>
+    
+</body>
+</html>

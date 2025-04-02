@@ -14,8 +14,8 @@ public class Fatura {
     private Long estadiaId;
     private BigDecimal valorTotal;
     private StatusPagamento statusPagamento;
+    private Long metodoPagamentoId;
     private LocalDateTime dataPagamento;
-    private Long idMetodoPagamento;
     private LocalDateTime dataEmissao;
 
     // Enum for status_pagamento
@@ -23,19 +23,19 @@ public class Fatura {
         Pendente, Pago
     }
 
-    public Fatura(Long estadiaId, BigDecimal valorTotal, StatusPagamento statusPagamento, Long idMetodoPagamento) {
+    public Fatura(Long estadiaId, BigDecimal valorTotal, StatusPagamento statusPagamento, Long metodoPagamentoId) {
         this.estadiaId = estadiaId;
         this.valorTotal = valorTotal;
         this.statusPagamento = statusPagamento;
-        this.idMetodoPagamento = idMetodoPagamento;
+        this.metodoPagamentoId = metodoPagamentoId;
     }
     
     public Fatura(Long estadiaId, BigDecimal valorTotal, StatusPagamento statusPagamento, 
-                 LocalDateTime dataPagamento, Long idMetodoPagamento) {
+                 LocalDateTime dataPagamento, Long metodoPagamentoId) {
         this.estadiaId = estadiaId;
         this.valorTotal = valorTotal;
         this.statusPagamento = statusPagamento;
         this.dataPagamento = dataPagamento;
-        this.idMetodoPagamento = idMetodoPagamento;
+        this.metodoPagamentoId = metodoPagamentoId;
     }
 }

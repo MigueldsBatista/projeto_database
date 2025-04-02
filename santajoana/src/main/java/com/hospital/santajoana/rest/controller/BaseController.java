@@ -28,6 +28,7 @@ public abstract class BaseController<T> {
         return ResponseEntity.ok(entities);
     }
 
+    
     @GetMapping("/{id}")
     public ResponseEntity<T> findById(@PathVariable Long id) {
         Optional<T> entity = mediator.findById(id);
@@ -35,15 +36,16 @@ public abstract class BaseController<T> {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<T> create(@RequestBody T entity) {
         T savedEntity = mediator.save(entity);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedEntity);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<T> update(@PathVariable Long id, @RequestBody T entity) {
         Optional<T> existingEntity = mediator.findById(id);
+        
         if (existingEntity.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
@@ -51,9 +53,10 @@ public abstract class BaseController<T> {
         return ResponseEntity.ok(updatedEntity);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         Optional<T> entity = mediator.findById(id);
+        System.out.println("Entity: " + entity);
         if (entity.isEmpty()) {
             return ResponseEntity.notFound().build();
         }

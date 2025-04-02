@@ -12,12 +12,27 @@ import com.hospital.santajoana.domain.entity.Paciente.StatusPaciente;
 public class PacienteRepository extends BaseRepository<Paciente>{
 
     public PacienteRepository(JdbcTemplate jdbcTemplate) {
-        super("PACIENTE", "ID_PACIENTE", jdbcTemplate, (rs, rowNum) -> new Paciente(
-            rs.getString("NOME"),
-            rs.getString("CPF"),
-            rs.getDate("DATA_NASCIMENTO").toLocalDate(),
-            StatusPaciente.valueOf(rs.getString("STATUS"))
-        ));
+        super("PACIENTE", "ID_PACIENTE", jdbcTemplate, (rs, rowNum) -> {
+            Paciente paciente = new Paciente(
+                rs.getString("NOME"),
+                rs.getString("CPF"),
+                rs.getDate("DATA_NASCIMENTO").toLocalDate(),
+                StatusPaciente.fromString(rs.getString("STATUS"))
+            );
+            paciente.setId(rs.getLong("ID_PACIENTE"));
+            
+            // Check if QUARTO_ID column exists and is not null
+            try {
+                Long quartoId = rs.getLong("QUARTO_ID");
+                if (!rs.wasNull()) {
+                    paciente.setQuartoId(quartoId);
+                }
+            } catch (Exception e) {
+                // Column might not exist, or other issue. Leave quartoId as null.
+            }
+            
+            return paciente;
+        });
     }
 
     @Override
@@ -28,19 +43,32 @@ public class PacienteRepository extends BaseRepository<Paciente>{
             paciente.getNome(),
             paciente.getCpf(),
             Date.valueOf(paciente.getDataNascimento()),
-            paciente.getStatus().name());
+            paciente.getStatus().getDescricao()
+            );
         return paciente;
     }
 
+    @Override
     public Paciente update(Paciente paciente) {
+        // Check if ID exists before attempting update
+        if (paciente.getId() == null) {
+            throw new IllegalArgumentException("Cannot update a Paciente without an ID");
+        }
+        
         String updateSql = "UPDATE PACIENTE SET NOME = ?, CPF = ?, DATA_NASCIMENTO = ?, STATUS = ? WHERE ID_PACIENTE = ?";
-        jdbcTemplate.update(updateSql,
+        int rowsAffected = jdbcTemplate.update(updateSql,
             paciente.getNome(),
             paciente.getCpf(),
             Date.valueOf(paciente.getDataNascimento()),
-            paciente.getStatus().name(),
+            paciente.getStatus().getDescricao(),
             paciente.getId()
         );
+        
+        // Check if any rows were affected by the update
+        if (rowsAffected == 0) {
+            throw new RuntimeException("No paciente found with ID: " + paciente.getId());
+        }
+        
         return paciente;
     }
 }

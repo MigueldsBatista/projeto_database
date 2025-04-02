@@ -13,4 +13,5 @@ public class PacienteController extends BaseController<Paciente> {
     public PacienteController(PacienteMediator pacienteMediator) {
         super(pacienteMediator);
     }
+    
 }

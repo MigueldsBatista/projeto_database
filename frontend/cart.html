@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrinho - Hospital Santa Joana</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/cart.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+</head>
+<body>
+    <div id="app">
+        <div class="screen active" id="cart-screen">
+            <header class="app-header">
+                <div class="header-left">
+                    <button class="back-button" onclick="window.location.href='dashboard.html'">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <h2>Carrinho</h2>
+                </div>
+                <div class="header-actions">
+                    <button class="icon-button" id="clear-cart-btn">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <div id="cart-items-container">
+                    <!-- Cart items will be loaded dynamically by JavaScript -->
+                </div>
+                
+                <div id="cart-summary" style="display: none;">
+                    <div class="cart-total-section">
+                        <div class="cart-total-row">
+                            <span>Subtotal</span>
+                            <span id="cart-subtotal">R$ 0,00</span>
+                        </div>
+                        <div class="cart-total-row">
+                            <span>Taxa de serviço</span>
+                            <span id="cart-service-fee">R$ 0,00</span>
+                        </div>
+                        <div class="cart-total-row final">
+                            <span>Total</span>
+                            <span id="cart-total">R$ 0,00</span>
+                        </div>
+                    </div>
+                    
+                    <div class="cart-notes">
+                        <label for="order-notes" class="form-label">Observações do pedido</label>
+                        <textarea id="order-notes" placeholder="Ex: Sem cebola, sem açúcar, etc."></textarea>
+                    </div>
+                    
+                    <button class="btn-primary" id="checkout-btn">Confirmar Pedido</button>
+                </div>
+                
+                <div id="empty-cart-message" style="display: none;" class="empty-cart">
+                    <i class="fas fa-shopping-cart"></i>
+                    <h3>Seu carrinho está vazio</h3>
+                    <p>Adicione itens do cardápio para fazer um pedido</p>
+                    <button class="btn-primary" onclick="window.location.href='menu.html'">Ver Cardápio</button>
+                </div>
+            </div>
+
+            <nav class="bottom-nav">
+                <a href="dashboard.html" class="nav-item">
+                    <i class="fas fa-home"></i>
+                    <span>Início</span>
+                </a>
+                <a href="menu.html" class="nav-item">
+                    <i class="fas fa-utensils"></i>
+                    <span>Cardápio</span>
+                </a>
+                <a href="cart.html" class="nav-item active">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Carrinho</span>
+                    <span class="badge cart-badge">0</span>
+                </a>
+                <a href="orders.html" class="nav-item">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Pedidos</span>
+                </a>
+                <a href="invoice.html" class="nav-item">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    <span>Fatura</span>
+                </a>
+            </nav>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script src="js/cart.js"></script>
+    
+</body>
+</html>

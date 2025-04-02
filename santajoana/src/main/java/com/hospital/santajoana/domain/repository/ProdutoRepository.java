@@ -10,19 +10,24 @@ import com.hospital.santajoana.domain.entity.Produto.CategoriaProduto;
 public class ProdutoRepository extends BaseRepository<Produto> {
 
     public ProdutoRepository(JdbcTemplate jdbcTemplate) {
-        super("PRODUTO","ID_PRODUTO",jdbcTemplate, (rs, rowNum) -> new Produto(
+        super("PRODUTO","ID_PRODUTO",jdbcTemplate, (rs, rowNum) -> {
+            Produto produto = new Produto(
             rs.getLong("ID_PRODUTO"),
             rs.getString("NOME"),
             rs.getString("DESCRICAO"),
             rs.getBigDecimal("PRECO"),
             rs.getInt("TEMPO_PREPARO"),
-            CategoriaProduto.valueOf(rs.getString("CATEGORIA")),
+            CategoriaProduto.fromString(rs.getString("CATEGORIA")),
             rs.getObject("CALORIAS_KCAL") != null ? rs.getInt("CALORIAS_KCAL") : null,
             rs.getObject("PROTEINAS_G") != null ? rs.getInt("PROTEINAS_G") : null,
             rs.getObject("CARBOIDRATOS_G") != null ? rs.getInt("CARBOIDRATOS_G") : null,
             rs.getObject("GORDURAS_G") != null ? rs.getInt("GORDURAS_G") : null,
             rs.getObject("SODIO_MG") != null ? rs.getInt("SODIO_MG") : null
-        ));
+        );
+        produto.setId(rs.getLong("ID_PRODUTO"));
+        return produto;
+        }
+        );
     }
 
     public Produto save(Produto produto) {
@@ -31,7 +36,7 @@ public class ProdutoRepository extends BaseRepository<Produto> {
             produto.getNome(),
             produto.getDescricao(),
             produto.getPreco(),
-            produto.getTempoPreparo(),
+            produto.getTempoPreparoMinutos(),
             produto.getCategoria().name(),
             produto.getCaloriasKcal(),
             produto.getProteinasG(),
@@ -47,7 +52,7 @@ public class ProdutoRepository extends BaseRepository<Produto> {
             produto.getNome(),
             produto.getDescricao(),
             produto.getPreco(),
-            produto.getTempoPreparo(),
+            produto.getTempoPreparoMinutos(),
             produto.getCategoria().name(),
             produto.getCaloriasKcal(),
             produto.getProteinasG(),

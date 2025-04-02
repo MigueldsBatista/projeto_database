@@ -29,6 +29,7 @@ public abstract class BaseRepository<T> {
         return results.stream().findFirst();
     }
 
+    
     public void deleteById(Long id) {
         String sql = "DELETE FROM " + tableName + " WHERE "+idColumn + " = ?";
         jdbcTemplate.update(sql, id);

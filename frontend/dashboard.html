@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Hospital Santa Joana</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div id="app">
+        <div class="screen active" id="dashboard-screen">
+            <header class="app-header">
+                <div class="patient-info">
+                    <h2>Olá, <span id="patient-name">Maria</span></h2>
+                    <p>Quarto <span id="room-number">302</span></p>
+                </div>
+                <div class="header-actions">
+                    <button class="icon-button" onclick="window.location.href='notifications.html'">
+                        <i class="fas fa-bell"></i>
+                        <span class="badge">2</span>
+                    </button>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <div class="welcome-card">
+                    <h3>Bem-vindo ao Santa Joana</h3>
+                    <p>O que você deseja pedir hoje?</p>
+                </div>
+
+                <div class="invoice-summary">
+                    <div class="summary-header">
+                        <h3>Resumo da Fatura</h3>
+                        <a href="invoice.html" class="view-all">Ver detalhes</a>
+                    </div>
+                    <div class="summary-content">
+                        <p class="total-amount">R$ <span id="invoice-total">320,50</span></p>
+                        <p class="status">Status: <span id="invoice-status">Pendente</span></p>
+                    </div>
+                </div>
+
+                <div class="category-menu">
+                    <h3>Cardápio</h3>
+                    <div class="categories">
+                        <div class="category-item" data-category="breakfast" onclick="window.location.href='menu.html?category=breakfast'">
+                            <div class="category-icon">
+                                <i class="fas fa-coffee"></i>
+                            </div>
+                            <p>Café da Manhã</p>
+                        </div>
+                        <div class="category-item" data-category="lunch" onclick="window.location.href='menu.html?category=lunch'">
+                            <div class="category-icon">
+                                <i class="fas fa-utensils"></i>
+                            </div>
+                            <p>Almoço</p>
+                        </div>
+                        <div class="category-item" data-category="dinner" onclick="window.location.href='menu.html?category=dinner'">
+                            <div class="category-icon">
+                                <i class="fas fa-drumstick-bite"></i>
+                            </div>
+                            <p>Jantar</p>
+                        </div>
+                        <div class="category-item" data-category="dessert" onclick="window.location.href='menu.html?category=dessert'">
+                            <div class="category-icon">
+                                <i class="fas fa-ice-cream"></i>
+                            </div>
+                            <p>Sobremesa</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="recent-orders">
+                    <div class="section-header">
+                        <h3>Pedidos Recentes</h3>
+                        <a href="orders.html" class="view-all">Ver todos</a>
+                    </div>
+                    <div class="orders-list">
+                        <div class="order-card" onclick="window.location.href='order-details.html?id=1'">
+                            <div class="order-info">
+                                <p class="order-date">Hoje, 10:30</p>
+                                <p class="order-items">Café da manhã, Água</p>
+                                <p class="order-price">R$ 25,90</p>
+                            </div>
+                            <div class="order-status">
+                                <span class="status-pill delivered">Entregue</span>
+                            </div>
+                        </div>
+                        <div class="order-card" onclick="window.location.href='order-details.html?id=2'">
+                            <div class="order-info">
+                                <p class="order-date">Ontem, 19:15</p>
+                                <p class="order-items">Jantar, Suco, Sobremesa</p>
+                                <p class="order-price">R$ 42,50</p>
+                            </div>
+                            <div class="order-status">
+                                <span class="status-pill delivered">Entregue</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="bottom-nav">
+                <a href="dashboard.html" class="nav-item active">
+                    <i class="fas fa-home"></i>
+                    <span>Início</span>
+                </a>
+                <a href="menu.html" class="nav-item">
+                    <i class="fas fa-utensils"></i>
+                    <span>Cardápio</span>
+                </a>
+                <a href="cart.html" class="nav-item">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Carrinho</span>
+                    <span class="badge cart-badge">0</span>
+                </a>
+                <a href="orders.html" class="nav-item">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Pedidos</span>
+                </a>
+                <a href="invoice.html" class="nav-item">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    <span>Fatura</span>
+                </a>
+            </nav>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script src="js/dashboard.js"></script>
+
+</body>
+</html>

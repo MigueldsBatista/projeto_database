@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes do Produto - Hospital Santa Joana</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/product-details.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+</head>
+<body>
+    <div id="app">
+        <div class="screen active" id="product-details-screen">
+            <header class="app-header">
+                <div class="header-left">
+                    <button class="back-button" onclick="window.location.href='menu.html'">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <h2>Detalhes do Produto</h2>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <div class="product-image-large">
+                    <img id="product-image" src="img/products/placeholder.jpg" alt="Produto">
+                </div>
+                
+                <div class="product-details-card">
+                    <h1 class="product-name" id="product-name">Nome do Produto</h1>
+                    <p class="product-price-large">R$ <span id="product-price">0,00</span></p>
+                    <p class="product-description-full" id="product-description">Descrição detalhada do produto...</p>
+                    
+                    <div class="quantity-control">
+                        <span class="quantity-label">Quantidade:</span>
+                        <button class="quantity-button" id="decrease-quantity">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <span class="quantity-value" id="quantity-value">1</span>
+                        <button class="quantity-button" id="increase-quantity">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                    
+                    <button class="btn-primary" id="add-to-cart-btn">
+                        <i class="fas fa-shopping-cart"></i> Adicionar ao Carrinho
+                    </button>
+                </div>
+                
+                <div class="product-details-card" id="nutritional-info-section" style="display: none;">
+                    <div class="product-info-section">
+                        <h3 class="product-info-title">Informações Nutricionais</h3>
+                        <ul class="info-list" id="nutritional-info-list">
+                            <!-- Nutritional info will be added dynamically -->
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="product-details-card">
+                    <div class="product-info-section">
+                        <h3 class="product-info-title">Informações Adicionais</h3>
+                        <ul class="info-list">
+                            <li>
+                                <span class="info-label">Categoria:</span>
+                                <span class="info-value" id="product-category">Categoria</span>
+                            </li>
+                            <li>
+                                <span class="info-label">Tempo de preparo:</span>
+                                <span class="info-value" id="prep-time">30 minutos</span>
+                            </li>
+                            <li>
+                                <span class="info-label">Disponibilidade:</span>
+                                <span class="info-value" id="availability">Em estoque</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="bottom-nav">
+                <a href="dashboard.html" class="nav-item">
+                    <i class="fas fa-home"></i>
+                    <span>Início</span>
+                </a>
+                <a href="menu.html" class="nav-item active">
+                    <i class="fas fa-utensils"></i>
+                    <span>Cardápio</span>
+                </a>
+                <a href="cart.html" class="nav-item">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Carrinho</span>
+                    <span class="badge cart-badge">0</span>
+                </a>
+                <a href="orders.html" class="nav-item">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Pedidos</span>
+                </a>
+                <a href="invoice.html" class="nav-item">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    <span>Fatura</span>
+                </a>
+            </nav>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script src="js/product-details.js"></script>
+    
+</body>
+</html>

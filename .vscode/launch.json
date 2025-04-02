@@ -2,7 +2,7 @@
     "configurations": [
         {
             "type": "java",
-            "name": "Spring Boot-SantajoanaApplication<santajoana>",
+             "name": "Spring Boot-SantajoanaApplication<santajoana>",
             "request": "launch",
             "cwd": "${workspaceFolder}",
             "mainClass": "com.hospital.santajoana.SantajoanaApplication",

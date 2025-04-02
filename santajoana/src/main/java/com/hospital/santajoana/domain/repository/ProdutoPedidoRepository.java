@@ -10,7 +10,8 @@ public class ProdutoPedidoRepository extends BaseRepository<ProdutoPedido> {
 
 
     public ProdutoPedidoRepository(JdbcTemplate jdbcTemplate) {
-        super("PRODUTO_PEDIDO","ID_PRODUTO_PEDIDO", jdbcTemplate, (rs, rowNum) -> new ProdutoPedido(
+        super("PRODUTO_PEDIDO","ID_PRODUTO_PEDIDO", jdbcTemplate, (rs, rowNum) -> 
+        new ProdutoPedido(
             rs.getLong("ID_PRODUTO"),
             rs.getLong("ID_PEDIDO"),
             rs.getInt("QUANTIDADE")
