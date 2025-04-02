@@ -10,17 +10,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL) // Exclude null fields from JSON serialization
-public class Camareira {
+public class Camareira extends Pessoa {
     
-    private Long id; // Primary Key
-    private String cre;
-    private String nome;
+    
+private String cre;
     private String cargo;
     private String setor;
 
-    public Camareira(String cre, String nome, String cargo, String setor) {
+    public Camareira(String cpf, String nome, String dataNascimento, String telefone, String cre, String cargo, String setor) {
+        super(null, cpf, nome, dataNascimento, telefone); 
         this.cre = cre;
-        this.nome = nome;
         this.cargo = cargo;
         this.setor = setor;
     }
