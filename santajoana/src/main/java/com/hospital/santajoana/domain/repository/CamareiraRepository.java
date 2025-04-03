@@ -65,7 +65,7 @@ public class CamareiraRepository extends BaseRepository<Camareira> {
         if (rowsAffected == 0) {
             throw new RuntimeException("No camareira found with ID: " + camareira.getId());
         }
-        
+
         return camareira;
     }
 }

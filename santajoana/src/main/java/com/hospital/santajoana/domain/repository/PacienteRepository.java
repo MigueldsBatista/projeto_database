@@ -9,15 +9,13 @@ import com.hospital.santajoana.domain.entity.Paciente;
 import com.hospital.santajoana.domain.entity.Paciente.StatusPaciente;
 
 @Repository
-public class PacienteRepository extends BaseRepository<Paciente>{
+public class PacienteRepository extends BaseRepository<Paciente> {
 
     public PacienteRepository(JdbcTemplate jdbcTemplate) {
         super("PACIENTE", "ID_PACIENTE", jdbcTemplate, (rs, rowNum) -> {
             Paciente paciente = new Paciente(
-                rs.getString("NOME"),
-                rs.getString("CPF"),
-                rs.getDate("DATA_NASCIMENTO").toLocalDate(),
-                StatusPaciente.fromString(rs.getString("STATUS"))
+                    StatusPaciente.fromString(rs.getString("STATUS"))
+
             );
             paciente.setId(rs.getLong("ID_PACIENTE"));
             
@@ -28,7 +26,7 @@ public class PacienteRepository extends BaseRepository<Paciente>{
             } catch (Exception e) {
                 // Fields might not exist in the result set, ignore
             }
-            
+
             return paciente;
         });
     }
