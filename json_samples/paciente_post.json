@@ -4,6 +4,8 @@
     "nome": "João Silva",
     "cpf": "12345678901",
     "dataNascimento": "1980-05-15",
+    "telefone": "11987654321",
+    "endereco": "Rua das Flores, 123",
     "status": "INTERNADO"
   }
 ]

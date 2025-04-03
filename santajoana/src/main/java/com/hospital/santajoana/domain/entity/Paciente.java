@@ -8,29 +8,30 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
+@EqualsAndHashCode(callSuper = true) // Include superclass fields in equals and hashCode
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL) // Exclude null fields from JSON serialization
 public class Paciente extends Pessoa {
 
     private StatusPaciente status; // Internado/Alta
-
-    // Construtor que aceita todos os atributos
-    public Paciente(String cpf, String nome, String dataNascimento, String telefone,String endereco, Long quartoId, StatusPaciente status) {
-        super(null, cpf, nome, dataNascimento, telefone,endereco); 
-        this.quartoId = quartoId;
+    
+    // Constructor that matches the repository usage
+    public Paciente(String nome, String cpf, LocalDate dataNascimento, StatusPaciente status) {
+        super(cpf, nome, dataNascimento); // Set basic info from Pessoa
         this.status = status;
     }
 
-    // Construtor que aceita apenas o status
-    public Paciente(StatusPaciente status) {
-        super(); // Chama o construtor padrão da classe Pessoa
+    // Comprehensive constructor
+    public Paciente(String cpf, String nome, LocalDate dataNascimento, String telefone, String endereco, StatusPaciente status) {
+        super(cpf, nome, dataNascimento, telefone, endereco);
         this.status = status;
-        this.quartoId = null; // Default value
     }
+        
 
     public enum StatusPaciente {
         INTERNADO("Internado"),

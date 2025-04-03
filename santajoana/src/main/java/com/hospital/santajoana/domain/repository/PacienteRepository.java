@@ -21,6 +21,14 @@ public class PacienteRepository extends BaseRepository<Paciente>{
             );
             paciente.setId(rs.getLong("ID_PACIENTE"));
             
+            // Try to retrieve other potential fields if they exist
+            try {
+                paciente.setTelefone(rs.getString("TELEFONE"));
+                paciente.setEndereco(rs.getString("ENDERECO"));
+            } catch (Exception e) {
+                // Fields might not exist in the result set, ignore
+            }
+            
             return paciente;
         });
     }
@@ -28,11 +36,13 @@ public class PacienteRepository extends BaseRepository<Paciente>{
     @Override
     public Paciente save(Paciente paciente) {
         String insertSql =
-        "INSERT INTO PACIENTE (NOME, CPF, DATA_NASCIMENTO, STATUS) VALUES (?, ?, ?, ?)";
+        "INSERT INTO PACIENTE (NOME, CPF, DATA_NASCIMENTO, TELEFONE, ENDERECO, STATUS) VALUES (?, ?, ?, ?, ?, ?)";
         jdbcTemplate.update(insertSql,
             paciente.getNome(),
             paciente.getCpf(),
             Date.valueOf(paciente.getDataNascimento()),
+            paciente.getTelefone(),
+            paciente.getEndereco(),
             paciente.getStatus().getDescricao()
             );
         return paciente;
@@ -45,16 +55,17 @@ public class PacienteRepository extends BaseRepository<Paciente>{
             throw new IllegalArgumentException("Cannot update a Paciente without an ID");
         }
         
-        String updateSql = "UPDATE PACIENTE SET NOME = ?, CPF = ?, DATA_NASCIMENTO = ?, STATUS = ? WHERE ID_PACIENTE = ?";
+        String updateSql = "UPDATE PACIENTE SET NOME = ?, CPF = ?, DATA_NASCIMENTO = ?, TELEFONE = ?, ENDERECO = ?, STATUS = ? WHERE ID_PACIENTE = ?";
         jdbcTemplate.update(updateSql,
             paciente.getNome(),
             paciente.getCpf(),
             Date.valueOf(paciente.getDataNascimento()),
+            paciente.getTelefone(),
+            paciente.getEndereco(),
             paciente.getStatus().getDescricao(),
             paciente.getId()
         );
         
-
         return paciente;
     }
 
