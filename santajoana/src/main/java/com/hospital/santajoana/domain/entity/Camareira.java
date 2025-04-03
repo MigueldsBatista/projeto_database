@@ -17,8 +17,8 @@ private String cre;
     private String cargo;
     private String setor;
 
-    public Camareira(String cpf, String nome, String dataNascimento, String telefone, String cre, String cargo, String setor) {
-        super(null, cpf, nome, dataNascimento, telefone); 
+    public Camareira(String cpf, String nome, String dataNascimento, String telefone,String endereco, String cre, String cargo, String setor) {
+        super(null, cpf, nome, dataNascimento, telefone,endereco); 
         this.cre = cre;
         this.cargo = cargo;
         this.setor = setor;
