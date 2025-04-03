@@ -12,8 +12,7 @@ import lombok.NoArgsConstructor;
 @JsonInclude(JsonInclude.Include.NON_NULL) // Exclude null fields from JSON serialization
 public class Camareira extends Pessoa {
     
-    
-private String cre;
+    private String cre;
     private String cargo;
     private String setor;
 

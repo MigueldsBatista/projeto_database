@@ -20,8 +20,8 @@ public class Paciente extends Pessoa {
     private StatusPaciente status; // Internado/Alta
 
     // Construtor que aceita todos os atributos
-    public Paciente(String cpf, String nome, String dataNascimento, String telefone, Long quartoId, StatusPaciente status) {
-        super(null, cpf, nome, dataNascimento, telefone); // Chama o construtor da classe Pessoa
+    public Paciente(String cpf, String nome, String dataNascimento, String telefone,String endereco, Long quartoId, StatusPaciente status) {
+        super(null, cpf, nome, dataNascimento, telefone,endereco); 
         this.quartoId = quartoId;
         this.status = status;
     }
