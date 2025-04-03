@@ -14,20 +14,22 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL) // Exclude null fields from JSON serialization
-public class Paciente {
+public class Paciente extends Pessoa {
 
-    private Long id; // Primary Key
-    private String nome;
-    private String cpf;
-    private LocalDate dataNascimento;
     private StatusPaciente status; // Internado/Alta
-    
-    public Paciente(String nome, String cpf, LocalDate dataNascimento, StatusPaciente status) {
-        this.nome = nome;
-        this.cpf = cpf;
-        this.dataNascimento = dataNascimento;
-        this.status = status;
 
+    // Construtor que aceita todos os atributos
+    public Paciente(String cpf, String nome, String dataNascimento, String telefone,String endereco, Long quartoId, StatusPaciente status) {
+        super(null, cpf, nome, dataNascimento, telefone,endereco); 
+        this.quartoId = quartoId;
+        this.status = status;
+    }
+
+    // Construtor que aceita apenas o status
+    public Paciente(StatusPaciente status) {
+        super(); // Chama o construtor padrão da classe Pessoa
+        this.status = status;
+        this.quartoId = null; // Default value
     }
 
     public enum StatusPaciente {
@@ -40,12 +42,12 @@ public class Paciente {
             this.descricao = descricao;
         }
         
-        @JsonValue// This annotation is used to serialize the enum value as a string
+        @JsonValue // Serialize the enum value as a string
         public String getDescricao() {
             return descricao;
         }
 
-        @JsonCreator// This annotation is used to deserialize the string value back to the enum
+        @JsonCreator // Deserialize the string value back to the enum
         public static StatusPaciente fromString(String descricao) {
             for (StatusPaciente status : StatusPaciente.values()) {
                 if (status.getDescricao().equalsIgnoreCase(descricao)) {
@@ -55,5 +57,4 @@ public class Paciente {
             throw new IllegalArgumentException("StatusPaciente inválido: " + descricao);
         }
     }
-
 }
