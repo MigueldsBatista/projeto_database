@@ -1,5 +1,7 @@
 package com.hospital.santajoana.domain.mediator;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -27,6 +29,23 @@ public class FaturaMediator extends BaseMediator<Fatura> {
 
     public Fatura update(Fatura entity) {
         return faturaRepository.update(entity);
+    }
+
+     public Optional<Fatura> marcarComoPaga(Long faturaId, Long metodoPagamentoId) {
+        return faturaRepository.findById(faturaId).map(fatura -> {
+            fatura.setStatusPagamento(Fatura.StatusPagamento.Pago);
+            fatura.setMetodoPagamentoId(metodoPagamentoId);
+            fatura.setDataPagamento(LocalDateTime.now());
+            return faturaRepository.update(fatura);
+        });
+    }
+
+    public List<Fatura> findByStatus(Fatura.StatusPagamento status) {
+        return faturaRepository.findByStatus(status);
+    }
+
+    public Optional<Fatura> findByEstadiaId(Long estadiaId) {
+        return faturaRepository.findByEstadiaId(estadiaId);
     }
 
 }

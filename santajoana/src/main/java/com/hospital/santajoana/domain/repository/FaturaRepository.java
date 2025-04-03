@@ -4,6 +4,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
+import java.util.List;
+import java.util.Optional;
 
 import com.hospital.santajoana.domain.entity.Fatura;
 import com.hospital.santajoana.domain.entity.Fatura.StatusPagamento;
@@ -49,5 +51,15 @@ public class FaturaRepository extends BaseRepository<Fatura> {
                 fatura.getMetodoPagamentoId(),
                 fatura.getId());
         return fatura;
+    }
+
+    public Optional<Fatura> findByEstadiaId(Long estadiaId) {
+        String sql = "SELECT * FROM FATURA WHERE ID_ESTADIA = ?";
+        return findBySql(sql, estadiaId).stream().findFirst();
+    }
+
+    public List<Fatura> findByStatus(Fatura.StatusPagamento status) {
+        String sql = "SELECT * FROM FATURA WHERE STATUS_PAGAMENTO = ?";
+        return findBySql(sql, status.name());
     }
 }
