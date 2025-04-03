@@ -24,17 +24,15 @@ public class PedidoMediator extends BaseMediator<Pedido> {
     public Pedido updateStatus(Long id, Pedido.StatusPedido status) {
         Optional<Pedido> pedido = findById(id);
         
-        if (pedido == null) {
-            throw new IllegalArgumentException("Pedido não encontrado");
-        }
-
-        if (pedido.isEmpty()) {
+        if (pedido == null || pedido.isEmpty()) {
             throw new IllegalArgumentException("Pedido não encontrado");
         }
         
         Pedido pedidoEntity = pedido.get();
+        
         pedidoEntity.setStatus(status);
-        return pedidoRepository.save(pedidoEntity);
+
+        return pedidoRepository.updateStatus(pedidoEntity.getId(), status);
     }
 
     public void delete(Pedido entity) {

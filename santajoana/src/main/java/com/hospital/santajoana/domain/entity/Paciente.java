@@ -20,7 +20,6 @@ public class Paciente {
     private String nome;
     private String cpf;
     private LocalDate dataNascimento;
-    private Long quartoId; // Foreign Key to Quarto
     private StatusPaciente status; // Internado/Alta
     
     public Paciente(String nome, String cpf, LocalDate dataNascimento, StatusPaciente status) {
@@ -28,7 +27,6 @@ public class Paciente {
         this.cpf = cpf;
         this.dataNascimento = dataNascimento;
         this.status = status;
-        this.quartoId = null; // Default value
 
     }
 

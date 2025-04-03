@@ -1,5 +1,7 @@
 package com.hospital.santajoana.domain.repository;
 
+import java.util.List;
+
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -14,17 +16,20 @@ public class PedidoRepository extends BaseRepository<Pedido> {
             rs.getLong("ID_PEDIDO"),
             rs.getLong("ID_ESTADIA"),
             rs.getLong("ID_CAMAREIRA"),
-            StatusPedido.valueOf(rs.getString("STATUS")),
+            StatusPedido.fromString(rs.getString("STATUS")),
             rs.getTimestamp("DATA_PEDIDO").toLocalDateTime()
         ));
     }
 
     public Pedido save(Pedido pedido) {
-        String insertSql = "INSERT INTO PEDIDO (ID_ESTADIA, ID_CAMAREIRA, STATUS) VALUES (?, ?, ?)";
+        String insertSql = "INSERT INTO PEDIDO (ID_ESTADIA, ID_CAMAREIRA) VALUES (?, ?)";
         jdbcTemplate.update(insertSql,
             pedido.getEstadiaId(),
-            pedido.getCamareiraId(),
-            pedido.getStatus().name());
+            pedido.getCamareiraId()
+            );
+
+            pedido.setDataPedido(java.time.LocalDateTime.now());
+            pedido.setStatus(StatusPedido.PENDENTE);
         return pedido;
     }
 
@@ -33,9 +38,23 @@ public class PedidoRepository extends BaseRepository<Pedido> {
         jdbcTemplate.update(updateSql,
             pedido.getEstadiaId(),
             pedido.getCamareiraId(),
-            pedido.getStatus().name(),
+            pedido.getStatus().getDescricao(),
             pedido.getId()
         );
         return pedido;
+    }
+
+    public List<Pedido> findByEstadiaId(Long estadiaId) {
+        String sql = "SELECT * FROM PEDIDO WHERE ID_ESTADIA = ?";
+        return findBySql(sql, estadiaId);
+    }
+
+    public Pedido updateStatus(Long pedidoId, StatusPedido status) {
+        String updateSql = "UPDATE PEDIDO SET STATUS = ? WHERE ID_PEDIDO = ?";
+        jdbcTemplate.update(updateSql,
+            status.getDescricao(),
+            pedidoId
+        );
+        return findById(pedidoId).orElse(null);
     }
 }

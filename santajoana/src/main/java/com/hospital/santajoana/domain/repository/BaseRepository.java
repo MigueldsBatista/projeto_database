@@ -37,4 +37,7 @@ public abstract class BaseRepository<T> {
 
     public abstract T update(T entity);
 
+    public List<T> findBySql(String sql, Object... args) {
+        return jdbcTemplate.query(sql, rowMapper, args);
+    }
 }

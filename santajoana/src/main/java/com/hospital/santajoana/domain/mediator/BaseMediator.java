@@ -5,12 +5,9 @@ import com.hospital.santajoana.domain.repository.BaseRepository;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 public abstract class BaseMediator<T>{
     
-    @Autowired
-    protected final BaseRepository<T> repository;
+    private final BaseRepository<T> repository;
     
     public BaseMediator(BaseRepository<T> repository) {
         this.repository = repository;

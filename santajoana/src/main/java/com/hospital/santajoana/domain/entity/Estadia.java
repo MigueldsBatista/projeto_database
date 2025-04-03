@@ -2,6 +2,8 @@ package com.hospital.santajoana.domain.entity;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,27 +11,25 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL) // Exclude null fields from JSON serialization
 public class Estadia {
     private Long id;
     private Long pacienteId;
     private Long quartoId;
-    private Long faturaId;
     private LocalDateTime dataEntrada;
     private LocalDateTime dataSaida;
     
-    public Estadia(Long pacienteId, Long quartoId, Long faturaId) {
+    public Estadia(Long pacienteId, Long quartoId) {
         this.pacienteId = pacienteId;
         this.quartoId = quartoId;
-        this.faturaId = faturaId;
     }
     
-    public Estadia(Long pacienteId, Long quartoId, Long faturaId, LocalDateTime dataEntrada, LocalDateTime dataSaida) {
+    public Estadia(Long pacienteId, Long quartoId, LocalDateTime dataEntrada, LocalDateTime dataSaida) {
         this.pacienteId = pacienteId;
         this.quartoId = quartoId;
-        this.faturaId = faturaId;
         this.dataEntrada = dataEntrada;
         this.dataSaida = dataSaida;
     }
-    
+
 
 }

@@ -149,7 +149,7 @@ public class DatabaseInitializer {
     @PostConstruct
     public void init() {
         if (recreateTables) {
-            dropTables();
+            // dropTables();
         }
         createTables();
     }

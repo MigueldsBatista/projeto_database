@@ -8,23 +8,23 @@ import com.hospital.santajoana.domain.repository.CamareiraRepository;
 @Service
 public class CamareiraMediator extends BaseMediator<Camareira> {
     
-    private final CamareiraRepository CAMAREIRARepository;
+    private final CamareiraRepository CamareiraRepository;
     
-    public CamareiraMediator(CamareiraRepository CAMAREIRARepository) {
-        super(CAMAREIRARepository);
-        this.CAMAREIRARepository = CAMAREIRARepository;
+    public CamareiraMediator(CamareiraRepository CamareiraRepository) {
+        super(CamareiraRepository);
+        this.CamareiraRepository = CamareiraRepository;
     }
     
     public Camareira save(Camareira CAMAREIRA) {
-        return CAMAREIRARepository.save(CAMAREIRA);
+        return CamareiraRepository.save(CAMAREIRA);
     }
 
     public void delete(Camareira entity) {
-        CAMAREIRARepository.deleteById(entity.getId());
+        CamareiraRepository.deleteById(entity.getId());
     }
 
     public Camareira update(Camareira CAMAREIRA) {
-        return CAMAREIRARepository.update(CAMAREIRA);
+        return CamareiraRepository.update(CAMAREIRA);
     }
     
 }

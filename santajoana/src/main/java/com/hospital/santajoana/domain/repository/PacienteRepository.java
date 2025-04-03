@@ -21,16 +21,6 @@ public class PacienteRepository extends BaseRepository<Paciente>{
             );
             paciente.setId(rs.getLong("ID_PACIENTE"));
             
-            // Check if QUARTO_ID column exists and is not null
-            try {
-                Long quartoId = rs.getLong("QUARTO_ID");
-                if (!rs.wasNull()) {
-                    paciente.setQuartoId(quartoId);
-                }
-            } catch (Exception e) {
-                // Column might not exist, or other issue. Leave quartoId as null.
-            }
-            
             return paciente;
         });
     }
@@ -56,7 +46,7 @@ public class PacienteRepository extends BaseRepository<Paciente>{
         }
         
         String updateSql = "UPDATE PACIENTE SET NOME = ?, CPF = ?, DATA_NASCIMENTO = ?, STATUS = ? WHERE ID_PACIENTE = ?";
-        int rowsAffected = jdbcTemplate.update(updateSql,
+        jdbcTemplate.update(updateSql,
             paciente.getNome(),
             paciente.getCpf(),
             Date.valueOf(paciente.getDataNascimento()),
@@ -64,10 +54,21 @@ public class PacienteRepository extends BaseRepository<Paciente>{
             paciente.getId()
         );
         
-        // Check if any rows were affected by the update
-        if (rowsAffected == 0) {
-            throw new RuntimeException("No paciente found with ID: " + paciente.getId());
+
+        return paciente;
+    }
+
+    public Paciente updateStatus(Paciente paciente) {
+        // Check if ID exists before attempting update
+        if (paciente.getId() == null) {
+            throw new IllegalArgumentException("Cannot update a Paciente without an ID");
         }
+        
+        String updateSql = "UPDATE PACIENTE SET STATUS = ? WHERE ID_PACIENTE = ?";
+        jdbcTemplate.update(updateSql,
+            paciente.getStatus().getDescricao(),
+            paciente.getId()
+        );
         
         return paciente;
     }

@@ -22,13 +22,11 @@ public class PedidoController extends BaseController<Pedido> {
         this.pedidoMediator = pedidoMediator;
     }
     
-    @PutMapping("/{id}/status")
-    public ResponseEntity<Pedido> updateStatus(@PathVariable Long id, @RequestParam StatusPedido status) {
-        try {
-            Pedido updatedPedido = pedidoMediator.updateStatus(id, status);
+    @PutMapping("/update/status/{id}")
+    public ResponseEntity<Pedido> updateStatus(@PathVariable Long id, @RequestParam String status) {//
+        //exemplo: /api/pedidos/1/status?status=FINALIZADO
+            StatusPedido statusPedido = StatusPedido.fromString(status);
+            Pedido updatedPedido = pedidoMediator.updateStatus(id, statusPedido);
             return ResponseEntity.ok(updatedPedido);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.notFound().build();
         }
     }
-}

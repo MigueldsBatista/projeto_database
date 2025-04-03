@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class ProdutoPedido {
+    private Long id;
     private Long produtoId;
     private Long pedidoId;
     private int quantidade;
