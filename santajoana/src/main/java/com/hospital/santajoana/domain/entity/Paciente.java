@@ -17,12 +17,16 @@ import lombok.NoArgsConstructor;
 public class Paciente extends Pessoa {
 
     private Long quartoId; // Foreign Key to Quarto
+    private LocalDate data_entrada;
+    private LocalDate  data_saida;
     private StatusPaciente status; // Internado/Alta
 
     // Construtor que aceita todos os atributos
-    public Paciente(String cpf, String nome, String dataNascimento, String telefone,String endereco, Long quartoId, StatusPaciente status) {
+    public Paciente(String cpf, String nome, String dataNascimento, String telefone,String endereco, Long quartoId, StatusPaciente status,LocalDate  data_entrada,LocalDate  data_saida) {
         super(null, cpf, nome, dataNascimento, telefone,endereco); 
         this.quartoId = quartoId;
+        this.data_entrada = data_entrada;
+        this.data_saida = data_saida;
         this.status = status;
     }
 
@@ -30,6 +34,8 @@ public class Paciente extends Pessoa {
     public Paciente(StatusPaciente status) {
         super(); // Chama o construtor padrão da classe Pessoa
         this.status = status;
+        this.data_entrada = null;
+        this.data_saida = null;
         this.quartoId = null; // Default value
     }
 

@@ -9,18 +9,16 @@ import com.hospital.santajoana.domain.entity.Paciente;
 import com.hospital.santajoana.domain.entity.Paciente.StatusPaciente;
 
 @Repository
-public class PacienteRepository extends BaseRepository<Paciente>{
+public class PacienteRepository extends BaseRepository<Paciente> {
 
     public PacienteRepository(JdbcTemplate jdbcTemplate) {
         super("PACIENTE", "ID_PACIENTE", jdbcTemplate, (rs, rowNum) -> {
             Paciente paciente = new Paciente(
-                rs.getString("NOME"),
-                rs.getString("CPF"),
-                rs.getDate("DATA_NASCIMENTO").toLocalDate(),
-                StatusPaciente.fromString(rs.getString("STATUS"))
+                    StatusPaciente.fromString(rs.getString("STATUS"))
+
             );
             paciente.setId(rs.getLong("ID_PACIENTE"));
-            
+
             // Check if QUARTO_ID column exists and is not null
             try {
                 Long quartoId = rs.getLong("QUARTO_ID");
@@ -30,21 +28,19 @@ public class PacienteRepository extends BaseRepository<Paciente>{
             } catch (Exception e) {
                 // Column might not exist, or other issue. Leave quartoId as null.
             }
-            
+
             return paciente;
         });
     }
 
     @Override
     public Paciente save(Paciente paciente) {
-        String insertSql =
-        "INSERT INTO PACIENTE (NOME, CPF, DATA_NASCIMENTO, STATUS) VALUES (?, ?, ?, ?)";
+        String insertSql = "INSERT INTO PACIENTE (NOME, CPF, DATA_NASCIMENTO, STATUS) VALUES (?, ?, ?, ?)";
         jdbcTemplate.update(insertSql,
-            paciente.getNome(),
-            paciente.getCpf(),
-            Date.valueOf(paciente.getDataNascimento()),
-            paciente.getStatus().getDescricao()
-            );
+                paciente.getNome(),
+                paciente.getCpf(),
+                Date.valueOf(paciente.getDataNascimento()),
+                paciente.getStatus().getDescricao());
         return paciente;
     }
 
@@ -54,21 +50,20 @@ public class PacienteRepository extends BaseRepository<Paciente>{
         if (paciente.getId() == null) {
             throw new IllegalArgumentException("Cannot update a Paciente without an ID");
         }
-        
+
         String updateSql = "UPDATE PACIENTE SET NOME = ?, CPF = ?, DATA_NASCIMENTO = ?, STATUS = ? WHERE ID_PACIENTE = ?";
         int rowsAffected = jdbcTemplate.update(updateSql,
-            paciente.getNome(),
-            paciente.getCpf(),
-            Date.valueOf(paciente.getDataNascimento()),
-            paciente.getStatus().getDescricao(),
-            paciente.getId()
-        );
-        
+                paciente.getNome(),
+                paciente.getCpf(),
+                Date.valueOf(paciente.getDataNascimento()),
+                paciente.getStatus().getDescricao(),
+                paciente.getId());
+
         // Check if any rows were affected by the update
         if (rowsAffected == 0) {
             throw new RuntimeException("No paciente found with ID: " + paciente.getId());
         }
-        
+
         return paciente;
     }
 }

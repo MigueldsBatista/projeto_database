@@ -14,7 +14,4 @@ public class Pessoa {
     private String dataNascimento; // Pode ser String ou LocalDate, dependendo do uso
     private String telefone;
     private String endereco;
-
-
-    
 }

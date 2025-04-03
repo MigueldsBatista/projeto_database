@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 public abstract class BaseRepository<T> {
-    
+
     private final String tableName;
     private final String idColumn;
     protected final JdbcTemplate jdbcTemplate;
@@ -24,14 +24,13 @@ public abstract class BaseRepository<T> {
     }
 
     public Optional<T> findById(Long id) {
-        String sql = "SELECT * FROM " + tableName + " WHERE " +idColumn + " = ?";
+        String sql = "SELECT * FROM " + tableName + " WHERE " + idColumn + " = ?";
         List<T> results = jdbcTemplate.query(sql, rowMapper, id);
         return results.stream().findFirst();
     }
 
-    
     public void deleteById(Long id) {
-        String sql = "DELETE FROM " + tableName + " WHERE "+idColumn + " = ?";
+        String sql = "DELETE FROM " + tableName + " WHERE " + idColumn + " = ?";
         jdbcTemplate.update(sql, id);
     }
 

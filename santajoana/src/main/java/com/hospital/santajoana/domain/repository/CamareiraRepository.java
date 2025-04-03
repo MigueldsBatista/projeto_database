@@ -11,11 +11,9 @@ public class CamareiraRepository extends BaseRepository<Camareira> {
     public CamareiraRepository(JdbcTemplate jdbcTemplate) {
         super("CAMAREIRA", "ID_CAMAREIRA", jdbcTemplate, (rs, rowNum) -> {
             Camareira camareira = new Camareira(
-                rs.getString("CRE"),
-                rs.getString("NOME"),
-                rs.getString("CARGO"),
-                rs.getString("SETOR")
-            );
+                    rs.getString("CRE"),
+                    rs.getString("CARGO"),
+                    rs.getString("SETOR"));
             camareira.setId(rs.getLong("ID_CAMAREIRA"));
             return camareira;
         });
@@ -25,11 +23,10 @@ public class CamareiraRepository extends BaseRepository<Camareira> {
     public Camareira save(Camareira camareira) {
         String insertSql = "INSERT INTO CAMAREIRA (CRE, NOME, CARGO, SETOR) VALUES (?, ?, ?, ?)";
         jdbcTemplate.update(insertSql,
-            camareira.getCre(),
-            camareira.getNome(),
-            camareira.getCargo(),
-            camareira.getSetor()
-        );
+                camareira.getCre(),
+                camareira.getNome(),
+                camareira.getCargo(),
+                camareira.getSetor());
         return camareira;
     }
 
@@ -39,21 +36,20 @@ public class CamareiraRepository extends BaseRepository<Camareira> {
         if (camareira.getId() == null) {
             throw new IllegalArgumentException("Cannot update a Camareira without an ID");
         }
-        
+
         String updateSql = "UPDATE CAMAREIRA SET CRE = ?, NOME = ?, CARGO = ?, SETOR = ? WHERE ID_CAMAREIRA = ?";
         int rowsAffected = jdbcTemplate.update(updateSql,
-            camareira.getCre(),
-            camareira.getNome(),
-            camareira.getCargo(),
-            camareira.getSetor(),
-            camareira.getId()
-        );
-        
+                camareira.getCre(),
+                camareira.getNome(),
+                camareira.getCargo(),
+                camareira.getSetor(),
+                camareira.getId());
+
         // Check if any rows were affected by the update
         if (rowsAffected == 0) {
             throw new RuntimeException("No camareira found with ID: " + camareira.getId());
         }
-        
+
         return camareira;
     }
 }
