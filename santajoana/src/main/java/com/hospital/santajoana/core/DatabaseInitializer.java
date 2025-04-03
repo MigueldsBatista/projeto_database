@@ -20,8 +20,6 @@ public class DatabaseInitializer {
 
     public void dropTables() {
         String[] dropStatements = {
-            "DROP TABLE IF EXISTS PEDIDO_REALIZADO;",
-            "DROP TABLE IF EXISTS ENFERMEIRO_QUARTO_PERIODO;",
             "DROP TABLE IF EXISTS PRODUTO_PEDIDO;",
             "DROP TABLE IF EXISTS PEDIDO;",
             "DROP TABLE IF EXISTS FATURA;",
@@ -55,19 +53,25 @@ public class DatabaseInitializer {
 
             "CREATE TABLE IF NOT EXISTS PACIENTE ("
             + "ID_PACIENTE INT PRIMARY KEY AUTO_INCREMENT,"
+            + "ID_DEPENDENTE INT,"
             + "STATUS ENUM('Internado', 'Alta') NOT NULL,"
             + "NOME VARCHAR(100) NOT NULL,"
             + "CPF VARCHAR(11) UNIQUE NOT NULL,"
-            + "DATA_NASCIMENTO DATE NOT NULL"
+            + "DATA_NASCIMENTO DATE NOT NULL,"
+            + "TELEFONE VARCHAR(11),"
+            + "ENDERECO VARCHAR(255),"
+            + "CONSTRAINT CHECK_E_CPF CHECK (LENGTH(CPF) = 11),"
+            + "CONSTRAINT CHECK_STATUS CHECK (STATUS IN ('Internado', 'Alta')),"
+            + "FOREIGN KEY (ID_DEPENDENTE) REFERENCES PACIENTE (ID_PACIENTE) ON DELETE SET NULL"
             + ");",
 
             "CREATE TABLE IF NOT EXISTS PRODUTO ("
             + "ID_PRODUTO INT PRIMARY KEY AUTO_INCREMENT,"
             + "NOME VARCHAR(100) NOT NULL,"
             + "DESCRICAO VARCHAR(255) NOT NULL,"
-            + "PRECO DECIMAL(10,2) NOT NULL CHECK (PRECO > 0),"
+            + "PRECO DECIMAL(10, 2) NOT NULL CHECK (PRECO > 0),"
             + "TEMPO_PREPARO INT NOT NULL CHECK (TEMPO_PREPARO > 0),"
-            + "CATEGORIA ENUM('Café da Manhã','Almoço','Jantar','Sobremesa') NOT NULL,"
+            + "CATEGORIA ENUM('Café da Manhã', 'Almoço', 'Jantar', 'Sobremesa') NOT NULL,"
             + "CALORIAS_KCAL INT CHECK (CALORIAS_KCAL >= 0),"
             + "PROTEINAS_G INT CHECK (PROTEINAS_G >= 0),"
             + "CARBOIDRATOS_G INT CHECK (CARBOIDRATOS_G >= 0),"
@@ -80,8 +84,13 @@ public class DatabaseInitializer {
             + "ID_CAMAREIRA INT PRIMARY KEY AUTO_INCREMENT,"
             + "CRE VARCHAR(20) NOT NULL UNIQUE,"
             + "NOME VARCHAR(100) NOT NULL,"
+            + "CPF VARCHAR(11) UNIQUE NOT NULL,"
+            + "DATA_NASCIMENTO VARCHAR(10) NOT NULL,"
+            + "TELEFONE VARCHAR(11),"
+            + "ENDERECO VARCHAR(255),"
             + "CARGO VARCHAR(50) NOT NULL,"
-            + "SETOR VARCHAR(50) NOT NULL"
+            + "SETOR VARCHAR(50) NOT NULL,"
+            + "CONSTRAINT CHECK_CPF CHECK (LENGTH(CPF) = 11)"
             + ");",
             
             "CREATE TABLE IF NOT EXISTS METODO_PAGAMENTO ("
@@ -94,18 +103,18 @@ public class DatabaseInitializer {
             + "ID_ESTADIA INT PRIMARY KEY AUTO_INCREMENT,"
             + "ID_PACIENTE INT NOT NULL,"
             + "ID_QUARTO INT NOT NULL,"
-            + "DATA_ENTRADA DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,"
+            + "DATA_ENTRADA DATETIME DEFAULT CURRENT_TIMESTAMP,"
             + "DATA_SAIDA DATETIME NULL,"
             + "UNIQUE (ID_PACIENTE, ID_QUARTO, DATA_ENTRADA),"
-            + "FOREIGN KEY (ID_PACIENTE) REFERENCES PACIENTE (ID_PACIENTE),"
             + "FOREIGN KEY (ID_QUARTO) REFERENCES QUARTO (ID_QUARTO),"
+            + "FOREIGN KEY (ID_PACIENTE) REFERENCES PACIENTE (ID_PACIENTE),"
             + "CONSTRAINT CHECK_ESTADIA_INTERVALO CHECK (DATA_ENTRADA <= DATA_SAIDA OR DATA_SAIDA IS NULL)"
             + ");",
             
             "CREATE TABLE IF NOT EXISTS FATURA ("
             + "ID_FATURA INT PRIMARY KEY AUTO_INCREMENT,"
-            + "STATUS_PAGAMENTO ENUM('Pendente','Pago') NOT NULL,"
-            + "VALOR_TOTAL DECIMAL(10,2) DEFAULT 0,"
+            + "STATUS_PAGAMENTO ENUM('Pendente', 'Pago') NOT NULL,"
+            + "VALOR_TOTAL DECIMAL(10, 2) DEFAULT 0,"
             + "DATA_PAGAMENTO DATETIME NULL,"
             + "ID_METODO_PAGAMENTO INT NOT NULL,"
             + "DATA_EMISSAO DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,"
@@ -119,13 +128,14 @@ public class DatabaseInitializer {
             + "ID_PEDIDO INT PRIMARY KEY AUTO_INCREMENT,"
             + "ID_ESTADIA INT NOT NULL,"
             + "ID_CAMAREIRA INT NOT NULL,"
-            + "STATUS ENUM('Pendente','Em Preparação','Entregue') NOT NULL,"
-            + "DATA_PEDIDO DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,"
+            + "STATUS ENUM('Pendente', 'Em Preparação', 'Entregue') DEFAULT 'Pendente' NOT NULL,"
+            + "DATA_PEDIDO DATETIME DEFAULT CURRENT_TIMESTAMP,"
             + "FOREIGN KEY (ID_ESTADIA) REFERENCES ESTADIA (ID_ESTADIA),"
             + "FOREIGN KEY (ID_CAMAREIRA) REFERENCES CAMAREIRA (ID_CAMAREIRA)"
             + ");",
 
             "CREATE TABLE IF NOT EXISTS PRODUTO_PEDIDO ("
+            + "ID_PRODUTO_PEDIDO INT PRIMARY KEY AUTO_INCREMENT,"
             + "ID_PRODUTO INT NOT NULL,"
             + "ID_PEDIDO INT NOT NULL,"
             + "QUANTIDADE INT NOT NULL,"
@@ -149,7 +159,7 @@ public class DatabaseInitializer {
     @PostConstruct
     public void init() {
         if (recreateTables) {
-            // dropTables();
+            dropTables();
         }
         createTables();
     }

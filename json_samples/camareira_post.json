@@ -1,13 +1,10 @@
-[
-  {"endpoint": "http://localhost:8080/api/camareiras"},
-  {
-    "nome": "Maria Oliveira",
-    "cpf": "98765432109",
-    "dataNascimento": "1985-10-20",
-    "telefone": "11912345678",
-    "endereco": "Avenida Central, 456",
-    "cre": "CR12345",
-    "cargo": "Camareira Sênior",
-    "setor": "Ala Leste"
-  }
+[{"endpoint": "http://localhost:8080/api/camareiras"},
+
+{
+  "cre": "CRE12345",
+  "nome": "Maria Santos",
+  "cargo": "Camareira Sênior",
+  "setor": "Apartamentos"
+}
+
 ]

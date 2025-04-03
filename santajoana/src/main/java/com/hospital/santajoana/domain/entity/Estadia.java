@@ -23,6 +23,13 @@ public class Estadia {
         this.pacienteId = pacienteId;
         this.quartoId = quartoId;
     }
+
+    public Estadia(Long id, Long pacienteId, Long quartoId) {
+        this.pacienteId = pacienteId;
+        this.quartoId = quartoId;
+        this.id = id;
+    }
+    
     
     public Estadia(Long pacienteId, Long quartoId, LocalDateTime dataEntrada, LocalDateTime dataSaida) {
         this.pacienteId = pacienteId;
