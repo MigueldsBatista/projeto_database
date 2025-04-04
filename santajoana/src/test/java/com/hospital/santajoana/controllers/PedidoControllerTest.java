@@ -4,13 +4,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.hamcrest.Matchers.hasSize;
 
-import java.time.LocalDateTime;
-
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.hospital.santajoana.domain.entity.Camareira;
 import com.hospital.santajoana.domain.entity.Pedido;
 import com.hospital.santajoana.domain.entity.Pedido.StatusPedido;
 
@@ -38,23 +35,9 @@ public class PedidoControllerTest extends BaseControllerTest {
     @Transactional
     void testCreatePedido() throws Exception {
         // Create necessary dependencies first
-        createDefaultEstadia();
         
-        // Create a camareira
-        Camareira camareira = new Camareira();
-        camareira.setNome("Ana Souza");
-        camareira.setCpf("98765432100");
-        camareira.setCre("54321");
-        camareira.setCargo("Camareira");
-        camareira.setSetor("Limpeza");
-        saveCamareiraEntity(camareira);
-
         // Create a test pedido
-        Pedido pedido = new Pedido();
-        pedido.setEstadiaId(1L);
-        pedido.setCamareiraId(1L);
-        pedido.setStatus(StatusPedido.PENDENTE);
-        pedido.setDataPedido(LocalDateTime.now());
+        Pedido pedido = createDefaultPedido();
         
         // Test creating a pedido
         String pedidoJson = objectMapper.writeValueAsString(pedido);
@@ -69,93 +52,53 @@ public class PedidoControllerTest extends BaseControllerTest {
     @Transactional
     void testGetPedidoById() throws Exception {
         // Setup: Create camareira and estadia before creating pedido
-        createDefaultEstadia();
-        
-        Camareira camareira = new Camareira();
-        camareira.setNome("Ana Souza");
-        camareira.setCpf("98765432100");
-        camareira.setCre("54321");
-        camareira.setCargo("Camareira");
-        camareira.setSetor("Limpeza");
-        saveCamareiraEntity(camareira);
         
         // Create a pedido
-        Pedido pedido = new Pedido();
-        pedido.setEstadiaId(1L);
-        pedido.setCamareiraId(1L);
-        pedido.setStatus(StatusPedido.PENDENTE);
-        pedido.setDataPedido(LocalDateTime.now());
-        savePedidoEntity(pedido);
+        Pedido pedido = createDefaultPedido();
         
         // Test GET by ID
-        mockMvc.perform(get("/api/pedidos/{id}", 1L))
+        mockMvc.perform(get("/api/pedidos/{id}", pedido.getId()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.estadiaId").value(1))
-                .andExpect(jsonPath("$.camareiraId").value(1))
-                .andExpect(jsonPath("$.status").value("PENDENTE"));
+                .andExpect(jsonPath("$.estadiaId").value(pedido.getEstadiaId()))
+                .andExpect(jsonPath("$.camareiraId").value(pedido.getCamareiraId()))
+                .andExpect(jsonPath("$.status").value(pedido.getStatus().getDescricao()))
+                .andExpect(jsonPath("$.dataPedido").exists());
     }
     
     @Test
     @Transactional
     void testUpdatePedido() throws Exception {
-        // Setup: Create dependencies and pedido
-        createDefaultEstadia();
-        
-        Camareira camareira = new Camareira();
-        camareira.setNome("Ana Souza");
-        camareira.setCpf("98765432100");
-        camareira.setCre("54321");
-        camareira.setCargo("Camareira");
-        camareira.setSetor("Limpeza");
-        saveCamareiraEntity(camareira);
-        
-        Pedido pedido = new Pedido();
-        pedido.setEstadiaId(1L);
-        pedido.setCamareiraId(1L);
-        pedido.setStatus(StatusPedido.PENDENTE);
-        pedido.setDataPedido(LocalDateTime.now());
-        savePedidoEntity(pedido);
-        
-        // Update the pedido
-        pedido.setId(1L);
+
+        Pedido pedido = createDefaultPedido();
+
         pedido.setStatus(StatusPedido.EM_PREPARO);
+
         String pedidoJson = objectMapper.writeValueAsString(pedido);
         
-        mockMvc.perform(put("/api/pedidos/update/{id}", 1L)
+        mockMvc.perform(put("/api/pedidos/update/{id}", pedido.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(pedidoJson))
+                .andDo(result -> {
+                    var response = result.getResponse().getContentAsString();
+                    System.out.println("Response: " + response);
+                })
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status").value("EM_PREPARO"));
+                .andExpect(jsonPath("$.status").value("Em Preparo"));
     }
-    
+
     @Test
     @Transactional
     void testDeletePedido() throws Exception {
-        // Setup: Create dependencies and pedido
-        createDefaultEstadia();
-        
-        Camareira camareira = new Camareira();
-        camareira.setNome("Ana Souza");
-        camareira.setCpf("98765432100");
-        camareira.setCre("54321");
-        camareira.setCargo("Camareira");
-        camareira.setSetor("Limpeza");
-        saveCamareiraEntity(camareira);
-        
-        Pedido pedido = new Pedido();
-        pedido.setEstadiaId(1L);
-        pedido.setCamareiraId(1L);
-        pedido.setStatus(StatusPedido.PENDENTE);
-        pedido.setDataPedido(LocalDateTime.now());
-        savePedidoEntity(pedido);
-        
+
+        Pedido pedido = createDefaultPedido();
+
         // Test deleting pedido
-        mockMvc.perform(delete("/api/pedidos/delete/{id}", 1L))
+        mockMvc.perform(delete("/api/pedidos/delete/{id}", pedido.getId()))
                 .andExpect(status().isNoContent());
                 
         // Verify it's deleted
-        mockMvc.perform(get("/api/pedidos/{id}", 1L))
+        mockMvc.perform(get("/api/pedidos/{id}", pedido.getId()))
                 .andExpect(status().isNotFound());
     }
 }

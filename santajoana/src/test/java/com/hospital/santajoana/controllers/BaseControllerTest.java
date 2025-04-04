@@ -171,16 +171,20 @@ public abstract class BaseControllerTest {
     
     protected Pedido createDefaultPedido() throws Exception {
         // First ensure we have an estadia
-        createDefaultEstadia();
-        
+        var estadia = createDefaultEstadia();
+        var camareira = createDefaultCamareira();
+
         Pedido pedido = new Pedido();
-        pedido.setEstadiaId(1L);
-        pedido.setCamareiraId(1L); // Assuming we have a camareira with ID 1
-        pedido.setStatus(StatusPedido.PENDENTE);
-        pedido.setDataPedido(LocalDateTime.now());
         
-        savePedidoEntity(pedido);
-        return pedido;
+        pedido.setEstadiaId(estadia.getId());
+        pedido.setCamareiraId(camareira.getId());
+        
+        String pedidoJson = savePedidoEntity(pedido)
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+        // Assuming the response contains the created Pedido object
+        return objectMapper.readValue(pedidoJson, Pedido.class);
     }
     
     protected ResultActions saveFaturaEntity(Fatura fatura) throws Exception {
@@ -197,17 +201,21 @@ public abstract class BaseControllerTest {
     
     protected Fatura createDefaultFatura() throws Exception {
         // First ensure we have an estadia
-        createDefaultEstadia();
-        
+        var estadia = createDefaultEstadia();
+        var metodoPagamento = createDefaultMetodoPagamento();
+
         Fatura fatura = new Fatura();
-        fatura.setEstadiaId(1L);
-        fatura.setValorTotal(new BigDecimal("1000.00"));
+        fatura.setEstadiaId(estadia.getId());
         fatura.setStatusPagamento(StatusPagamento.Pendente);
-        fatura.setMetodoPagamentoId(1L); // Assuming we have a metodo_pagamento with ID 1
-        fatura.setDataEmissao(LocalDateTime.now());
+        fatura.setValorTotal(new BigDecimal("1000.00"));
+        fatura.setMetodoPagamentoId(metodoPagamento.getId()); // Assuming we have a metodo_pagamento with ID 1
         
-        saveFaturaEntity(fatura);
-        return fatura;
+        String faturaJson = saveFaturaEntity(fatura)
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        return objectMapper.readValue(faturaJson, Fatura.class);
     }
     
     protected ResultActions saveCamareiraEntity(Camareira camareira) throws Exception {
@@ -229,8 +237,36 @@ public abstract class BaseControllerTest {
         camareira.setCpf("12345678900");
         camareira.setCre("123456789");
         camareira.setSetor("Limpeza");
+        camareira.setDataNascimento(LocalDate.of(1990, 1, 1));
         
-        saveCamareiraEntity(camareira);
-        return camareira;
+        String camareiraJson = saveCamareiraEntity(camareira)
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+        return objectMapper.readValue(camareiraJson, Camareira.class);
     }
+
+    protected ResultActions saveMetodoPagamentoEntity(MetodoPagamento metodoPagamento) throws Exception {
+        String metodoPagamentoJson = objectMapper.writeValueAsString(metodoPagamento);
+        return mockMvc.perform(post("/api/metodos-pagamento/create")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(metodoPagamentoJson))
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON)).andDo(result -> {
+                    // Optionally log the result
+                    System.out.println("MetodoPagamento created: " + result.getResponse().getContentAsString());
+                });
+    }
+    
+    protected MetodoPagamento createDefaultMetodoPagamento() throws Exception {
+        MetodoPagamento metodoPagamento = new MetodoPagamento();
+        metodoPagamento.setTipo("Cartão de Crédito");
+        String metodoPagamentoJson = saveMetodoPagamentoEntity(metodoPagamento)
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        return objectMapper.readValue(metodoPagamentoJson, MetodoPagamento.class);
+    }
+
 }

@@ -30,9 +30,12 @@ public class PedidoRepository extends BaseRepository<Pedido> {
 
             pedido.setDataPedido(java.time.LocalDateTime.now());
             pedido.setStatus(StatusPedido.PENDENTE);
-        return pedido;
+            var savedPedido = findLastInserted();
+
+        return savedPedido;
     }
 
+    
     public Pedido update(Pedido pedido) {
         String updateSql = "UPDATE PEDIDO SET ID_ESTADIA = ?, ID_CAMAREIRA = ?, STATUS = ? WHERE ID_PEDIDO = ?";
         jdbcTemplate.update(updateSql,

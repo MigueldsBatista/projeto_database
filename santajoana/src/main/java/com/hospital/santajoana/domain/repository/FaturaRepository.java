@@ -38,7 +38,9 @@ public class FaturaRepository extends BaseRepository<Fatura> {
                 fatura.getStatusPagamento().name(),
                 fatura.getDataPagamento() != null ? Timestamp.valueOf(fatura.getDataPagamento()) : null,
                 fatura.getMetodoPagamentoId());
-        return fatura;
+                var savedFatura = findLastInserted();
+                
+        return savedFatura;
     }
 
     public Fatura update(Fatura fatura) {

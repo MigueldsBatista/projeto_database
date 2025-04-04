@@ -15,4 +15,7 @@ public class MetodoPagamento {
     private Long id;
     private String tipo;
 
+    public MetodoPagamento(String tipo) {
+        this.tipo = tipo;
+    }
 }

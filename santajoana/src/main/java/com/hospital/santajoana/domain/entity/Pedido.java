@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -38,6 +39,12 @@ public class Pedido {
         StatusPedido(String descricao) {
             this.descricao = descricao;
         }
+        
+        @JsonValue // Add this annotation to use descricao for serialization
+        public String getDescricao() {
+            return descricao;
+        }
+        
         @JsonCreator// This annotation is used to deserialize the string value back to the enum
         public static StatusPedido fromString(String descricao) {
             for (StatusPedido status : StatusPedido.values()) {

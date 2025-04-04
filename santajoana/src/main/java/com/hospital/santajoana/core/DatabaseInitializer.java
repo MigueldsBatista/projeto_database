@@ -113,7 +113,7 @@ public class DatabaseInitializer {
             
             "CREATE TABLE IF NOT EXISTS FATURA ("
             + "ID_FATURA INT PRIMARY KEY AUTO_INCREMENT,"
-            + "STATUS_PAGAMENTO ENUM('Pendente', 'Pago') NOT NULL,"
+            + "STATUS_PAGAMENTO ENUM('Pendente', 'Pago') DEFAULT 'Pendente' NOT NULL,"
             + "VALOR_TOTAL DECIMAL(10, 2) DEFAULT 0,"
             + "DATA_PAGAMENTO DATETIME NULL,"
             + "ID_METODO_PAGAMENTO INT NOT NULL,"
@@ -128,7 +128,7 @@ public class DatabaseInitializer {
             + "ID_PEDIDO INT PRIMARY KEY AUTO_INCREMENT,"
             + "ID_ESTADIA INT NOT NULL,"
             + "ID_CAMAREIRA INT NOT NULL,"
-            + "STATUS ENUM('Pendente', 'Em Preparação', 'Entregue') DEFAULT 'Pendente' NOT NULL,"
+            + "STATUS ENUM('Pendente', 'Em Preparo', 'Entregue') DEFAULT 'Pendente' NOT NULL,"
             + "DATA_PEDIDO DATETIME DEFAULT CURRENT_TIMESTAMP,"
             + "FOREIGN KEY (ID_ESTADIA) REFERENCES ESTADIA (ID_ESTADIA),"
             + "FOREIGN KEY (ID_CAMAREIRA) REFERENCES CAMAREIRA (ID_CAMAREIRA)"

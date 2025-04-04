@@ -18,7 +18,10 @@ public class MetodoPagamentoRepository extends BaseRepository<MetodoPagamento> {
         String insertSql = "INSERT INTO METODO_PAGAMENTO (TIPO) VALUES (?)";
         jdbcTemplate.update(insertSql,
                 metodoPagamento.getTipo());
-        return metodoPagamento;
+
+        var metodo = findLastInserted();
+        
+        return metodo;
     }
 
     public MetodoPagamento update(MetodoPagamento metodoPagamento) {

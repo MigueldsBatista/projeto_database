@@ -26,16 +26,20 @@ public class FaturaControllerTest extends BaseControllerTest {
                 .andExpect(jsonPath("$", hasSize(0)));
                 
         // Setup and create a fatura
-        createDefaultEstadia();
-        jdbcTemplate.execute("INSERT INTO metodo_pagamento (id, descricao) VALUES (1, 'Cartão de Crédito')");
-        
+        var estadia = createDefaultEstadia();
+        var metodoPagamento = createDefaultMetodoPagamento();
+
         Fatura fatura = new Fatura();
-        fatura.setEstadiaId(1L);
-        fatura.setValorTotal(new BigDecimal("1500.00"));
         fatura.setStatusPagamento(StatusPagamento.Pendente);
-        fatura.setMetodoPagamentoId(1L);
-        fatura.setDataEmissao(LocalDateTime.now());
-        saveFaturaEntity(fatura);
+        fatura.setEstadiaId(estadia.getId());
+        fatura.setValorTotal(new BigDecimal("1500.00"));
+        fatura.setMetodoPagamentoId(metodoPagamento.getId());
+        
+        mockMvc.perform(post("/api/faturas/create")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(fatura)))
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
         
         // Verify list size increases
         mockMvc.perform(get("/api/faturas"))
@@ -47,17 +51,9 @@ public class FaturaControllerTest extends BaseControllerTest {
     @Test
     @Transactional
     void testCreateFatura() throws Exception {
-        // Setup dependencies
-        createDefaultEstadia();
-        jdbcTemplate.execute("INSERT INTO metodo_pagamento (id, descricao) VALUES (1, 'Cartão de Crédito')");
 
         // Create a test fatura
-        Fatura fatura = new Fatura();
-        fatura.setEstadiaId(1L);
-        fatura.setValorTotal(new BigDecimal("1500.00"));
-        fatura.setStatusPagamento(StatusPagamento.Pendente);
-        fatura.setMetodoPagamentoId(1L);
-        fatura.setDataEmissao(LocalDateTime.now());
+        Fatura fatura = createDefaultFatura();
         
         // Test creating a fatura
         String faturaJson = objectMapper.writeValueAsString(fatura);
@@ -65,82 +61,64 @@ public class FaturaControllerTest extends BaseControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(faturaJson))
                 .andExpect(status().isCreated())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.estadiaId").value(fatura.getEstadiaId()))
+                .andExpect(jsonPath("$.valorTotal").value(fatura.getValorTotal().doubleValue()))
+                .andExpect(jsonPath("$.metodoPagamentoId").value(fatura.getMetodoPagamentoId()))
+                .andExpect(jsonPath("$.dataEmissao").value(fatura.getDataEmissao().toString()))
+                .andExpect(jsonPath("$.dataPagamento").value(fatura.getDataPagamento() != null ? fatura.getDataPagamento().toString() : null))
+                .andExpect(jsonPath("$.statusPagamento").value(fatura.getStatusPagamento().toString()));
     }
     
     @Test
     @Transactional
     void testGetFaturaById() throws Exception {
         // Setup dependencies and create fatura
-        createDefaultEstadia();
-        jdbcTemplate.execute("INSERT INTO metodo_pagamento (id, descricao) VALUES (1, 'Cartão de Crédito')");
         
-        Fatura fatura = new Fatura();
-        fatura.setEstadiaId(1L);
-        fatura.setValorTotal(new BigDecimal("1500.00"));
-        fatura.setStatusPagamento(StatusPagamento.Pendente);
-        fatura.setMetodoPagamentoId(1L);
-        fatura.setDataEmissao(LocalDateTime.now());
-        saveFaturaEntity(fatura);
+        Fatura fatura = createDefaultFatura();
         
         // Test GET by ID
-        mockMvc.perform(get("/api/faturas/{id}", 1L))
+        mockMvc.perform(get("/api/faturas/{id}", fatura.getId()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.estadiaId").value(1))
-                .andExpect(jsonPath("$.valorTotal").value(1500.00))
-                .andExpect(jsonPath("$.statusPagamento").value("Pendente"));
-    }
-    
-    @Test
-    @Transactional
-    void testUpdateFatura() throws Exception {
+                .andExpect(jsonPath("$.estadiaId").value(fatura.getEstadiaId()))
+                .andExpect(jsonPath("$.valorTotal").value(fatura.getValorTotal().doubleValue()))
+                .andExpect(jsonPath("$.metodoPagamentoId").value(fatura.getMetodoPagamentoId()))
+                .andExpect(jsonPath("$.dataEmissao").value(fatura.getDataEmissao().toString()))
+                .andExpect(jsonPath("$.dataPagamento").value(fatura.getDataPagamento() != null ? fatura.getDataPagamento().toString() : null))
+                .andExpect(jsonPath("$.statusPagamento").value(fatura.getStatusPagamento().toString()));
+}
+
+@Test
+@Transactional
+void testUpdateFatura() throws Exception {
         // Setup dependencies and create fatura
-        createDefaultEstadia();
-        jdbcTemplate.execute("INSERT INTO metodo_pagamento (id, descricao) VALUES (1, 'Cartão de Crédito')");
-        
-        Fatura fatura = new Fatura();
-        fatura.setEstadiaId(1L);
-        fatura.setValorTotal(new BigDecimal("1500.00"));
-        fatura.setStatusPagamento(StatusPagamento.Pendente);
-        fatura.setMetodoPagamentoId(1L);
-        fatura.setDataEmissao(LocalDateTime.now());
-        saveFaturaEntity(fatura);
+        Fatura fatura = createDefaultFatura();
         
         // Update the fatura
-        fatura.setId(1L);
         fatura.setStatusPagamento(StatusPagamento.Pago);
         fatura.setDataPagamento(LocalDateTime.now());
         String faturaJson = objectMapper.writeValueAsString(fatura);
         
-        mockMvc.perform(put("/api/faturas/update/{id}", 1L)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(faturaJson))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.statusPagamento").value("Pago"));
-    }
-    
-    @Test
-    @Transactional
-    void testDeleteFatura() throws Exception {
+        mockMvc.perform(put("/api/faturas/update/{id}", fatura.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(faturaJson))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.statusPagamento").value("Pago"));
+}
+
+@Test
+@Transactional
+void testDeleteFatura() throws Exception {
         // Setup dependencies and create fatura
-        createDefaultEstadia();
-        jdbcTemplate.execute("INSERT INTO metodo_pagamento (id, descricao) VALUES (1, 'Cartão de Crédito')");
-        
-        Fatura fatura = new Fatura();
-        fatura.setEstadiaId(1L);
-        fatura.setValorTotal(new BigDecimal("1500.00"));
-        fatura.setStatusPagamento(StatusPagamento.Pendente);
-        fatura.setMetodoPagamentoId(1L);
-        fatura.setDataEmissao(LocalDateTime.now());
-        saveFaturaEntity(fatura);
+        Fatura fatura = createDefaultFatura();
         
         // Test deleting fatura
-        mockMvc.perform(delete("/api/faturas/delete/{id}", 1L))
-                .andExpect(status().isNoContent());
-                
+        mockMvc.perform(delete("/api/faturas/delete/{id}", fatura.getId()))
+                        .andExpect(status().isNoContent());
+                        
         // Verify it's deleted
-        mockMvc.perform(get("/api/faturas/{id}", 1L))
-                .andExpect(status().isNotFound());
-    }
+        mockMvc.perform(get("/api/faturas/{id}", fatura.getId()))
+                        .andExpect(status().isNotFound());
+}
 }
