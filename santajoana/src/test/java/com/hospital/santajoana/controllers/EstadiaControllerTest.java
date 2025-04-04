@@ -2,85 +2,98 @@ package com.hospital.santajoana.controllers;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.hamcrest.Matchers.hasSize;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hospital.santajoana.domain.entity.Estadia;
-import com.hospital.santajoana.domain.entity.Paciente;
-import com.hospital.santajoana.domain.entity.Paciente.StatusPaciente;
-import com.hospital.santajoana.domain.entity.Quarto;
 
-@SpringBootTest(webEnvironment = WebEnvironment.MOCK)
-@AutoConfigureMockMvc
-public class EstadiaControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
+public class EstadiaControllerTest extends BaseControllerTest {
 
     @Test
-    void testEndpoints() throws Exception {
-        // Test GET all estadias
-
-
-// Create a test paciente for the other operations
-        Paciente testPaciente = new Paciente(
-            "João Silva", 
-            "12345678900", 
-            LocalDate.of(1980, 1, 1), 
-            StatusPaciente.INTERNADO
-        );
-
-        // Test creating a paciente
-        String pacienteJson = objectMapper.writeValueAsString(testPaciente);
-        mockMvc.perform(post("/api/pacientes/create")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(pacienteJson))
-                .andExpect(status().isCreated())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
-
-
+    @Transactional
+    void testGetAllEstadias() throws Exception {
+        // Test GET all estadias - initially should be empty
         mockMvc.perform(get("/api/estadias"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$", hasSize(0)));
+                
+        // Create an estadia and verify list size increases
+        createDefaultEstadia();
+        
+        mockMvc.perform(get("/api/estadias"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$", hasSize(1)));
+    }
+    
+    @Test
+    @Transactional
+    void testCreateEstadia() throws Exception {
+        // Create a paciente and quarto first
+        var paciente = createDefaultPaciente();
+        var quarto = createDefaultQuarto();
 
-
-                        // Create a test quarto for the other operations
-        Quarto testQuarto = new Quarto(101, "Enfermaria");
-
-        // Test creating a quarto
-        String quartoJson = objectMapper.writeValueAsString(testQuarto);
-        mockMvc.perform(post("/api/quartos/create")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(quartoJson))
-                .andExpect(status().isCreated())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
-
-        // Create a test estadia
-        Estadia testEstadia = new Estadia(1L, 1L);
-
+        // Create a test estadia using the created entities
+        Estadia estadia = new Estadia(paciente.getId(), quarto.getId(), LocalDateTime.now(), null);
+        
         // Test creating an estadia
-        String estadiaJson = objectMapper.writeValueAsString(testEstadia);
+        String estadiaJson = objectMapper.writeValueAsString(estadia);
         mockMvc.perform(post("/api/estadias/create")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(estadiaJson))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
-
+    }
+    
+    @Test
+    @Transactional
+    void testGetEstadiaById() throws Exception {
+        // Create an estadia first
+        var estadia = createDefaultEstadia();
+        
         // Test GET by ID
-        mockMvc.perform(get("/api/estadias/{id}", 1L))
+        mockMvc.perform(get("/api/estadias/{id}", estadia.getId()))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.pacienteId").value(estadia.getPacienteId()))
+                .andExpect(jsonPath("$.quartoId").value(estadia.getQuartoId()));
+    }
+    
+    @Test
+    @Transactional
+    void testUpdateEstadia() throws Exception {
+        // Create an estadia first
+        Estadia estadia = createDefaultEstadia();
+        
+        // Update the estadia with a checkout date
+        estadia.setDataSaida(LocalDateTime.now());
+        String estadiaJson = objectMapper.writeValueAsString(estadia);
+        
+        mockMvc.perform(put("/api/estadias/update/{id}", estadia.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(estadiaJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.dataSaida").exists());
+    }
+    
+    @Test
+    @Transactional
+    void testDeleteEstadia() throws Exception {
+        // Create an estadia first
+        Estadia estadia = createDefaultEstadia();
+        
+        // Test deleting estadia
+        mockMvc.perform(delete("/api/estadias/delete/{id}", estadia.getId()))
+                .andExpect(status().isNoContent());
+                
+        // Verify it's deleted
+        mockMvc.perform(get("/api/estadias/{id}", estadia.getId()))
+                .andExpect(status().isNotFound());
     }
 }

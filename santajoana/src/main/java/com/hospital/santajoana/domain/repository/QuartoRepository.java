@@ -23,7 +23,8 @@ public class QuartoRepository extends BaseRepository<Quarto> {
         jdbcTemplate.update(insertSql,
             quarto.getNumero(),
             quarto.getTipo());
-        return quarto;
+            var savedQuarto = findLastInserted();
+        return savedQuarto;
     }
 
     public Optional<Quarto> findById(Long id) {

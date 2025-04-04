@@ -15,16 +15,16 @@ public class CamareiraMediator extends BaseMediator<Camareira> {
         this.CamareiraRepository = CamareiraRepository;
     }
     
-    public Camareira save(Camareira CAMAREIRA) {
-        return CamareiraRepository.save(CAMAREIRA);
+    public Camareira save(Camareira camareira) {
+        return CamareiraRepository.save(camareira);
     }
 
     public void delete(Camareira entity) {
         CamareiraRepository.deleteById(entity.getId());
     }
 
-    public Camareira update(Camareira CAMAREIRA) {
-        return CamareiraRepository.update(CAMAREIRA);
+    public Camareira update(Camareira camareira) {
+        return CamareiraRepository.update(camareira);
     }
     
 }

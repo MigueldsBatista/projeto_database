@@ -39,4 +39,10 @@ public abstract class BaseRepository<T> {
     public List<T> findBySql(String sql, Object... args) {
         return jdbcTemplate.query(sql, rowMapper, args);
     }
+
+    public T findLastInserted() {
+        String sql = "SELECT * FROM " + tableName + " ORDER BY " + idColumn + " DESC LIMIT 1";
+        List<T> results = jdbcTemplate.query(sql, rowMapper);
+        return results.stream().findFirst().orElse(null);
+    }
 }

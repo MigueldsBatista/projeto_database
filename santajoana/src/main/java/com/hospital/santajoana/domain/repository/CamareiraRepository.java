@@ -38,7 +38,8 @@ public class CamareiraRepository extends BaseRepository<Camareira> {
             camareira.getCargo(),
             camareira.getSetor()
         );
-        return camareira;
+        var savedCamareira = findLastInserted();
+        return savedCamareira;
     }
 
     @Override

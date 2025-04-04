@@ -40,7 +40,8 @@ public class EstadiaRepository extends BaseRepository<Estadia> {
             estadia.getPacienteId(),
             estadia.getQuartoId()
             );
-        return estadia;
+            var savedEstadia = findLastInserted();
+        return savedEstadia;
     }
 
     public Estadia update(Estadia estadia) {

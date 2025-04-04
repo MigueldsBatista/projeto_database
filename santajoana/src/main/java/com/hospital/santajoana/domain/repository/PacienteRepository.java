@@ -13,21 +13,31 @@ public class PacienteRepository extends BaseRepository<Paciente> {
 
     public PacienteRepository(JdbcTemplate jdbcTemplate) {
         super("PACIENTE", "ID_PACIENTE", jdbcTemplate, (rs, rowNum) -> {
-            Paciente paciente = new Paciente(
-                    StatusPaciente.fromString(rs.getString("STATUS"))
-
-            );
-            paciente.setId(rs.getLong("ID_PACIENTE"));
-            
-            // Try to retrieve other potential fields if they exist
             try {
+                // Create Paciente with just the status
+                Paciente paciente = new Paciente(
+                    StatusPaciente.fromString(rs.getString("STATUS"))
+                );
+                
+                // Set ID and basic personal information
+                paciente.setId(rs.getLong("ID_PACIENTE"));
+                paciente.setNome(rs.getString("NOME"));
+                paciente.setCpf(rs.getString("CPF"));
+                
+                // Handle date conversion safely
+                Date dataNascDB = rs.getDate("DATA_NASCIMENTO");
+                if (dataNascDB != null) {
+                    paciente.setDataNascimento(dataNascDB.toLocalDate());
+                }
+                
+                // Set contact information
                 paciente.setTelefone(rs.getString("TELEFONE"));
                 paciente.setEndereco(rs.getString("ENDERECO"));
-            } catch (Exception e) {
-                // Fields might not exist in the result set, ignore
-            }
 
-            return paciente;
+                return paciente;
+            } catch (Exception e) {
+                throw new RuntimeException("Error mapping Paciente result set: " + e.getMessage(), e);
+            }
         });
     }
 
@@ -43,7 +53,8 @@ public class PacienteRepository extends BaseRepository<Paciente> {
             paciente.getEndereco(),
             paciente.getStatus().getDescricao()
             );
-        return paciente;
+            Paciente salvo = findLastInserted();
+        return salvo;
     }
 
     @Override
