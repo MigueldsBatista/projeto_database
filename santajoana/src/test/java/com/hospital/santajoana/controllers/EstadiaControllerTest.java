@@ -40,7 +40,7 @@ public class EstadiaControllerTest extends BaseControllerTest {
         var quarto = createDefaultQuarto();
 
         // Create a test estadia using the created entities
-        Estadia estadia = new Estadia(paciente.getId(), quarto.getId(), LocalDateTime.now(), null);
+        Estadia estadia = new Estadia(paciente, quarto, LocalDateTime.now(), null);
         
         // Test creating an estadia
         String estadiaJson = objectMapper.writeValueAsString(estadia);
@@ -61,8 +61,8 @@ public class EstadiaControllerTest extends BaseControllerTest {
         mockMvc.perform(get("/api/estadias/{id}", estadia.getId()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.pacienteId").value(estadia.getPacienteId()))
-                .andExpect(jsonPath("$.quartoId").value(estadia.getQuartoId()));
+                .andExpect(jsonPath("$.pacienteId").value(estadia.getPaciente().getId()))
+                .andExpect(jsonPath("$.quartoId").value(estadia.getQuarto().getId()));
     }
     
     @Test

@@ -1,12 +1,10 @@
-package com.hospital.santajoana.domain.mediator;
+package com.hospital.santajoana.domain.services;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.hospital.santajoana.domain.entity.Paciente;
-import com.hospital.santajoana.domain.entity.Pedido;
 import com.hospital.santajoana.domain.repository.PacienteRepository;
 
 @Service

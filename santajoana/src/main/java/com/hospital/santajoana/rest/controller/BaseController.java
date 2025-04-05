@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.hospital.santajoana.domain.mediator.BaseMediator;
+import com.hospital.santajoana.domain.services.BaseMediator;
 
 public abstract class BaseController<T> {
 

@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.http.MediaType;
 
 import com.hospital.santajoana.domain.entity.Produto;
-import com.hospital.santajoana.domain.entity.Produto.CategoriaProduto;
 
 public class ProdutoControllerTest extends BaseControllerTest {
 
@@ -25,6 +24,7 @@ public class ProdutoControllerTest extends BaseControllerTest {
                 .andExpect(jsonPath("$", hasSize(0)));
 
         var produto = createDefaultProduto();
+        
         mockMvc.perform(get("/api/produtos"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -39,12 +39,15 @@ public class ProdutoControllerTest extends BaseControllerTest {
     @Test
     @Transactional
     void testCreateProduto() throws Exception {
+        // First create a categoria produto
+        var categoriaProduto = createDefaultCategoriaProduto();
+        
         Produto testProduto = new Produto();
         testProduto.setNome("Refeição Teste");
         testProduto.setDescricao("Refeição com arroz, feijão e carne");
         testProduto.setPreco(BigDecimal.valueOf(25.50));
         testProduto.setTempoPreparoMinutos(30);
-        testProduto.setCategoria(CategoriaProduto.ALMOCO);
+        testProduto.setCategoriaFromId(categoriaProduto);
         testProduto.setCaloriasKcal(500);
         testProduto.setProteinasG(30);
         testProduto.setCarboidratosG(60);
@@ -62,7 +65,9 @@ public class ProdutoControllerTest extends BaseControllerTest {
                 .andExpect(jsonPath("$.descricao").value(testProduto.getDescricao()))
                 .andExpect(jsonPath("$.preco").value(testProduto.getPreco()))
                 .andExpect(jsonPath("$.tempoPreparoMinutos").value(testProduto.getTempoPreparoMinutos()))
-                .andExpect(jsonPath("$.categoria").value(testProduto.getCategoria().getDescricao()))
+                .andExpect(jsonPath("$.categoriaId").value(testProduto.getCategoriaId()))
+                .andExpect(jsonPath("$.categoria.id").value(categoriaProduto.getId()))
+                .andExpect(jsonPath("$.categoria.nome").value(categoriaProduto.getNome()))
                 .andExpect(jsonPath("$.caloriasKcal").value(testProduto.getCaloriasKcal()))
                 .andExpect(jsonPath("$.proteinasG").value(testProduto.getProteinasG()))
                 .andExpect(jsonPath("$.carboidratosG").value(testProduto.getCarboidratosG()))
@@ -82,7 +87,7 @@ public class ProdutoControllerTest extends BaseControllerTest {
                 .andExpect(jsonPath("$.id").value(produto.getId()))
                 .andExpect(jsonPath("$.nome").value(produto.getNome()))
                 .andExpect(jsonPath("$.descricao").value(produto.getDescricao()))
-                .andExpect(jsonPath("$.categoria").value(produto.getCategoria().getDescricao()));
+                .andExpect(jsonPath("$.categoriaId").value(produto.getCategoriaId()));
     }
 
     @Test
@@ -96,7 +101,7 @@ public class ProdutoControllerTest extends BaseControllerTest {
         updatedProduto.setDescricao("Refeição com arroz, feijão e carne");
         updatedProduto.setPreco(BigDecimal.valueOf(30.00));
         updatedProduto.setTempoPreparoMinutos(25);
-        updatedProduto.setCategoria(CategoriaProduto.JANTAR);
+        updatedProduto.setCategoriaId();
         updatedProduto.setCaloriasKcal(600);
         updatedProduto.setProteinasG(35);
         updatedProduto.setCarboidratosG(70);
@@ -117,7 +122,7 @@ public class ProdutoControllerTest extends BaseControllerTest {
                 .andExpect(jsonPath("$.descricao").value(updatedProduto.getDescricao()))
                 .andExpect(jsonPath("$.preco").value(updatedProduto.getPreco()))
                 .andExpect(jsonPath("$.tempoPreparoMinutos").value(updatedProduto.getTempoPreparoMinutos()))
-                .andExpect(jsonPath("$.categoria").value(updatedProduto.getCategoria().getDescricao()))
+                .andExpect(jsonPath("$.categoriaId").value(updatedProduto.getCategoriaId()))
                 .andExpect(jsonPath("$.caloriasKcal").value(updatedProduto.getCaloriasKcal()))
                 .andExpect(jsonPath("$.proteinasG").value(updatedProduto.getProteinasG()))
                 .andExpect(jsonPath("$.carboidratosG").value(updatedProduto.getCarboidratosG()))

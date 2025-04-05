@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.hospital.santajoana.domain.entity.Paciente;
 import com.hospital.santajoana.domain.entity.Paciente.StatusPaciente;
-import com.hospital.santajoana.domain.mediator.EstadiaMediator;
-import com.hospital.santajoana.domain.mediator.PacienteMediator;
-import com.hospital.santajoana.domain.mediator.PedidoMediator;
+import com.hospital.santajoana.domain.services.EstadiaMediator;
+import com.hospital.santajoana.domain.services.PacienteMediator;
+import com.hospital.santajoana.domain.services.PedidoMediator;
 import com.hospital.santajoana.domain.entity.Pedido;
 import java.util.List;
 import org.springframework.web.bind.annotation.*;

@@ -18,8 +18,8 @@ import lombok.NoArgsConstructor;
 public class Pedido {
     
     private Long id;
-    private Long estadiaId;
-    private Long camareiraId;
+    private Estadia estadia;
+    private Camareira camareira;
     private StatusPedido status;
     private LocalDateTime dataPedido;
     

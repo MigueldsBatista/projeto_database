@@ -1,16 +1,25 @@
 package com.hospital.santajoana.rest.controller;
 
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+
 import com.hospital.santajoana.domain.entity.ProdutoPedido;
+import com.hospital.santajoana.domain.services.ProdutoPedidoMediator;
+import com.hospital.santajoana.rest.dto.ProdutoPedidoDTO;
 
-// public class ProdutoPedidoController extends BaseController<ProdutoPedido> {
+import io.micrometer.core.ipc.http.HttpSender.Response;
 
-//     private final ProdutoPedidoMediator produtoPedidoMediator;
+public class ProdutoPedidoController extends BaseController<ProdutoPedido> {
 
-//     public ProdutoPedidoController(produtoPedidoMediator produtoPedidoMediator) {
-//         super(produtoPedidoMediator);
-//         this.produtoPedidoMediator = produtoPedidoMediator;
-//     }
+    private final ProdutoPedidoMediator produtoPedidoMediator;
 
-//     // Implement any additional methods specific to ProdutoPedido if needed
+    public ProdutoPedidoController(ProdutoPedidoMediator produtoPedidoMediator) {
+        super(produtoPedidoMediator);
+        this.produtoPedidoMediator = produtoPedidoMediator;
+    }
 
-// }
+
+
+}

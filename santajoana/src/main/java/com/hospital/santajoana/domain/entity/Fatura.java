@@ -11,10 +11,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Fatura {
     private Long id;
-    private Long estadiaId;
+    private Estadia estadia;
     private BigDecimal valorTotal;
     private StatusPagamento statusPagamento;
-    private Long metodoPagamentoId;
+    private MetodoPagamento metodoPagamento;
     private LocalDateTime dataPagamento;
     private LocalDateTime dataEmissao;
 

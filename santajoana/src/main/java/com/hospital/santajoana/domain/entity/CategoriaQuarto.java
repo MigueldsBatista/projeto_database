@@ -7,8 +7,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Endereco {
-    private String rua;
-    private String apartamento; // Pode ser null se não houver apartamento
-    private String numero;
+public class CategoriaQuarto {
+
+    private Long id;
+    private String nome;
+    private String descricao;
+    
 }

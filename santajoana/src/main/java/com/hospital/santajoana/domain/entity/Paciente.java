@@ -18,30 +18,13 @@ import lombok.NoArgsConstructor;
 @JsonInclude(JsonInclude.Include.NON_NULL) // Exclude null fields from JSON serialization
 public class Paciente extends Pessoa {
 
-    private StatusPaciente status; // Internado/Alta
+    private StatusPaciente status; 
     
-
-    /**
-     * Constructor for creating a new patient with basic information.
-     * @param nome Patient name
-     * @param cpf Patient CPF (ID number)
-     * @param dataNascimento Patient birth date
-     * @param status Patient status (INTERNADO/ALTA)
-     */
     public Paciente(String nome, String cpf, LocalDate dataNascimento, StatusPaciente status) {
         super(cpf, nome, dataNascimento); // Set basic info from Pessoa
         this.status = status;
     }
 
-    /**
-     * Comprehensive constructor with all patient details.
-     * @param cpf Patient CPF (ID number)
-     * @param nome Patient name
-     * @param dataNascimento Patient birth date
-     * @param telefone Patient phone number
-     * @param endereco Patient address
-     * @param status Patient status (INTERNADO/ALTA)
-     */
     public Paciente(String cpf, String nome, LocalDate dataNascimento, String telefone, String endereco, StatusPaciente status) {
         super(cpf, nome, dataNascimento, telefone, endereco);
         this.status = status;

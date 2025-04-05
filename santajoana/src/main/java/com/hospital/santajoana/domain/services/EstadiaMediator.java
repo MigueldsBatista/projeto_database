@@ -1,4 +1,4 @@
-package com.hospital.santajoana.domain.mediator;
+package com.hospital.santajoana.domain.services;
 
 import java.util.Optional;
 
@@ -22,9 +22,9 @@ public class EstadiaMediator extends BaseMediator<Estadia> {
     }
 
     public Estadia save(Estadia estadia) {
-        Optional<Estadia> existingEstadia = this.findMostRecentEstadiaByPacienteId(estadia.getPacienteId());
+        Optional<Estadia> existingEstadia = this.findMostRecentEstadiaByPacienteId(estadia.getPaciente().getId());
 
-        Optional<Paciente> paciente = pacienteMediator.findById(estadia.getPacienteId());
+        Optional<Paciente> paciente = pacienteMediator.findById(estadia.getPaciente().getId());
 
 
         if(
@@ -61,6 +61,19 @@ public class EstadiaMediator extends BaseMediator<Estadia> {
     public Optional<Estadia> findMostRecentEstadiaByPacienteId(Long pacienteId){
 
         return repository.findMostRecentEstadiaByPacienteId(pacienteId);
+    }
+
+    // Add methods to ensure objects are loaded
+    public void ensureReferencesLoaded(Estadia estadia) {
+        if (estadia.getPaciente() == null && estadia.getPacienteId() != null) {
+            pacienteMediator.findById(estadia.getPacienteId())
+                .ifPresent(estadia::setPaciente);
+        }
+        
+        if (estadia.getQuarto() == null && estadia.getQuartoId() != null) {
+            quartoMediator.findById(estadia.getQuartoId())
+                .ifPresent(estadia::setQuarto);
+        }
     }
 
 }

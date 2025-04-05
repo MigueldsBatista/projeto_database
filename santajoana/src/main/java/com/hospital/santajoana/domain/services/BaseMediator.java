@@ -1,4 +1,4 @@
-package com.hospital.santajoana.domain.mediator;
+package com.hospital.santajoana.domain.services;
 
 import com.hospital.santajoana.domain.repository.BaseRepository;
 

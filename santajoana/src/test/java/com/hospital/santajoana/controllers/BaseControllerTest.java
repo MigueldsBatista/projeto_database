@@ -3,8 +3,6 @@ package com.hospital.santajoana.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hospital.santajoana.domain.entity.*;
 import com.hospital.santajoana.domain.entity.Paciente.StatusPaciente;
-import com.hospital.santajoana.domain.entity.Pedido.StatusPedido;
-import com.hospital.santajoana.domain.entity.Produto.CategoriaProduto;
 import com.hospital.santajoana.domain.entity.Fatura.StatusPagamento;
 
 import org.junit.jupiter.api.AfterEach;
@@ -20,6 +18,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -90,6 +89,7 @@ public abstract class BaseControllerTest {
             
             // Verify the PRODUTO table is empty
             Integer count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM PRODUTO", Integer.class);
+            
             if (count > 0) {
                 System.err.println("WARNING: PRODUTO table still has " + count + " records after cleanup!");
             }
@@ -150,7 +150,9 @@ public abstract class BaseControllerTest {
     }
     
     protected ResultActions saveEstadiaEntity(Estadia estadia) throws Exception {
+        
         String estadiaJson = objectMapper.writeValueAsString(estadia);
+
         return mockMvc.perform(post("/api/estadias/create")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(estadiaJson))
@@ -166,8 +168,10 @@ public abstract class BaseControllerTest {
         var paciente = createDefaultPaciente();
         var quarto = createDefaultQuarto();
         
-        // Create the estadia with IDs 1 since they should be the first records
-        Estadia estadia = new Estadia(paciente.getId(), quarto.getId());
+        // Create the estadia with dataEntrada = now
+        Estadia estadia = new Estadia(paciente, quarto);
+        estadia.setDataEntrada(LocalDateTime.now());
+        
         String estadiaJson = saveEstadiaEntity(estadia)
             .andReturn()
             .getResponse()
@@ -204,6 +208,7 @@ public abstract class BaseControllerTest {
             .getContentAsString();
         // Assuming the response contains the created Pedido object
         return objectMapper.readValue(pedidoJson, Pedido.class);
+
     }
     
     protected ResultActions saveProdutoEntity(Produto produto) throws Exception {
@@ -221,11 +226,14 @@ public abstract class BaseControllerTest {
     protected Produto createDefaultProduto() throws Exception {
         // First ensure we have an estadia
 
+
+        
         Produto produto = new Produto();
+
         produto.setNome("Refeição Completa");
         produto.setDescricao("Refeição com arroz, feijão e carne");
         produto.setPreco(new BigDecimal("25.9"));
-        produto.setCategoria(CategoriaProduto.ALMOCO);
+        produto.setCategoriaId();
         produto.setCaloriasKcal(500);
         produto.setProteinasG(30);
         produto.setCarboidratosG(60);
@@ -321,6 +329,54 @@ public abstract class BaseControllerTest {
             .getContentAsString();
 
         return objectMapper.readValue(metodoPagamentoJson, MetodoPagamento.class);
+    }
+
+    protected ResultActions saveCategoriaProdutoEntity(CategoriaProduto categoriaProduto) throws Exception {
+        String categoriaProdutoJson = objectMapper.writeValueAsString(categoriaProduto);
+        return mockMvc.perform(post("/api/categorias-produto/create")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(categoriaProdutoJson))
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON)).andDo(result -> {
+                    // Optionally log the result
+                    System.out.println("CategoriaProduto created: " + result.getResponse().getContentAsString());
+                });
+    }
+    
+    protected CategoriaProduto createDefaultCategoriaProduto() throws Exception {
+        CategoriaProduto categoriaProduto = new CategoriaProduto();
+        categoriaProduto.setNome("Refeição");
+        categoriaProduto.setDescricao("Refeições completas");
+        
+        String categoriaProdutoJson = saveCategoriaProdutoEntity(categoriaProduto)
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+        return objectMapper.readValue(categoriaProdutoJson, CategoriaProduto.class);
+    }
+    
+    protected ResultActions saveCategoriaQuartoEntity(CategoriaQuarto categoriaQuarto) throws Exception {
+        String categoriaQuartoJson = objectMapper.writeValueAsString(categoriaQuarto);
+        return mockMvc.perform(post("/api/categorias-quarto/create")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(categoriaQuartoJson))
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON)).andDo(result -> {
+                    // Optionally log the result
+                    System.out.println("CategoriaQuarto created: " + result.getResponse().getContentAsString());
+                });
+    }
+    
+    protected CategoriaQuarto createDefaultCategoriaQuarto() throws Exception {
+        CategoriaQuarto categoriaQuarto = new CategoriaQuarto();
+        categoriaQuarto.setNome("Enfermaria");
+        categoriaQuarto.setDescricao("Quartos de enfermaria");
+        
+        String categoriaQuartoJson = saveCategoriaQuartoEntity(categoriaQuarto)
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+        return objectMapper.readValue(categoriaQuartoJson, CategoriaQuarto.class);
     }
 
 }
