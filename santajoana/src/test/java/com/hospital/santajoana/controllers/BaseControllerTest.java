@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hospital.santajoana.domain.entity.*;
 import com.hospital.santajoana.domain.entity.Paciente.StatusPaciente;
 import com.hospital.santajoana.domain.entity.Pedido.StatusPedido;
+import com.hospital.santajoana.domain.entity.Produto.CategoriaProduto;
 import com.hospital.santajoana.domain.entity.Fatura.StatusPagamento;
 
 import org.junit.jupiter.api.AfterEach;
@@ -19,7 +20,6 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -40,44 +40,63 @@ public abstract class BaseControllerTest {
     
     @BeforeEach
     public void setUp() {
-        // Setup code if needed
+        // Add explicit cleanup to ensure database is clean before each test
+        cleanup();
+        
+        // Log tables state after cleanup
+        logTableCounts();
+    }
+    
+    private void logTableCounts() {
+        String[] tables = {"PRODUTO", "PEDIDO", "PACIENTE", "ESTADIA", "QUARTO", "CAMAREIRA", "METODO_PAGAMENTO", "FATURA"};
+        for (String table : tables) {
+            try {
+                Integer count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM " + table, Integer.class);
+                System.out.println("Table " + table + " has " + count + " records");
+            } catch (Exception e) {
+                System.err.println("Error counting " + table + ": " + e.getMessage());
+            }
+        }
     }
     
     @AfterEach
     public void cleanup() {
-        // Clean up all tables after each test
-        // Using H2-compatible syntax to disable and enable referential integrity
+        // Enhance cleanup to be more thorough
         try {
-            // Disable referential integrity constraints
+            // First try to delete records instead of truncate
+            // In reverse order of dependencies to avoid constraint violations
+            jdbcTemplate.execute("DELETE FROM PRODUTO_PEDIDO");
+            jdbcTemplate.execute("DELETE FROM PEDIDO");
+            jdbcTemplate.execute("DELETE FROM FATURA");
+            jdbcTemplate.execute("DELETE FROM ESTADIA");
+            jdbcTemplate.execute("DELETE FROM PACIENTE");
+            jdbcTemplate.execute("DELETE FROM QUARTO");
+            jdbcTemplate.execute("DELETE FROM CAMAREIRA");
+            jdbcTemplate.execute("DELETE FROM METODO_PAGAMENTO");
+            jdbcTemplate.execute("DELETE FROM PRODUTO"); // Make sure PRODUTO is cleaned
+            
+            // Now try the H2 specific approach as fallback
             jdbcTemplate.execute("SET REFERENTIAL_INTEGRITY FALSE");
-            
-            // Truncate all tables
-            jdbcTemplate.execute("TRUNCATE TABLE fatura");
-            jdbcTemplate.execute("TRUNCATE TABLE pedido");
-            jdbcTemplate.execute("TRUNCATE TABLE estadia");
-            jdbcTemplate.execute("TRUNCATE TABLE paciente");
-            jdbcTemplate.execute("TRUNCATE TABLE quarto");
-            jdbcTemplate.execute("TRUNCATE TABLE camareira");
-            jdbcTemplate.execute("TRUNCATE TABLE metodo_pagamento");
-            
-            // Re-enable referential integrity constraints
+            jdbcTemplate.execute("TRUNCATE TABLE PRODUTO_PEDIDO");
+            jdbcTemplate.execute("TRUNCATE TABLE PEDIDO");
+            jdbcTemplate.execute("TRUNCATE TABLE FATURA");
+            jdbcTemplate.execute("TRUNCATE TABLE ESTADIA");
+            jdbcTemplate.execute("TRUNCATE TABLE PACIENTE");
+            jdbcTemplate.execute("TRUNCATE TABLE QUARTO");
+            jdbcTemplate.execute("TRUNCATE TABLE CAMAREIRA");
+            jdbcTemplate.execute("TRUNCATE TABLE METODO_PAGAMENTO");
+            jdbcTemplate.execute("TRUNCATE TABLE PRODUTO"); // Make sure PRODUTO is explicitly truncated
             jdbcTemplate.execute("SET REFERENTIAL_INTEGRITY TRUE");
-        } catch (Exception e) {
-            // If H2-specific commands fail, try a more database-agnostic approach
-            // This is a fallback for other databases that might be used in different environments
-            try {
-                // Delete from tables in reverse order of dependencies
-                jdbcTemplate.execute("DELETE FROM fatura");
-                jdbcTemplate.execute("DELETE FROM pedido");
-                jdbcTemplate.execute("DELETE FROM estadia");
-                jdbcTemplate.execute("DELETE FROM paciente");
-                jdbcTemplate.execute("DELETE FROM quarto");
-                jdbcTemplate.execute("DELETE FROM camareira");
-                jdbcTemplate.execute("DELETE FROM metodo_pagamento");
-            } catch (Exception ex) {
-                // Log the exception if both approaches fail
-                System.err.println("Failed to clean up test database: " + ex.getMessage());
+            
+            // Verify the PRODUTO table is empty
+            Integer count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM PRODUTO", Integer.class);
+            if (count > 0) {
+                System.err.println("WARNING: PRODUTO table still has " + count + " records after cleanup!");
             }
+            
+        } catch (Exception e) {
+            System.err.println("Failed to clean up test database: " + e.getMessage());
+            e.printStackTrace();
         }
     }
     
@@ -185,6 +204,41 @@ public abstract class BaseControllerTest {
             .getContentAsString();
         // Assuming the response contains the created Pedido object
         return objectMapper.readValue(pedidoJson, Pedido.class);
+    }
+    
+    protected ResultActions saveProdutoEntity(Produto produto) throws Exception {
+        String produtoJson = objectMapper.writeValueAsString(produto);
+        return mockMvc.perform(post("/api/produtos/create")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(produtoJson))
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON)).andDo(result -> {
+                    // Optionally log the result
+                    System.out.println("Produto created: " + result.getResponse().getContentAsString());
+                });
+    }
+    
+    protected Produto createDefaultProduto() throws Exception {
+        // First ensure we have an estadia
+
+        Produto produto = new Produto();
+        produto.setNome("Refeição Completa");
+        produto.setDescricao("Refeição com arroz, feijão e carne");
+        produto.setPreco(new BigDecimal("25.9"));
+        produto.setCategoria(CategoriaProduto.ALMOCO);
+        produto.setCaloriasKcal(500);
+        produto.setProteinasG(30);
+        produto.setCarboidratosG(60);
+        produto.setGordurasG(20);
+        produto.setSodioMg(200);
+        produto.setTempoPreparoMinutos(30);
+        
+        String produtoJson = saveProdutoEntity(produto)
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+        // Assuming the response contains the created Produto object
+        return objectMapper.readValue(produtoJson, Produto.class);
     }
     
     protected ResultActions saveFaturaEntity(Fatura fatura) throws Exception {

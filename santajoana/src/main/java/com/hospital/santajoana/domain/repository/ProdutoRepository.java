@@ -37,13 +37,14 @@ public class ProdutoRepository extends BaseRepository<Produto> {
             produto.getDescricao(),
             produto.getPreco(),
             produto.getTempoPreparoMinutos(),
-            produto.getCategoria().name(),
+            produto.getCategoria().getDescricao(),
             produto.getCaloriasKcal(),
             produto.getProteinasG(),
             produto.getCarboidratosG(),
             produto.getGordurasG(),
             produto.getSodioMg());
-        return produto;
+            var produtoSaved = findLastInserted();
+        return produtoSaved;
     }
 
     public Produto update(Produto produto) {
@@ -53,7 +54,7 @@ public class ProdutoRepository extends BaseRepository<Produto> {
             produto.getDescricao(),
             produto.getPreco(),
             produto.getTempoPreparoMinutos(),
-            produto.getCategoria().name(),
+            produto.getCategoria().getDescricao(),
             produto.getCaloriasKcal(),
             produto.getProteinasG(),
             produto.getCarboidratosG(),

@@ -5,7 +5,6 @@ import java.math.BigDecimal;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.hospital.santajoana.domain.entity.Paciente.StatusPaciente;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,17 +22,16 @@ public class Produto {
     private Integer tempoPreparoMinutos;
     private CategoriaProduto categoria;
     private Integer caloriasKcal;
-    private Integer ProteinasG;
-    private Integer CarboidratosG;
-    private Integer GordurasG;
+    private Integer proteinasG;
+    private Integer carboidratosG;
+    private Integer gordurasG;
     private Integer sodioMg;
 
     public enum CategoriaProduto {
         CAFE_DA_MANHA("Café da Manhã"),
         ALMOCO("Almoço"),
         JANTAR("Jantar"),
-        SOBREMESA("Sobremesa"),
-        BEBIDAS("Bebidas");
+        LANCHE("Lanche");
 
         private final String descricao;
 
@@ -41,19 +39,19 @@ public class Produto {
             this.descricao = descricao;
         }
 
-        @JsonValue// This annotation is used to serialize the enum value as a string
+        @JsonValue // This annotation is crucial for proper serialization
         public String getDescricao() {
             return descricao;
         }
 
-        @JsonCreator// This annotation is used to deserialize the string value back to the enum
+        @JsonCreator // This is needed for proper deserialization
         public static CategoriaProduto fromString(String descricao) {
-            for (CategoriaProduto status : CategoriaProduto.values()) {
-                if (status.getDescricao().equalsIgnoreCase(descricao)) {
-                    return status;
+            for (CategoriaProduto categoria : CategoriaProduto.values()) {
+                if (categoria.getDescricao().equalsIgnoreCase(descricao)) {
+                    return categoria;
                 }
             }
-            throw new IllegalArgumentException("Categoria Produto inválido: " + descricao);
+            throw new IllegalArgumentException("CategoriaProduto inválida: " + descricao);
         }
     }
     public Produto(String nome, String descricao, BigDecimal preco) {
