@@ -9,17 +9,24 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.hospital.santajoana.domain.entity.Paciente;
 import com.hospital.santajoana.domain.entity.Paciente.StatusPaciente;
+import com.hospital.santajoana.domain.mediator.EstadiaMediator;
 import com.hospital.santajoana.domain.mediator.PacienteMediator;
+import com.hospital.santajoana.domain.mediator.PedidoMediator;
+import com.hospital.santajoana.domain.entity.Pedido;
+import java.util.List;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/pacientes")
 public class PacienteController extends BaseController<Paciente> {
 
     private final PacienteMediator pacienteMediator;
+    private final PedidoMediator pedidoMediator;
 
-    public PacienteController(PacienteMediator pacienteMediator) {
+    public PacienteController(PacienteMediator pacienteMediator, PedidoMediator pedidoMediator, EstadiaMediator estadiaMediator) {
         super(pacienteMediator);
         this.pacienteMediator = pacienteMediator;
+        this.pedidoMediator=pedidoMediator;
     }
     
     @PutMapping("/update/status/{id}")
@@ -29,5 +36,13 @@ public class PacienteController extends BaseController<Paciente> {
             Paciente updated = pacienteMediator.updateStatus(id, statusPaciente);
             return ResponseEntity.ok(updated);
         }
+    
+    @GetMapping("/{id}/pedidos")
+    public ResponseEntity<List<Pedido>> getPedidosByPacienteId(@PathVariable Long id) {
+
+        List<Pedido> pedidos = pedidoMediator.findLatestPedidosByPacienteId(id);
+
+        return ResponseEntity.ok(pedidos);
     }
 
+}

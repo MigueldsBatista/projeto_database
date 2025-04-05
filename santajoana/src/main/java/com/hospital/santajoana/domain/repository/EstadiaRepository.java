@@ -4,9 +4,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Optional;
 
 import com.hospital.santajoana.domain.entity.Estadia;
+import com.hospital.santajoana.domain.entity.Pedido;
 
 @Repository
 public class EstadiaRepository extends BaseRepository<Estadia> {
@@ -56,10 +58,12 @@ public class EstadiaRepository extends BaseRepository<Estadia> {
         return estadia;
     }
 
-    public Optional<Estadia> getMostRecentEstadiaByPacienteId(Long pacienteId) {
+    public Optional<Estadia> findMostRecentEstadiaByPacienteId(Long pacienteId) {
         String sql = "SELECT * FROM ESTADIA WHERE ID_PACIENTE = ? ORDER BY DATA_ENTRADA DESC";
         return findBySql(sql, pacienteId)
             .stream()
             .findFirst();
     }
+
+
 }

@@ -22,7 +22,7 @@ public class EstadiaMediator extends BaseMediator<Estadia> {
     }
 
     public Estadia save(Estadia estadia) {
-        Optional<Estadia> existingEstadia = repository.getMostRecentEstadiaByPacienteId(estadia.getPacienteId());
+        Optional<Estadia> existingEstadia = this.findMostRecentEstadiaByPacienteId(estadia.getPacienteId());
 
         Optional<Paciente> paciente = pacienteMediator.findById(estadia.getPacienteId());
 
@@ -56,6 +56,11 @@ public class EstadiaMediator extends BaseMediator<Estadia> {
 
     public void delete(Estadia entity) {
         repository.deleteById(entity.getId());          
+    }
+
+    public Optional<Estadia> findMostRecentEstadiaByPacienteId(Long pacienteId){
+
+        return repository.findMostRecentEstadiaByPacienteId(pacienteId);
     }
 
 }

@@ -1,30 +1,14 @@
 package com.hospital.santajoana;
 
-import java.io.ObjectInputFilter.Status;
-import java.sql.Date;
-import java.time.LocalDate;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 
-import com.hospital.santajoana.domain.entity.Paciente;
-import com.hospital.santajoana.domain.entity.Quarto;
-import com.hospital.santajoana.domain.entity.Paciente.StatusPaciente;
-import com.hospital.santajoana.domain.mediator.PacienteMediator;
-import com.hospital.santajoana.domain.mediator.QuartoMediator;
-
-
 @SpringBootApplication
 public class SantajoanaApplication {
 
-	@Autowired
-	private PacienteMediator pacienteMediator;
-	@Autowired
-	private QuartoMediator quartoMediator;
 	public static void main(String[] args) {
 		SpringApplication.run(SantajoanaApplication.class, args);
 	}

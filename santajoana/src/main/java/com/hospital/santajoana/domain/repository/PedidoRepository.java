@@ -8,6 +8,9 @@ import org.springframework.stereotype.Repository;
 import com.hospital.santajoana.domain.entity.Pedido;
 import com.hospital.santajoana.domain.entity.Pedido.StatusPedido;
 
+import lombok.Getter;
+
+@Getter
 @Repository
 public class PedidoRepository extends BaseRepository<Pedido> {
 
@@ -47,11 +50,6 @@ public class PedidoRepository extends BaseRepository<Pedido> {
         return pedido;
     }
 
-    public List<Pedido> findByEstadiaId(Long estadiaId) {
-        String sql = "SELECT * FROM PEDIDO WHERE ID_ESTADIA = ?";
-        return findBySql(sql, estadiaId);
-    }
-
     public Pedido updateStatus(Long pedidoId, StatusPedido status) {
         String updateSql = "UPDATE PEDIDO SET STATUS = ? WHERE ID_PEDIDO = ?";
         jdbcTemplate.update(updateSql,
@@ -60,4 +58,15 @@ public class PedidoRepository extends BaseRepository<Pedido> {
         );
         return findById(pedidoId).orElse(null);
     }
+
+    public List<Pedido> findPedidosByEstadiaId(Long estadiaId){
+
+        String sql = "SELECT ID_PEDIDO, ID_ESTADIA, ID_CAMAREIRA, DATA_PEDIDO, STATUS " +
+             "FROM PEDIDO " +
+             "WHERE ID_ESTADIA = ?";
+        
+        return findBySql(sql, estadiaId);
+
+    }
+
 }

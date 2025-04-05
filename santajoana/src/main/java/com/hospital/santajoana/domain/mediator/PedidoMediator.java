@@ -1,9 +1,11 @@
 package com.hospital.santajoana.domain.mediator;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.hospital.santajoana.domain.entity.Estadia;
 import com.hospital.santajoana.domain.entity.Pedido;
 import com.hospital.santajoana.domain.repository.PedidoRepository;
 
@@ -59,6 +61,22 @@ public class PedidoMediator extends BaseMediator<Pedido> {
 
     public Pedido update(Pedido pedido) {
         return pedidoRepository.update(pedido);
+    }
+
+
+    public List<Pedido> findPedidosByEstadiaId(Long estadiaId){
+        return pedidoRepository.findPedidosByEstadiaId(estadiaId);
+    }
+
+    //Retorna os pedidos da ultima estadia do paciente
+    public List<Pedido> findLatestPedidosByPacienteId(Long pacienteId) {
+
+        Optional<Estadia> estadia = estadiaMediator.findMostRecentEstadiaByPacienteId(pacienteId);
+
+        if(!estadia.isPresent()) return List.of();// Se não houver estadia, retorna uma lista vazia
+
+        return this.findPedidosByEstadiaId(estadia.get().getId());
+
     }
 
 
