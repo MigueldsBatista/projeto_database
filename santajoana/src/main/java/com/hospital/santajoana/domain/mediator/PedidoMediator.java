@@ -65,6 +65,11 @@ public class PedidoMediator extends BaseMediator<Pedido> {
 
 
     public List<Pedido> findPedidosByEstadiaId(Long estadiaId){
+        if(!estadiaMediator.findById(estadiaId).isPresent()){
+            
+            throw new IllegalArgumentException("Estadia com id "+ estadiaId+ " Não encontrada");
+        }
+
         return pedidoRepository.findPedidosByEstadiaId(estadiaId);
     }
 
