@@ -2,18 +2,21 @@ package com.hospital.santajoana.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
 @Data
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL) // Exclude null fields from JSON serialization
-public class MetodoPagamento {
-
-    private Long id;
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class MetodoPagamento extends Entity {
     private String tipo;
+
+    public MetodoPagamento(Long id, String tipo) {
+        super(id);
+        this.tipo = tipo;
+    }
 
     public MetodoPagamento(String tipo) {
         this.tipo = tipo;

@@ -28,7 +28,9 @@ public class DatabaseInitializer {
             "DROP TABLE IF EXISTS CAMAREIRA;",
             "DROP TABLE IF EXISTS QUARTO;",
             "DROP TABLE IF EXISTS PRODUTO;",
-            "DROP TABLE IF EXISTS METODO_PAGAMENTO;"
+            "DROP TABLE IF EXISTS METODO_PAGAMENTO;",
+            "DROP TABLE IF EXISTS CATEGORIA_QUARTO;",
+            "DROP TABLE IF EXISTS CATEGORIA_PRODUTO;"
         };
 
         for (String sql : dropStatements) {
@@ -43,17 +45,30 @@ public class DatabaseInitializer {
     public void createTables() {
         // Create tables first
         String[] createTableStatements = {
-            // Create base tables first
+            // Create category tables first
+            "CREATE TABLE IF NOT EXISTS CATEGORIA_QUARTO ("
+            + "ID_CATEGORIA INT PRIMARY KEY AUTO_INCREMENT,"
+            + "NOME VARCHAR(50) NOT NULL UNIQUE,"
+            + "DESCRICAO VARCHAR(255)"
+            + ");",
+
+            "CREATE TABLE IF NOT EXISTS CATEGORIA_PRODUTO ("
+            + "ID_CATEGORIA INT PRIMARY KEY AUTO_INCREMENT,"
+            + "NOME VARCHAR(50) NOT NULL UNIQUE,"
+            + "DESCRICAO VARCHAR(255)"
+            + ");",
+
+            // Create base tables with foreign keys to categories
             "CREATE TABLE IF NOT EXISTS QUARTO ("
             + "ID_QUARTO INT PRIMARY KEY AUTO_INCREMENT,"
             + "NUMERO INT NOT NULL,"
-            + "TIPO ENUM('Enfermaria', 'Apartamento', 'UTI', 'Sala de Exame', 'Outro') NOT NULL,"
-            + "CONSTRAINT UNIQUE_NUMERO UNIQUE (NUMERO)"
+            + "ID_CATEGORIA_QUARTO INT,"
+            + "CONSTRAINT UNIQUE_NUMERO UNIQUE (NUMERO),"
+            + "FOREIGN KEY (ID_CATEGORIA_QUARTO) REFERENCES CATEGORIA_QUARTO (ID_CATEGORIA_QUARTO) ON DELETE SET NULL"
             + ");",
 
             "CREATE TABLE IF NOT EXISTS PACIENTE ("
             + "ID_PACIENTE INT PRIMARY KEY AUTO_INCREMENT,"
-            + "ID_DEPENDENTE INT,"
             + "STATUS ENUM('Internado', 'Alta') NOT NULL,"
             + "NOME VARCHAR(100) NOT NULL,"
             + "CPF VARCHAR(11) UNIQUE NOT NULL,"
@@ -61,8 +76,7 @@ public class DatabaseInitializer {
             + "TELEFONE VARCHAR(11),"
             + "ENDERECO VARCHAR(255),"
             + "CONSTRAINT CHECK_E_CPF CHECK (LENGTH(CPF) = 11),"
-            + "CONSTRAINT CHECK_STATUS CHECK (STATUS IN ('Internado', 'Alta')),"
-            + "FOREIGN KEY (ID_DEPENDENTE) REFERENCES PACIENTE (ID_PACIENTE) ON DELETE SET NULL"
+            + "CONSTRAINT CHECK_STATUS CHECK (STATUS IN ('Internado', 'Alta'))"
             + ");",
 
             "CREATE TABLE IF NOT EXISTS PRODUTO ("
@@ -71,13 +85,14 @@ public class DatabaseInitializer {
             + "DESCRICAO VARCHAR(255) NOT NULL,"
             + "PRECO DECIMAL(10, 2) NOT NULL CHECK (PRECO > 0),"
             + "TEMPO_PREPARO INT NOT NULL CHECK (TEMPO_PREPARO > 0),"
-            + "CATEGORIA ENUM('Café da Manhã', 'Almoço', 'Jantar', 'Sobremesa') NOT NULL,"
+            + "ID_CATEGORIA_PRODUTO INT,"
             + "CALORIAS_KCAL INT CHECK (CALORIAS_KCAL >= 0),"
             + "PROTEINAS_G INT CHECK (PROTEINAS_G >= 0),"
             + "CARBOIDRATOS_G INT CHECK (CARBOIDRATOS_G >= 0),"
             + "GORDURAS_G INT CHECK (GORDURAS_G >= 0),"
             + "SODIO_MG INT CHECK (SODIO_MG >= 0),"
-            + "CONSTRAINT UNIQUE_NOME UNIQUE (NOME)"
+            + "CONSTRAINT UNIQUE_NOME UNIQUE (NOME),"
+            + "FOREIGN KEY (ID_CATEGORIA_PRODUTO) REFERENCES CATEGORIA_PRODUTO (ID_CATEGORIA_PRODUTO) ON DELETE SET NULL"
             + ");",
 
             "CREATE TABLE IF NOT EXISTS CAMAREIRA ("
@@ -128,7 +143,7 @@ public class DatabaseInitializer {
             + "ID_PEDIDO INT PRIMARY KEY AUTO_INCREMENT,"
             + "ID_ESTADIA INT NOT NULL,"
             + "ID_CAMAREIRA INT NOT NULL,"
-            + "STATUS ENUM('Pendente', 'Em Preparo', 'Entregue') DEFAULT 'Pendente' NOT NULL,"
+            + "STATUS ENUM('Pendente', 'Em Preparo', 'Entregue', 'Cancelado') DEFAULT 'Pendente' NOT NULL,"
             + "DATA_PEDIDO DATETIME DEFAULT CURRENT_TIMESTAMP,"
             + "FOREIGN KEY (ID_ESTADIA) REFERENCES ESTADIA (ID_ESTADIA),"
             + "FOREIGN KEY (ID_CAMAREIRA) REFERENCES CAMAREIRA (ID_CAMAREIRA)"

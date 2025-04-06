@@ -12,9 +12,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.hospital.santajoana.domain.mediator.BaseMediator;
+import com.hospital.santajoana.domain.entity.Entity;
+import com.hospital.santajoana.domain.services.BaseMediator;
 
-public abstract class BaseController<T> {
+public abstract class BaseController<T extends Entity> {
 
     protected final BaseMediator<T> mediator;
 
@@ -31,6 +32,7 @@ public abstract class BaseController<T> {
     
     @GetMapping("/{id}")
     public ResponseEntity<T> findById(@PathVariable Long id) {
+        
         Optional<T> entity = mediator.findById(id);
         return entity.map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -42,14 +44,20 @@ public abstract class BaseController<T> {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedEntity);
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<T> update(@PathVariable Long id, @RequestBody T entity) {
-        Optional<T> existingEntity = mediator.findById(id);
+    @PutMapping("/update")
+    public ResponseEntity<T> update(@RequestBody T entity) {
+        if (entity.getId() == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        
+        Optional<T> existingEntity = mediator.findById(entity.getId());
         
         if (existingEntity.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
+        
         T updatedEntity = mediator.update(entity);
+        
         return ResponseEntity.ok(updatedEntity);
     }
 

@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.hospital.santajoana.domain.entity.Estadia;
 
+
 public class EstadiaControllerTest extends BaseControllerTest {
 
     @Test
@@ -40,7 +41,7 @@ public class EstadiaControllerTest extends BaseControllerTest {
         var quarto = createDefaultQuarto();
 
         // Create a test estadia using the created entities
-        Estadia estadia = new Estadia(paciente.getId(), quarto.getId(), LocalDateTime.now(), null);
+        Estadia estadia = new Estadia(paciente.getId(), quarto.getId());
         
         // Test creating an estadia
         String estadiaJson = objectMapper.writeValueAsString(estadia);
@@ -75,7 +76,7 @@ public class EstadiaControllerTest extends BaseControllerTest {
         estadia.setDataSaida(LocalDateTime.now());
         String estadiaJson = objectMapper.writeValueAsString(estadia);
         
-        mockMvc.perform(put("/api/estadias/update/{id}", estadia.getId())
+        mockMvc.perform(put("/api/estadias/update")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(estadiaJson))
                 .andExpect(status().isOk())

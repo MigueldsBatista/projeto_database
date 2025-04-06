@@ -10,8 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.http.MediaType;
 
+import com.hospital.santajoana.domain.entity.CategoriaProduto;
 import com.hospital.santajoana.domain.entity.Produto;
-import com.hospital.santajoana.domain.entity.Produto.CategoriaProduto;
 
 public class ProdutoControllerTest extends BaseControllerTest {
 
@@ -39,12 +39,15 @@ public class ProdutoControllerTest extends BaseControllerTest {
     @Test
     @Transactional
     void testCreateProduto() throws Exception {
+
+        CategoriaProduto categoria = createDefaultCategoriaProduto();
+
         Produto testProduto = new Produto();
         testProduto.setNome("Refeição Teste");
         testProduto.setDescricao("Refeição com arroz, feijão e carne");
         testProduto.setPreco(BigDecimal.valueOf(25.50));
         testProduto.setTempoPreparoMinutos(30);
-        testProduto.setCategoria(CategoriaProduto.ALMOCO);
+        testProduto.setCategoriaId(categoria.getId());
         testProduto.setCaloriasKcal(500);
         testProduto.setProteinasG(30);
         testProduto.setCarboidratosG(60);
@@ -52,6 +55,7 @@ public class ProdutoControllerTest extends BaseControllerTest {
         testProduto.setSodioMg(200);
 
         String produtoJson = objectMapper.writeValueAsString(testProduto);
+
         mockMvc.perform(post("/api/produtos/create")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(produtoJson))
@@ -62,7 +66,7 @@ public class ProdutoControllerTest extends BaseControllerTest {
                 .andExpect(jsonPath("$.descricao").value(testProduto.getDescricao()))
                 .andExpect(jsonPath("$.preco").value(testProduto.getPreco()))
                 .andExpect(jsonPath("$.tempoPreparoMinutos").value(testProduto.getTempoPreparoMinutos()))
-                .andExpect(jsonPath("$.categoria").value(testProduto.getCategoria().getDescricao()))
+                .andExpect(jsonPath("$.categoriaId").value(testProduto.getCategoriaId()))
                 .andExpect(jsonPath("$.caloriasKcal").value(testProduto.getCaloriasKcal()))
                 .andExpect(jsonPath("$.proteinasG").value(testProduto.getProteinasG()))
                 .andExpect(jsonPath("$.carboidratosG").value(testProduto.getCarboidratosG()))
@@ -82,12 +86,14 @@ public class ProdutoControllerTest extends BaseControllerTest {
                 .andExpect(jsonPath("$.id").value(produto.getId()))
                 .andExpect(jsonPath("$.nome").value(produto.getNome()))
                 .andExpect(jsonPath("$.descricao").value(produto.getDescricao()))
-                .andExpect(jsonPath("$.categoria").value(produto.getCategoria().getDescricao()));
+                .andExpect(jsonPath("$.categoriaId").value(produto.getCategoriaId()));
     }
 
     @Test
     @Transactional
     void testUpdateProduto() throws Exception {
+        CategoriaProduto categoria = createDefaultCategoriaProduto();
+
         Produto firstProduto = createDefaultProduto();
 
         Produto updatedProduto = new Produto();
@@ -96,7 +102,7 @@ public class ProdutoControllerTest extends BaseControllerTest {
         updatedProduto.setDescricao("Refeição com arroz, feijão e carne");
         updatedProduto.setPreco(BigDecimal.valueOf(30.00));
         updatedProduto.setTempoPreparoMinutos(25);
-        updatedProduto.setCategoria(CategoriaProduto.JANTAR);
+        updatedProduto.setCategoriaId(categoria.getId());
         updatedProduto.setCaloriasKcal(600);
         updatedProduto.setProteinasG(35);
         updatedProduto.setCarboidratosG(70);
@@ -104,7 +110,7 @@ public class ProdutoControllerTest extends BaseControllerTest {
         updatedProduto.setSodioMg(250);
 
         String produtoJson = objectMapper.writeValueAsString(updatedProduto);
-        mockMvc.perform(put("/api/produtos/update/{id}", firstProduto.getId())
+        mockMvc.perform(put("/api/produtos/update")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(produtoJson))
                 .andDo(result -> {
@@ -117,7 +123,7 @@ public class ProdutoControllerTest extends BaseControllerTest {
                 .andExpect(jsonPath("$.descricao").value(updatedProduto.getDescricao()))
                 .andExpect(jsonPath("$.preco").value(updatedProduto.getPreco()))
                 .andExpect(jsonPath("$.tempoPreparoMinutos").value(updatedProduto.getTempoPreparoMinutos()))
-                .andExpect(jsonPath("$.categoria").value(updatedProduto.getCategoria().getDescricao()))
+                .andExpect(jsonPath("$.categoriaId").value(updatedProduto.getCategoriaId()))
                 .andExpect(jsonPath("$.caloriasKcal").value(updatedProduto.getCaloriasKcal()))
                 .andExpect(jsonPath("$.proteinasG").value(updatedProduto.getProteinasG()))
                 .andExpect(jsonPath("$.carboidratosG").value(updatedProduto.getCarboidratosG()))

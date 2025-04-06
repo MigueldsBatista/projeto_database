@@ -4,7 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hospital.santajoana.domain.entity.Quarto;
-import com.hospital.santajoana.domain.mediator.QuartoMediator;
+import com.hospital.santajoana.domain.services.QuartoMediator;
 
 @RestController
 @RequestMapping("/api/quartos")

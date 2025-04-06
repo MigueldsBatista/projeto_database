@@ -76,7 +76,7 @@ public class PedidoControllerTest extends BaseControllerTest {
 
         String pedidoJson = objectMapper.writeValueAsString(pedido);
         
-        mockMvc.perform(put("/api/pedidos/update/{id}", pedido.getId())
+        mockMvc.perform(put("/api/pedidos/update")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(pedidoJson))
                 .andDo(result -> {

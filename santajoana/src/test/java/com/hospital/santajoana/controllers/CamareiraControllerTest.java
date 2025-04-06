@@ -94,7 +94,7 @@ public class CamareiraControllerTest extends BaseControllerTest {
 
         String camareiraJson = objectMapper.writeValueAsString(camareira);
         
-        mockMvc.perform(put("/api/camareiras/update/{id}", camareira.getId())
+        mockMvc.perform(put("/api/camareiras/update")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(camareiraJson))
                 .andExpect(status().isOk())

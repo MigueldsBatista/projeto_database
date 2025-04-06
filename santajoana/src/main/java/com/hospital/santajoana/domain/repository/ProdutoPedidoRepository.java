@@ -1,5 +1,7 @@
 package com.hospital.santajoana.domain.repository;
 
+import java.util.List;
+
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -37,4 +39,8 @@ public class ProdutoPedidoRepository extends BaseRepository<ProdutoPedido> {
         );
         return produtoPedido;
     }
-}
+
+    public List<ProdutoPedido> findByPedidoId(Long pedidoId) {
+        String sql = "SELECT * FROM PRODUTO_PEDIDO WHERE ID_PEDIDO = ?";
+        return findBySql(sql, pedidoId);
+    }}

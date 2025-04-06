@@ -1,16 +1,21 @@
 package com.hospital.santajoana.rest.controller;
 
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.hospital.santajoana.domain.entity.ProdutoPedido;
+import com.hospital.santajoana.domain.services.ProdutoPedidoMediator;
 
-// public class ProdutoPedidoController extends BaseController<ProdutoPedido> {
+@RestController
+@RequestMapping("/api/produto-pedidos")
+public class ProdutoPedidoController extends BaseController<ProdutoPedido> {
 
-//     private final ProdutoPedidoMediator produtoPedidoMediator;
+    private final ProdutoPedidoMediator produtoPedidoMediator;
 
-//     public ProdutoPedidoController(produtoPedidoMediator produtoPedidoMediator) {
-//         super(produtoPedidoMediator);
-//         this.produtoPedidoMediator = produtoPedidoMediator;
-//     }
+    public ProdutoPedidoController(ProdutoPedidoMediator produtoPedidoMediator) {
+        super(produtoPedidoMediator);
+        this.produtoPedidoMediator = produtoPedidoMediator;
+    }
 
-//     // Implement any additional methods specific to ProdutoPedido if needed
 
-// }
+}

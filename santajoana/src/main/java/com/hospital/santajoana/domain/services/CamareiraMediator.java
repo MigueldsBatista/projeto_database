@@ -1,4 +1,4 @@
-package com.hospital.santajoana.domain.mediator;
+package com.hospital.santajoana.domain.services;
 
 import org.springframework.stereotype.Service;
 

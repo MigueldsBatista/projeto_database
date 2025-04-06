@@ -9,11 +9,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL) // Exclude null fields from JSON serialization
-public class Estadia {
-    private Long id;
+public class Estadia extends Entity{
     private Long pacienteId;
     private Long quartoId;
     private LocalDateTime dataEntrada;
@@ -24,19 +22,12 @@ public class Estadia {
         this.quartoId = quartoId;
     }
 
-    public Estadia(Long id, Long pacienteId, Long quartoId) {
-        this.pacienteId = pacienteId;
-        this.quartoId = quartoId;
-        this.id = id;
-    }
-    
-    
-    public Estadia(Long pacienteId, Long quartoId, LocalDateTime dataEntrada, LocalDateTime dataSaida) {
+    public Estadia(Long estadiaId, Long pacienteId, Long quartoId, LocalDateTime dataEntrada, LocalDateTime dataSaida) {
+        super(estadiaId);
         this.pacienteId = pacienteId;
         this.quartoId = quartoId;
         this.dataEntrada = dataEntrada;
         this.dataSaida = dataSaida;
     }
-
 
 }

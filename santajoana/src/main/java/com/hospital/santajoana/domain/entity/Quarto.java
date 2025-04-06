@@ -2,23 +2,26 @@ package com.hospital.santajoana.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL) // Exclude null fields from JSON serialization
-public class Quarto {
-
-    private Long id;
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class Quarto extends Entity {
     private Integer numero;
-    private String tipo;
+    private Long categoriaId;
     
-    public Quarto(Integer numero, String tipo) {
+    public Quarto(Long id, Integer numero, Long categoriaId) {
+        super(id);
         this.numero = numero;
-        this.tipo = tipo;
+        this.categoriaId = categoriaId;
     }
     
+    public Quarto(Integer numero, Long categoriaId) {
+        this.numero = numero;
+        this.categoriaId = categoriaId;
+    }
 }

@@ -1,4 +1,4 @@
-package com.hospital.santajoana.domain.mediator;
+package com.hospital.santajoana.domain.services;
 
 import java.time.LocalDateTime;
 import java.util.List;

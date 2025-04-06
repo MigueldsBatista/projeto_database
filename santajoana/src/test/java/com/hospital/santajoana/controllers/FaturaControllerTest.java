@@ -100,7 +100,7 @@ void testUpdateFatura() throws Exception {
         fatura.setDataPagamento(LocalDateTime.now());
         String faturaJson = objectMapper.writeValueAsString(fatura);
         
-        mockMvc.perform(put("/api/faturas/update/{id}", fatura.getId())
+        mockMvc.perform(put("/api/faturas/update")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(faturaJson))
                         .andExpect(status().isOk())

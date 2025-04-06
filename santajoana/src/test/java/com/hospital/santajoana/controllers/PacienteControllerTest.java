@@ -78,7 +78,7 @@ public class PacienteControllerTest extends BaseControllerTest {
         createdPaciente.setStatus(StatusPaciente.ALTA);
         String pacienteJson = objectMapper.writeValueAsString(createdPaciente);
         
-        mockMvc.perform(put("/api/pacientes/update/{id}", createdPaciente.getId())
+        mockMvc.perform(put("/api/pacientes/update")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(pacienteJson))
                 .andExpect(status().isOk())

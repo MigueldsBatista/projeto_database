@@ -14,15 +14,15 @@ public class QuartoRepository extends BaseRepository<Quarto> {
         super("QUARTO", "ID_QUARTO", jdbcTemplate,(rs, rowNum) -> new Quarto(
             rs.getLong("ID_QUARTO"),
             rs.getInt("NUMERO"),
-            rs.getString("TIPO")
+            rs.getLong("ID_CATEGORIA_QUARTO")
         ));
     }
 
     public Quarto save(Quarto quarto) {
-        String insertSql = "INSERT INTO QUARTO (NUMERO, TIPO) VALUES (?, ?)";
+        String insertSql = "INSERT INTO QUARTO (NUMERO, ID_CATEGORIA_QUARTO) VALUES (?, ?)";
         jdbcTemplate.update(insertSql,
             quarto.getNumero(),
-            quarto.getTipo());
+            quarto.getCategoriaId());
             var savedQuarto = findLastInserted();
         return savedQuarto;
     }
@@ -36,10 +36,10 @@ public class QuartoRepository extends BaseRepository<Quarto> {
     }
 
     public Quarto update(Quarto quarto) {
-        String updateSql = "UPDATE QUARTO SET NUMERO = ?, TIPO = ? WHERE ID_QUARTO = ?";
+        String updateSql = "UPDATE QUARTO SET NUMERO = ?, ID_CATEGORIA_QUARTO = ? WHERE ID_QUARTO = ?";
         jdbcTemplate.update(updateSql,
             quarto.getNumero(),
-            quarto.getTipo(),
+            quarto.getCategoriaId(),
             quarto.getId()
         );
         return quarto;

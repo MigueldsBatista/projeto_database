@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hospital.santajoana.domain.entity.*;
 import com.hospital.santajoana.domain.entity.Paciente.StatusPaciente;
 import com.hospital.santajoana.domain.entity.Pedido.StatusPedido;
-import com.hospital.santajoana.domain.entity.Produto.CategoriaProduto;
 import com.hospital.santajoana.domain.entity.Fatura.StatusPagamento;
 
 import org.junit.jupiter.api.AfterEach;
@@ -128,6 +127,50 @@ public abstract class BaseControllerTest {
         return objectMapper.readValue(responseJson, Paciente.class);
     }
     
+
+    protected ResultActions saveCategoriaQuartoEntity(CategoriaQuarto categoriaQuarto) throws Exception {
+        String categoriaQuartoJson = objectMapper.writeValueAsString(categoriaQuarto);
+        return mockMvc.perform(post("/api/categoria-quarto/create")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(categoriaQuartoJson))
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON)).andDo(result -> {
+                    // Optionally log the result
+                    System.out.println("CategoriaQuarto created: " + result.getResponse().getContentAsString());
+    });
+    }
+
+    protected CategoriaQuarto createDefaultCategoriaQuarto() throws Exception {
+
+        CategoriaQuarto categoriaQuarto = new CategoriaQuarto("Enfermaria", "Enfermaria com 4 leitos");
+        String categoriaQuartoJson = saveCategoriaQuartoEntity(categoriaQuarto)
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+        return objectMapper.readValue(categoriaQuartoJson, CategoriaQuarto.class);
+    }
+   
+
+    protected ResultActions saveCategoriaProdutoEntity(CategoriaProduto categoriaProduto) throws Exception {
+        String categoriaProdutoJson = objectMapper.writeValueAsString(categoriaProduto);
+        return mockMvc.perform(post("/api/categoria-produto/create")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(categoriaProdutoJson))
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON)).andDo(result -> {
+                    // Optionally log the result
+                    System.out.println("CategoriaProduto created: " + result.getResponse().getContentAsString());
+                });
+    }
+    protected CategoriaProduto createDefaultCategoriaProduto() throws Exception {
+        CategoriaProduto categoriaProduto = new CategoriaProduto("Almoço", "Refeições do almoço");
+        String categoriaProdutoJson = saveCategoriaProdutoEntity(categoriaProduto)
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+        return objectMapper.readValue(categoriaProdutoJson, CategoriaProduto.class);
+    }
+
     protected ResultActions saveQuartoEntity(Quarto quarto) throws Exception {
         String quartoJson = objectMapper.writeValueAsString(quarto);
         return mockMvc.perform(post("/api/quartos/create")
@@ -141,7 +184,10 @@ public abstract class BaseControllerTest {
     }
     
     protected Quarto createDefaultQuarto() throws Exception {
-        Quarto quarto = new Quarto(101, "Enfermaria");
+
+        CategoriaQuarto categoriaQuarto = createDefaultCategoriaQuarto();
+
+        Quarto quarto = new Quarto(101, categoriaQuarto.getId());
         String quartoJson = saveQuartoEntity(quarto)
             .andReturn()
             .getResponse()
@@ -220,12 +266,13 @@ public abstract class BaseControllerTest {
     
     protected Produto createDefaultProduto() throws Exception {
         // First ensure we have an estadia
+        CategoriaProduto categoriaProduto = createDefaultCategoriaProduto();
 
         Produto produto = new Produto();
         produto.setNome("Refeição Completa");
         produto.setDescricao("Refeição com arroz, feijão e carne");
         produto.setPreco(new BigDecimal("25.9"));
-        produto.setCategoria(CategoriaProduto.ALMOCO);
+        produto.setCategoriaId(categoriaProduto.getId());
         produto.setCaloriasKcal(500);
         produto.setProteinasG(30);
         produto.setCarboidratosG(60);

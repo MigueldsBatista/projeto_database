@@ -4,7 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hospital.santajoana.domain.entity.Fatura;
-import com.hospital.santajoana.domain.mediator.FaturaMediator;
+import com.hospital.santajoana.domain.services.FaturaMediator;
 
 import java.util.List;
 

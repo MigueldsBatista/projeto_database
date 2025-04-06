@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.hospital.santajoana.domain.entity.CategoriaQuarto;
 import com.hospital.santajoana.domain.entity.Quarto;
 
 public class QuartoControllerTest extends BaseControllerTest {
@@ -34,7 +35,10 @@ public class QuartoControllerTest extends BaseControllerTest {
     @Transactional
     void testCreateQuarto() throws Exception {
         // Create a test quarto
-        Quarto quarto = new Quarto(101, "Enfermaria");
+
+        CategoriaQuarto categoria = createDefaultCategoriaQuarto();
+
+        Quarto quarto = new Quarto(101, categoria.getId());
         
         // Test creating a quarto
         String quartoJson = objectMapper.writeValueAsString(quarto);
@@ -49,6 +53,9 @@ public class QuartoControllerTest extends BaseControllerTest {
     @Transactional
     void testGetQuartoById() throws Exception {
         // Create a quarto first
+
+        CategoriaQuarto categoria = createDefaultCategoriaQuarto();
+
         var quarto = createDefaultQuarto();
         
         // Test GET by ID
@@ -56,7 +63,7 @@ public class QuartoControllerTest extends BaseControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.numero").value(101))
-                .andExpect(jsonPath("$.tipo").value("Enfermaria"));
+                .andExpect(jsonPath("$.categoriaId").value(categoria.getId()));
     }
     
     @Test
@@ -64,17 +71,20 @@ public class QuartoControllerTest extends BaseControllerTest {
     void testUpdateQuarto() throws Exception {
         // Create a quarto first
         var quarto = createDefaultQuarto();
+
+        CategoriaQuarto categoria = createDefaultCategoriaQuarto(); 
+
         quarto.setNumero(102);
-        quarto.setTipo("UTI");
+        quarto.setCategoriaId(categoria.getId());
         // Update the quarto
         String quartoJson = objectMapper.writeValueAsString(quarto);
         
-        mockMvc.perform(put("/api/quartos/update/{id}", quarto.getId())
+        mockMvc.perform(put("/api/quartos/update")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(quartoJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.numero").value(102))
-                .andExpect(jsonPath("$.tipo").value("UTI"));
+                .andExpect(jsonPath("$.categoriaId").value(categoria.getId()));
     }
     
     @Test
