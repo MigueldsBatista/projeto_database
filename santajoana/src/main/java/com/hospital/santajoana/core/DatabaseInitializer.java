@@ -7,6 +7,9 @@ import org.springframework.stereotype.Component;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 @Component
 @RequiredArgsConstructor
@@ -15,8 +18,21 @@ public class DatabaseInitializer {
     @Autowired
     private final JdbcTemplate jdbcTemplate;
     
+    @Autowired
+    private final DataSource dataSource;
+    
     @Value("${database.recreate-tables:false}")
     private boolean recreateTables;
+
+    private boolean isH2Database() {
+        try (Connection connection = dataSource.getConnection()) {
+            String dbProductName = connection.getMetaData().getDatabaseProductName().toLowerCase();
+            return dbProductName.contains("h2");
+        } catch (SQLException e) {
+            System.err.println("Error detecting database type: " + e.getMessage());
+            return false;
+        }
+    }
 
     public void dropTables() {
         String[] dropStatements = {
@@ -43,8 +59,29 @@ public class DatabaseInitializer {
     }
 
     public void createTables() {
+        boolean isH2 = isH2Database();
+        System.out.println("Detected database type: " + (isH2 ? "H2" : "MySQL"));
+        
         // Create tables first
-        String[] createTableStatements = {
+        String[] createTableStatements = generateCreateTableStatements(isH2);
+        
+        // Execute all table creation statements
+        for (String sql : createTableStatements) {
+            try {
+                jdbcTemplate.execute(sql);
+            } catch (Exception e) {
+                System.err.println("Error creating tables: " + e.getMessage());
+                System.err.println("SQL statement: " + sql);
+            }
+        }
+    }
+
+    private String[] generateCreateTableStatements(boolean isH2) {
+        // For different database references
+        String categoriaQuartoCol = isH2 ? "ID_CATEGORIA" : "ID_CATEGORIA_QUARTO";
+        String categoriaProdutoCol = isH2 ? "ID_CATEGORIA" : "ID_CATEGORIA_PRODUTO";
+
+        return new String[] {
             // Create category tables first
             "CREATE TABLE IF NOT EXISTS CATEGORIA_QUARTO ("
             + "ID_CATEGORIA INT PRIMARY KEY AUTO_INCREMENT,"
@@ -64,7 +101,8 @@ public class DatabaseInitializer {
             + "NUMERO INT NOT NULL,"
             + "ID_CATEGORIA_QUARTO INT,"
             + "CONSTRAINT UNIQUE_NUMERO UNIQUE (NUMERO),"
-            + "FOREIGN KEY (ID_CATEGORIA_QUARTO) REFERENCES CATEGORIA_QUARTO (ID_CATEGORIA_QUARTO) ON DELETE SET NULL"
+            + "FOREIGN KEY (ID_CATEGORIA_QUARTO) REFERENCES CATEGORIA_QUARTO (" + categoriaQuartoCol + ")"
+            + (isH2 ? "" : " ON DELETE SET NULL")
             + ");",
 
             "CREATE TABLE IF NOT EXISTS PACIENTE ("
@@ -92,9 +130,12 @@ public class DatabaseInitializer {
             + "GORDURAS_G INT CHECK (GORDURAS_G >= 0),"
             + "SODIO_MG INT CHECK (SODIO_MG >= 0),"
             + "CONSTRAINT UNIQUE_NOME UNIQUE (NOME),"
-            + "FOREIGN KEY (ID_CATEGORIA_PRODUTO) REFERENCES CATEGORIA_PRODUTO (ID_CATEGORIA_PRODUTO) ON DELETE SET NULL"
+            + "FOREIGN KEY (ID_CATEGORIA_PRODUTO) REFERENCES CATEGORIA_PRODUTO (" + categoriaProdutoCol + ")"
+            + (isH2 ? "" : " ON DELETE SET NULL")
             + ");",
 
+            // Rest of the tables remain largely unchanged
+            // ...existing code for CAMAREIRA...
             "CREATE TABLE IF NOT EXISTS CAMAREIRA ("
             + "ID_CAMAREIRA INT PRIMARY KEY AUTO_INCREMENT,"
             + "CRE VARCHAR(20) NOT NULL UNIQUE,"
@@ -108,12 +149,13 @@ public class DatabaseInitializer {
             + "CONSTRAINT CHECK_CPF CHECK (LENGTH(CPF) = 11)"
             + ");",
             
+            // ...existing code for METODO_PAGAMENTO...
             "CREATE TABLE IF NOT EXISTS METODO_PAGAMENTO ("
             + "ID_METODO_PAGAMENTO INT PRIMARY KEY AUTO_INCREMENT,"
             + "TIPO VARCHAR(50) NOT NULL UNIQUE"
             + ");",
             
-            // Create tables with foreign key constraints
+            // ...existing code for ESTADIA...
             "CREATE TABLE IF NOT EXISTS ESTADIA ("
             + "ID_ESTADIA INT PRIMARY KEY AUTO_INCREMENT,"
             + "ID_PACIENTE INT NOT NULL,"
@@ -126,6 +168,7 @@ public class DatabaseInitializer {
             + "CONSTRAINT CHECK_ESTADIA_INTERVALO CHECK (DATA_ENTRADA <= DATA_SAIDA OR DATA_SAIDA IS NULL)"
             + ");",
             
+            // ...existing code for FATURA...
             "CREATE TABLE IF NOT EXISTS FATURA ("
             + "ID_FATURA INT PRIMARY KEY AUTO_INCREMENT,"
             + "STATUS_PAGAMENTO ENUM('Pendente', 'Pago') DEFAULT 'Pendente' NOT NULL,"
@@ -134,11 +177,12 @@ public class DatabaseInitializer {
             + "ID_METODO_PAGAMENTO INT NOT NULL,"
             + "DATA_EMISSAO DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,"
             + "ID_ESTADIA INT NOT NULL,"
-            + "FOREIGN KEY (ID_ESTADIA) REFERENCES ESTADIA (ID_ESTADIA) ON DELETE CASCADE,"
+            + "FOREIGN KEY (ID_ESTADIA) REFERENCES ESTADIA (ID_ESTADIA)" + (isH2 ? "" : " ON DELETE CASCADE") + ","
             + "FOREIGN KEY (ID_METODO_PAGAMENTO) REFERENCES METODO_PAGAMENTO (ID_METODO_PAGAMENTO),"
             + "CONSTRAINT CHECK_VALOR_TOTAL CHECK (VALOR_TOTAL >= 0)"
             + ");",
             
+            // ...existing code for PEDIDO...
             "CREATE TABLE IF NOT EXISTS PEDIDO ("
             + "ID_PEDIDO INT PRIMARY KEY AUTO_INCREMENT,"
             + "ID_ESTADIA INT NOT NULL,"
@@ -149,6 +193,7 @@ public class DatabaseInitializer {
             + "FOREIGN KEY (ID_CAMAREIRA) REFERENCES CAMAREIRA (ID_CAMAREIRA)"
             + ");",
 
+            // ...existing code for PRODUTO_PEDIDO...
             "CREATE TABLE IF NOT EXISTS PRODUTO_PEDIDO ("
             + "ID_PRODUTO_PEDIDO INT PRIMARY KEY AUTO_INCREMENT,"
             + "ID_PRODUTO INT NOT NULL,"
@@ -160,15 +205,6 @@ public class DatabaseInitializer {
             + "CONSTRAINT CHECK_QUANTIDADE CHECK (QUANTIDADE > 0)"
             + ");"
         };
-        
-        // Execute all table creation statements
-        for (String sql : createTableStatements) {
-            try {
-                jdbcTemplate.execute(sql);
-            } catch (Exception e) {
-                System.err.println("Error creating tables: " + e.getMessage());
-            }
-        }
     }
 
     @PostConstruct

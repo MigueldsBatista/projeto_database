@@ -92,7 +92,8 @@ public class ProdutoControllerTest extends BaseControllerTest {
     @Test
     @Transactional
     void testUpdateProduto() throws Exception {
-        CategoriaProduto categoria = createDefaultCategoriaProduto();
+        
+        CategoriaProduto categoria = createDefaultCategoriaProduto("Categoria Atualizada");
 
         Produto firstProduto = createDefaultProduto();
 

@@ -73,6 +73,8 @@ public abstract class BaseControllerTest {
             jdbcTemplate.execute("DELETE FROM CAMAREIRA");
             jdbcTemplate.execute("DELETE FROM METODO_PAGAMENTO");
             jdbcTemplate.execute("DELETE FROM PRODUTO"); // Make sure PRODUTO is cleaned
+            jdbcTemplate.execute("DELETE FROM CATEGORIA_PRODUTO");
+            jdbcTemplate.execute("DELETE FROM CATEGORIA_QUARTO");
             
             // Now try the H2 specific approach as fallback
             jdbcTemplate.execute("SET REFERENTIAL_INTEGRITY FALSE");
@@ -85,12 +87,20 @@ public abstract class BaseControllerTest {
             jdbcTemplate.execute("TRUNCATE TABLE CAMAREIRA");
             jdbcTemplate.execute("TRUNCATE TABLE METODO_PAGAMENTO");
             jdbcTemplate.execute("TRUNCATE TABLE PRODUTO"); // Make sure PRODUTO is explicitly truncated
+            jdbcTemplate.execute("TRUNCATE TABLE CATEGORIA_PRODUTO");
+            jdbcTemplate.execute("TRUNCATE TABLE CATEGORIA_QUARTO");
             jdbcTemplate.execute("SET REFERENTIAL_INTEGRITY TRUE");
             
-            // Verify the PRODUTO table is empty
-            Integer count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM PRODUTO", Integer.class);
-            if (count > 0) {
-                System.err.println("WARNING: PRODUTO table still has " + count + " records after cleanup!");
+            // Verify all tables are empty
+            String[] tables = {"PRODUTO_PEDIDO", "PEDIDO", "FATURA", "ESTADIA", "PACIENTE", 
+                              "QUARTO", "CAMAREIRA", "METODO_PAGAMENTO", "PRODUTO", 
+                              "CATEGORIA_PRODUTO", "CATEGORIA_QUARTO"};
+                              
+            for (String table : tables) {
+                Integer count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM " + table, Integer.class);
+                if (count > 0) {
+                    System.err.println("WARNING: " + table + " table still has " + count + " records after cleanup!");
+                }
             }
             
         } catch (Exception e) {
@@ -150,6 +160,16 @@ public abstract class BaseControllerTest {
         return objectMapper.readValue(categoriaQuartoJson, CategoriaQuarto.class);
     }
    
+    protected CategoriaQuarto createDefaultCategoriaQuarto(String name) throws Exception {
+
+        CategoriaQuarto categoriaQuarto = new CategoriaQuarto(name, "Enfermaria com 4 leitos");
+        String categoriaQuartoJson = saveCategoriaQuartoEntity(categoriaQuarto)
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+        return objectMapper.readValue(categoriaQuartoJson, CategoriaQuarto.class);
+    }
+   
 
     protected ResultActions saveCategoriaProdutoEntity(CategoriaProduto categoriaProduto) throws Exception {
         String categoriaProdutoJson = objectMapper.writeValueAsString(categoriaProduto);
@@ -164,6 +184,14 @@ public abstract class BaseControllerTest {
     }
     protected CategoriaProduto createDefaultCategoriaProduto() throws Exception {
         CategoriaProduto categoriaProduto = new CategoriaProduto("Almoço", "Refeições do almoço");
+        String categoriaProdutoJson = saveCategoriaProdutoEntity(categoriaProduto)
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+        return objectMapper.readValue(categoriaProdutoJson, CategoriaProduto.class);
+    }
+    protected CategoriaProduto createDefaultCategoriaProduto(String name) throws Exception {
+        CategoriaProduto categoriaProduto = new CategoriaProduto(name, "Refeições do almoço");
         String categoriaProdutoJson = saveCategoriaProdutoEntity(categoriaProduto)
             .andReturn()
             .getResponse()

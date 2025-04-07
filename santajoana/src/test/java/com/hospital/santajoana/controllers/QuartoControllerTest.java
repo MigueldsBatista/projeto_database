@@ -54,8 +54,6 @@ public class QuartoControllerTest extends BaseControllerTest {
     void testGetQuartoById() throws Exception {
         // Create a quarto first
 
-        CategoriaQuarto categoria = createDefaultCategoriaQuarto();
-
         var quarto = createDefaultQuarto();
         
         // Test GET by ID
@@ -63,7 +61,7 @@ public class QuartoControllerTest extends BaseControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.numero").value(101))
-                .andExpect(jsonPath("$.categoriaId").value(categoria.getId()));
+                .andExpect(jsonPath("$.categoriaId").value(quarto.getCategoriaId()));
     }
     
     @Test
@@ -72,7 +70,7 @@ public class QuartoControllerTest extends BaseControllerTest {
         // Create a quarto first
         var quarto = createDefaultQuarto();
 
-        CategoriaQuarto categoria = createDefaultCategoriaQuarto(); 
+        CategoriaQuarto categoria = createDefaultCategoriaQuarto("Quarto Atualizado"); 
 
         quarto.setNumero(102);
         quarto.setCategoriaId(categoria.getId());

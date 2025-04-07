@@ -15,14 +15,13 @@ public class EstadiaRepository extends BaseRepository<Estadia> {
         super(
        "ESTADIA",
         "ID_ESTADIA",
-                jdbcTemplate, 
+                jdbcTemplate,
                 (rs, rowNum) -> { // Map the ResultSet to an Estadia object
             Timestamp dataEntrada = rs.getTimestamp("DATA_ENTRADA");
             Timestamp dataSaida = rs.getTimestamp("DATA_SAIDA");
             Long idEstadia = rs.getLong("ID_ESTADIA");
             Long idPaciente = rs.getLong("ID_PACIENTE");
             Long idQuarto = rs.getLong("ID_QUARTO");
-            
             
             return new Estadia(
                 idEstadia,
@@ -41,6 +40,7 @@ public class EstadiaRepository extends BaseRepository<Estadia> {
             estadia.getQuartoId()
             );
             var savedEstadia = findLastInserted();
+
         return savedEstadia;
     }
 
