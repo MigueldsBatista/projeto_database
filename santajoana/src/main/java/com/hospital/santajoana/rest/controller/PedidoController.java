@@ -2,11 +2,14 @@ package com.hospital.santajoana.rest.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,11 +38,14 @@ public class PedidoController extends BaseController<Pedido> {
         this.produtoMediator = produtoMediator;
     }
     
-    @PutMapping("/update/status/{id}")
-    public ResponseEntity<Pedido> updateStatus(@PathVariable Long id, @RequestParam String status) {//
-        //exemplo: /api/pedidos/1/status?status=FINALIZADO
-            StatusPedido statusPedido = StatusPedido.fromString(status);
+    @PatchMapping("/update/status/{id}")
+    public ResponseEntity<Pedido> updateStatus(@PathVariable Long id, @RequestBody Map<String, String> statusMap) {//
+
+            
+            StatusPedido statusPedido = StatusPedido.fromString(statusMap.get("status"));
+
             Pedido updatedPedido = pedidoMediator.updateStatus(id, statusPedido);
+            
             return ResponseEntity.ok(updatedPedido);
         }
 

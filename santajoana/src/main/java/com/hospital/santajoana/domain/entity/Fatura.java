@@ -2,6 +2,9 @@ package com.hospital.santajoana.domain.entity;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -19,7 +22,30 @@ public class Fatura extends Entity {
 
     // Enum for status_pagamento
     public enum StatusPagamento {
-        Pendente, Pago
+        PENDENTE("Pendente"), PAGO("Pago");
+
+
+        private final String descricao;
+
+        StatusPagamento(String descricao) {
+            this.descricao = descricao;
+        }
+
+        @JsonValue
+        public String getDescricao() {
+            return descricao;
+        }
+
+        @JsonCreator // Deserialize the string value back to the enum
+        public static StatusPagamento fromString(String descricao) {
+            for (StatusPagamento status : StatusPagamento.values()) {
+                String descricaoAtual = status.getDescricao();
+                if (descricaoAtual.equalsIgnoreCase(descricao)) {
+                    return status;
+                }
+            }
+            throw new IllegalArgumentException("StatusPagamento inválido: " + descricao);
+        }
     }
 
     public Fatura(Long id, Long estadiaId, BigDecimal valorTotal, StatusPagamento statusPagamento, 
@@ -35,10 +61,15 @@ public class Fatura extends Entity {
     
     public Fatura(Long estadiaId, BigDecimal valorTotal, StatusPagamento statusPagamento, Long metodoPagamentoId) {
         this.estadiaId = estadiaId;
-        this.valorTotal = valorTotal;
         this.statusPagamento = statusPagamento;
+        this.valorTotal = valorTotal;
         this.metodoPagamentoId = metodoPagamentoId;
     }
+    
+    public Fatura(Long estadiaId) {
+        this.estadiaId = estadiaId;
+    }
+    
     
     public Fatura(Long estadiaId, BigDecimal valorTotal, StatusPagamento statusPagamento, 
                  LocalDateTime dataPagamento, Long metodoPagamentoId) {

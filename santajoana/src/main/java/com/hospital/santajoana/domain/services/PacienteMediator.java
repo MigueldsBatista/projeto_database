@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.hospital.santajoana.domain.entity.Paciente;
+import com.hospital.santajoana.domain.entity.Paciente.StatusPaciente;
 import com.hospital.santajoana.domain.repository.PacienteRepository;
 
 @Service
@@ -42,7 +43,7 @@ public class PacienteMediator extends BaseMediator<Paciente>  {
 
     }
 
-    public Paciente updateStatus(Long id, Paciente.StatusPaciente status) {
+    public Paciente updateStatus(Long id, StatusPaciente status) {
         Optional<Paciente> paciente = findById(id);
         
         if (paciente == null || paciente.isEmpty()) {

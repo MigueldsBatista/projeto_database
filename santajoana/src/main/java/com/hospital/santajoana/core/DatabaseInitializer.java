@@ -45,8 +45,12 @@ public class DatabaseInitializer {
             "DROP TABLE IF EXISTS QUARTO;",
             "DROP TABLE IF EXISTS PRODUTO;",
             "DROP TABLE IF EXISTS METODO_PAGAMENTO;",
+            "DROP TABLE IF EXISTS TELEFONE_PESSOA;",
+            "DROP TABLE IF EXISTS PESSOA;",
             "DROP TABLE IF EXISTS CATEGORIA_QUARTO;",
-            "DROP TABLE IF EXISTS CATEGORIA_PRODUTO;"
+            "DROP TABLE IF EXISTS CATEGORIA_PRODUTO;",
+            "DROP TABLE IF EXISTS PEDIDO_REALIZADO;",
+            "DROP TABLE IF EXISTS ENFERMEIRO_QUARTO_PERIODO;"
         };
 
         for (String sql : dropStatements) {
@@ -174,7 +178,7 @@ public class DatabaseInitializer {
             + "STATUS_PAGAMENTO ENUM('Pendente', 'Pago') DEFAULT 'Pendente' NOT NULL,"
             + "VALOR_TOTAL DECIMAL(10, 2) DEFAULT 0,"
             + "DATA_PAGAMENTO DATETIME NULL,"
-            + "ID_METODO_PAGAMENTO INT NOT NULL,"
+            + "ID_METODO_PAGAMENTO INT NULL,"
             + "DATA_EMISSAO DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,"
             + "ID_ESTADIA INT NOT NULL,"
             + "FOREIGN KEY (ID_ESTADIA) REFERENCES ESTADIA (ID_ESTADIA)" + (isH2 ? "" : " ON DELETE CASCADE") + ","
@@ -186,22 +190,22 @@ public class DatabaseInitializer {
             "CREATE TABLE IF NOT EXISTS PEDIDO ("
             + "ID_PEDIDO INT PRIMARY KEY AUTO_INCREMENT,"
             + "ID_ESTADIA INT NOT NULL,"
-            + "ID_CAMAREIRA INT NOT NULL,"
+            + "ID_CAMAREIRA INT NULL,"
             + "STATUS ENUM('Pendente', 'Em Preparo', 'Entregue', 'Cancelado') DEFAULT 'Pendente' NOT NULL,"
             + "DATA_PEDIDO DATETIME DEFAULT CURRENT_TIMESTAMP,"
-            + "FOREIGN KEY (ID_ESTADIA) REFERENCES ESTADIA (ID_ESTADIA),"
-            + "FOREIGN KEY (ID_CAMAREIRA) REFERENCES CAMAREIRA (ID_CAMAREIRA)"
+            + "FOREIGN KEY (ID_ESTADIA) REFERENCES ESTADIA (ID_ESTADIA)" + (isH2 ? "" : " ON DELETE CASCADE") + ","
+            + "FOREIGN KEY (ID_CAMAREIRA) REFERENCES CAMAREIRA (ID_CAMAREIRA)" + (isH2 ? "" : " ON DELETE SET NULL")
             + ");",
 
-            // ...existing code for PRODUTO_PEDIDO...
+            // Updated PRODUTO_PEDIDO table with ON DELETE CASCADE constraints
             "CREATE TABLE IF NOT EXISTS PRODUTO_PEDIDO ("
             + "ID_PRODUTO_PEDIDO INT PRIMARY KEY AUTO_INCREMENT,"
             + "ID_PRODUTO INT NOT NULL,"
             + "ID_PEDIDO INT NOT NULL,"
             + "QUANTIDADE INT NOT NULL,"
             + "UNIQUE (ID_PRODUTO, ID_PEDIDO),"
-            + "FOREIGN KEY (ID_PRODUTO) REFERENCES PRODUTO (ID_PRODUTO),"
-            + "FOREIGN KEY (ID_PEDIDO) REFERENCES PEDIDO (ID_PEDIDO),"
+            + "FOREIGN KEY (ID_PRODUTO) REFERENCES PRODUTO (ID_PRODUTO)" + (isH2 ? "" : " ON DELETE CASCADE") + ","
+            + "FOREIGN KEY (ID_PEDIDO) REFERENCES PEDIDO (ID_PEDIDO)" + (isH2 ? "" : " ON DELETE CASCADE") + ","
             + "CONSTRAINT CHECK_QUANTIDADE CHECK (QUANTIDADE > 0)"
             + ");"
         };

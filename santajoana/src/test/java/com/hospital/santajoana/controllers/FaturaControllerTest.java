@@ -30,7 +30,7 @@ public class FaturaControllerTest extends BaseControllerTest {
         var metodoPagamento = createDefaultMetodoPagamento();
 
         Fatura fatura = new Fatura();
-        fatura.setStatusPagamento(StatusPagamento.Pendente);
+        fatura.setStatusPagamento(StatusPagamento.PENDENTE);
         fatura.setEstadiaId(estadia.getId());
         fatura.setValorTotal(new BigDecimal("1500.00"));
         fatura.setMetodoPagamentoId(metodoPagamento.getId());
@@ -96,7 +96,7 @@ void testUpdateFatura() throws Exception {
         Fatura fatura = createDefaultFatura();
         
         // Update the fatura
-        fatura.setStatusPagamento(StatusPagamento.Pago);
+        fatura.setStatusPagamento(StatusPagamento.PAGO);
         fatura.setDataPagamento(LocalDateTime.now());
         String faturaJson = objectMapper.writeValueAsString(fatura);
         

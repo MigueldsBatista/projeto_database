@@ -52,10 +52,11 @@ public class Pedido extends Entity {
             return descricao;
         }
         
-        @JsonCreator// This annotation is used to deserialize the string value back to the enum
+        @JsonCreator // Add this annotation to use fromString for deserialization
         public static StatusPedido fromString(String descricao) {
             for (StatusPedido status : StatusPedido.values()) {
-                if (status.getDescricao().equalsIgnoreCase(descricao)) {
+                String descricaoAtual =status.getDescricao();
+                if (descricaoAtual.equalsIgnoreCase(descricao)) {
                     return status;
                 }
             }

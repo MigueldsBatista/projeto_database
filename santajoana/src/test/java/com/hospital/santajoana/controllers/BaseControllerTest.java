@@ -335,7 +335,7 @@ public abstract class BaseControllerTest {
 
         Fatura fatura = new Fatura();
         fatura.setEstadiaId(estadia.getId());
-        fatura.setStatusPagamento(StatusPagamento.Pendente);
+        fatura.setStatusPagamento(StatusPagamento.PENDENTE);
         fatura.setValorTotal(new BigDecimal("1000.00"));
         fatura.setMetodoPagamentoId(metodoPagamento.getId()); // Assuming we have a metodo_pagamento with ID 1
         

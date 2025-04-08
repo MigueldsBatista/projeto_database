@@ -6,20 +6,40 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.hospital.santajoana.domain.entity.Estadia;
 import com.hospital.santajoana.domain.entity.Fatura;
+import com.hospital.santajoana.domain.entity.Fatura.StatusPagamento;
 import com.hospital.santajoana.domain.repository.FaturaRepository;
 
 @Service
 public class FaturaMediator extends BaseMediator<Fatura> {
     
     private final FaturaRepository faturaRepository;
-    
-    public FaturaMediator(FaturaRepository faturaRepository) {
+    private final EstadiaMediator estadiaMediator;
+
+    public FaturaMediator(FaturaRepository faturaRepository, EstadiaMediator estadiaMediator) {
         super(faturaRepository);
         this.faturaRepository = faturaRepository;
+        this.estadiaMediator = estadiaMediator;
     }
     
     public Fatura save(Fatura fatura) {
+
+        Optional<Estadia> estadiaExistente = estadiaMediator.findById(fatura.getEstadiaId());
+        if(estadiaExistente.isEmpty()){
+            throw new IllegalArgumentException("Estadia não encontrada.");
+        }
+        Estadia estadia = estadiaExistente.get();
+
+        if(estadia.getDataSaida() != null){
+            throw new IllegalArgumentException("Estadia já finalizada.");
+        }
+        Optional<Fatura> faturaExistente = findByEstadiaId(estadia.getId());
+
+        if(faturaExistente.isPresent() && faturaExistente.get().getStatusPagamento() == StatusPagamento.PENDENTE){
+            throw new IllegalArgumentException("Fatura já existe para esta estadia.");
+        }
+
         return faturaRepository.save(fatura);
     }
     
@@ -31,16 +51,16 @@ public class FaturaMediator extends BaseMediator<Fatura> {
         return faturaRepository.update(entity);
     }
 
-     public Optional<Fatura> marcarComoPaga(Long faturaId, Long metodoPagamentoId) {
+     public Optional<Fatura> updateStatus(Long faturaId, StatusPagamento status) {
         return faturaRepository.findById(faturaId).map(fatura -> {
-            fatura.setStatusPagamento(Fatura.StatusPagamento.Pago);
-            fatura.setMetodoPagamentoId(metodoPagamentoId);
+
+            fatura.setStatusPagamento(status);
             fatura.setDataPagamento(LocalDateTime.now());
             return faturaRepository.update(fatura);
         });
     }
 
-    public List<Fatura> findByStatus(Fatura.StatusPagamento status) {
+    public List<Fatura> findByStatus(StatusPagamento status) {
         return faturaRepository.findByStatus(status);
     }
 
