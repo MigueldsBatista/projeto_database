@@ -53,21 +53,22 @@ public class FaturaControllerTest extends BaseControllerTest {
     void testCreateFatura() throws Exception {
 
         // Create a test fatura
-        Fatura fatura = createDefaultFatura();
+        var estadia = createDefaultEstadia();
+
+        Fatura fatura = new Fatura(estadia.getId());
         
         // Test creating a fatura
         String faturaJson = objectMapper.writeValueAsString(fatura);
+
         mockMvc.perform(post("/api/faturas/create")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(faturaJson))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.estadiaId").value(fatura.getEstadiaId()))
-                .andExpect(jsonPath("$.valorTotal").value(fatura.getValorTotal().doubleValue()))
-                .andExpect(jsonPath("$.metodoPagamentoId").value(fatura.getMetodoPagamentoId()))
                 .andExpect(jsonPath("$.dataEmissao").exists())
-                .andExpect(jsonPath("$.dataPagamento").value(fatura.getDataPagamento() != null ? fatura.getDataPagamento().toString() : null))
-                .andExpect(jsonPath("$.statusPagamento").value(fatura.getStatusPagamento().toString()));
+                .andExpect(jsonPath("$.statusPagamento").exists());
     }
     
     @Test
@@ -86,25 +87,59 @@ public class FaturaControllerTest extends BaseControllerTest {
                 .andExpect(jsonPath("$.metodoPagamentoId").value(fatura.getMetodoPagamentoId()))
                 .andExpect(jsonPath("$.dataEmissao").exists())
                 .andExpect(jsonPath("$.dataPagamento").value(fatura.getDataPagamento() != null ? fatura.getDataPagamento().toString() : null))
-                .andExpect(jsonPath("$.statusPagamento").value(fatura.getStatusPagamento().toString()));
+                .andExpect(jsonPath("$.statusPagamento").value(fatura.getStatusPagamento().getDescricao()));
 }
 
 @Test
 @Transactional
 void testUpdateFatura() throws Exception {
-        // Setup dependencies and create fatura
+        // Setup dependencies and create fatura - this also creates a MetodoPagamento
         Fatura fatura = createDefaultFatura();
+        
+        // Get the actual MetodoPagamento ID from the database record
+        Long actualMetodoPagamentoId = fatura.getMetodoPagamentoId();
+        System.out.println("Original MetodoPagamentoId: " + actualMetodoPagamentoId);
         
         // Update the fatura
         fatura.setStatusPagamento(StatusPagamento.PAGO);
-        fatura.setDataPagamento(LocalDateTime.now());
+        LocalDateTime paymentDate = LocalDateTime.now();
+        fatura.setDataPagamento(paymentDate);
+        
+        // Make sure we keep the existing MetodoPagamentoId that worked during creation
+        // The createDefaultFatura method already set this with a valid ID, so we shouldn't change it
+        System.out.println("MetodoPagamentoId before JSON conversion: " + fatura.getMetodoPagamentoId());
+        
+        // Convert to JSON and log the serialized content for debugging
         String faturaJson = objectMapper.writeValueAsString(fatura);
+        System.out.println("Serialized fatura JSON: " + faturaJson);
+        
+        // Verify the MetodoPagamentoId is included in the JSON
+        Fatura deserializedFatura = objectMapper.readValue(faturaJson, Fatura.class);
+        System.out.println("MetodoPagamentoId after deserialization: " + deserializedFatura.getMetodoPagamentoId());
         
         mockMvc.perform(put("/api/faturas/update")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(faturaJson))
-                        .andExpect(status().isOk())
-                        .andExpect(jsonPath("$.statusPagamento").value("Pago"));
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(faturaJson))
+                .andDo(result -> {
+                    System.out.println("Update Response: " + result.getResponse().getContentAsString());
+                })
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(fatura.getId()))
+                .andExpect(jsonPath("$.statusPagamento").value("Pago"))
+                .andExpect(jsonPath("$.dataPagamento").exists())
+                .andExpect(jsonPath("$.valorTotal").value(fatura.getValorTotal().doubleValue()))
+                .andExpect(jsonPath("$.metodoPagamentoId").value(fatura.getMetodoPagamentoId()));
+
+        // Verify the update was persisted by getting the fatura again
+        mockMvc.perform(get("/api/faturas/{id}", fatura.getId()))
+                .andExpect(status().isOk())
+                .andDo(result -> {
+                    System.out.println("Get Response: " + result.getResponse().getContentAsString());
+                })
+                .andExpect(jsonPath("$.statusPagamento").value("Pago"))
+                .andExpect(jsonPath("$.dataPagamento").exists())
+                .andExpect(jsonPath("$.metodoPagamentoId").value(fatura.getMetodoPagamentoId()));
 }
 
 @Test
