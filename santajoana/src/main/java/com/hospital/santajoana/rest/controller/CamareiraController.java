@@ -8,7 +8,7 @@ import com.hospital.santajoana.domain.services.CamareiraMediator;
 
 @RestController
 @RequestMapping("/api/camareiras")
-public class CamareiraController extends BaseController<Camareira> {
+public class CamareiraController extends BaseController<Camareira, Long> {
     //embed methods
     //get, post, put, delete
     //get by id

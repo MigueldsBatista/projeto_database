@@ -31,6 +31,10 @@ public class Paciente extends Pessoa {
         super(cpf, nome, dataNascimento, telefone, endereco);
         this.status = status;
     }
+
+    public Paciente(String cpf, String nome, LocalDate dataNascimento, String telefone, String endereco) {
+        super(cpf, nome, dataNascimento, telefone, endereco);
+    }
         
 
     public enum StatusPaciente {

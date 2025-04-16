@@ -12,7 +12,7 @@ import com.hospital.santajoana.domain.entity.Fatura.StatusPagamento;
 import com.hospital.santajoana.domain.repository.FaturaRepository;
 
 @Service
-public class FaturaMediator extends BaseMediator<Fatura> {
+public class FaturaMediator extends BaseMediator<Fatura, LocalDateTime> {
     
     private final FaturaRepository faturaRepository;
     private final EstadiaMediator estadiaMediator;
@@ -24,8 +24,8 @@ public class FaturaMediator extends BaseMediator<Fatura> {
     }
     
     public Fatura save(Fatura fatura) {
-
-        Optional<Estadia> estadiaExistente = estadiaMediator.findById(fatura.getEstadiaId());
+        var id = fatura.getDataEntradaEstadia();
+        Optional<Estadia> estadiaExistente = estadiaMediator.findById(id);
         if(estadiaExistente.isEmpty()){
             throw new IllegalArgumentException("Estadia não encontrada.");
         }
@@ -34,7 +34,7 @@ public class FaturaMediator extends BaseMediator<Fatura> {
         if(estadia.getDataSaida() != null){
             throw new IllegalArgumentException("Estadia já finalizada.");
         }
-        Optional<Fatura> faturaExistente = findByEstadiaId(estadia.getId());
+        Optional<Fatura> faturaExistente = findByDataEntradaEstadia(estadia.getId());
 
         if(faturaExistente.isPresent() && faturaExistente.get().getStatusPagamento() == StatusPagamento.PENDENTE){
             throw new IllegalArgumentException("Fatura já existe para esta estadia.");
@@ -51,7 +51,7 @@ public class FaturaMediator extends BaseMediator<Fatura> {
         return faturaRepository.update(entity);
     }
 
-     public Optional<Fatura> updateStatus(Long faturaId, StatusPagamento status) {
+     public Optional<Fatura> updateStatus(LocalDateTime faturaId, StatusPagamento status) {
         return faturaRepository.findById(faturaId).map(fatura -> {
 
             fatura.setStatusPagamento(status);
@@ -64,8 +64,8 @@ public class FaturaMediator extends BaseMediator<Fatura> {
         return faturaRepository.findByStatus(status);
     }
 
-    public Optional<Fatura> findByEstadiaId(Long estadiaId) {
-        return faturaRepository.findByEstadiaId(estadiaId);
+    public Optional<Fatura> findByDataEntradaEstadia(LocalDateTime dataEntradaEstadia) {
+        return faturaRepository.findByDataEntradaEstadia(dataEntradaEstadia);
     }
 
 }

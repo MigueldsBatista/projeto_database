@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import com.hospital.santajoana.domain.entity.Quarto;
 
 @Repository
-public class QuartoRepository extends BaseRepository<Quarto> {
+public class QuartoRepository extends BaseRepository<Quarto, Long> {
 
     public QuartoRepository(JdbcTemplate jdbcTemplate) {
         super("QUARTO", "ID_QUARTO", jdbcTemplate,(rs, rowNum) -> new Quarto(

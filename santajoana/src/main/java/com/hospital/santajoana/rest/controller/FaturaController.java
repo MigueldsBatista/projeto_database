@@ -9,18 +9,20 @@ import com.hospital.santajoana.domain.services.FaturaMediator;
 
 import java.util.List;
 import java.util.Map;
+import java.time.LocalDateTime;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @RequestMapping("/api/faturas")
-public class FaturaController extends BaseController<Fatura> {
+public class FaturaController extends BaseController<Fatura, LocalDateTime> {
 
     private final FaturaMediator faturaMediator;
 
@@ -47,20 +49,32 @@ public class FaturaController extends BaseController<Fatura> {
         return super.findAll(params);
     }
 
-    @GetMapping("/estadia/{estadiaId}")
-    public ResponseEntity<Fatura> findByEstadiaId(@PathVariable Long estadiaId){
-        return faturaMediator.findById(estadiaId).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    @GetMapping("/estadia/{dataEntradaEstadia}")
+    public ResponseEntity<Fatura> findByDataEntradaEstadia(@PathVariable LocalDateTime dataEntradaEstadia){
+        return faturaMediator.findByDataEntradaEstadia(dataEntradaEstadia).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
     @PatchMapping("/{id}/update/status")
-    public ResponseEntity<Fatura> updateStatus(@PathVariable Long id, @RequestBody Map<String, String> status){
-        throw new UnsupportedOperationException("Not supported yet.");
+    public ResponseEntity<Fatura> updateStatus(@PathVariable("id") String id, @RequestBody Map<String, String> status){
+        LocalDateTime dataEmissao = LocalDateTime.parse(id);
+        var result = faturaMediator.updateStatus(dataEmissao, Fatura.StatusPagamento.fromString(status.get("status")));
+        return result.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
+
+
+@PostMapping("/create")
+public ResponseEntity<Fatura> create(@RequestBody Fatura entity) {
+    // Exemplo de conversão manual, se necessário:
+    // if (entity.getDataEntradaEstadia() instanceof String) {
+    //     entity.setDataEntradaEstadia(LocalDateTime.parse((String) entity.getDataEntradaEstadia()));
+    // }
+    return super.create(entity);
+}
+
 
     @Override
     @PutMapping("/update")
-    public ResponseEntity<Fatura> update(Fatura entity) {
-
+    public ResponseEntity<Fatura> update(@RequestBody Fatura entity) {
         return super.update(entity);
     }
 }

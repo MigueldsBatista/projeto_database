@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import com.hospital.santajoana.domain.entity.Produto;
 
 @Repository
-public class ProdutoRepository extends BaseRepository<Produto> {
+public class ProdutoRepository extends BaseRepository<Produto, Long> {
 
     public ProdutoRepository(JdbcTemplate jdbcTemplate) {
         super("PRODUTO","ID_PRODUTO",jdbcTemplate, (rs, rowNum) -> {

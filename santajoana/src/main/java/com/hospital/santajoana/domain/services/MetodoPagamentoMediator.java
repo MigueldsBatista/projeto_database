@@ -7,7 +7,7 @@ import com.hospital.santajoana.domain.repository.MetodoPagamentoRepository;
 
 
 @Service
-public class MetodoPagamentoMediator extends BaseMediator<MetodoPagamento> {
+public class MetodoPagamentoMediator extends BaseMediator<MetodoPagamento, Long> {
 
     
     private final MetodoPagamentoRepository metodoPagamentoRepository;

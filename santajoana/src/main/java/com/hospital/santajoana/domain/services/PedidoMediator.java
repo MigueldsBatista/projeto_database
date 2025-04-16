@@ -2,6 +2,7 @@ package com.hospital.santajoana.domain.services;
 
 import java.util.List;
 import java.util.Optional;
+import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Service;
 
@@ -11,7 +12,7 @@ import com.hospital.santajoana.domain.repository.PedidoRepository;
 
 
 @Service
-public class PedidoMediator extends BaseMediator<Pedido> {
+public class PedidoMediator extends BaseMediator<Pedido, LocalDateTime> {
     
     private final PedidoRepository pedidoRepository;
     private final EstadiaMediator estadiaMediator;
@@ -27,21 +28,21 @@ public class PedidoMediator extends BaseMediator<Pedido> {
     public Pedido save(Pedido pedido) {
 
 
-        var estadiaId = pedido.getEstadiaId();
+        var dataEntradaEstadia = pedido.getDataEntradaEstadia();
         var camareiraId = pedido.getCamareiraId();
 
         if(camareiraMediator.findById(camareiraId).isEmpty()){
             throw new IllegalArgumentException("Camareira não encontrada.");
         }
 
-        if(estadiaMediator.findById(estadiaId).isEmpty()){
+        if(estadiaMediator.findById(dataEntradaEstadia).isEmpty()){
             throw new IllegalArgumentException("Estadia não encontrada.");
         }
 
         return pedidoRepository.save(pedido);
     }
     
-    public Pedido updateStatus(Long id, Pedido.StatusPedido status) {
+    public Pedido updateStatus(LocalDateTime id, Pedido.StatusPedido status) {
         Optional<Pedido> pedido = findById(id);
         
         if (pedido == null || pedido.isEmpty()) {
@@ -64,13 +65,13 @@ public class PedidoMediator extends BaseMediator<Pedido> {
     }
 
 
-    public List<Pedido> findPedidosByEstadiaId(Long estadiaId){
-        if(!estadiaMediator.findById(estadiaId).isPresent()){
+    public List<Pedido> findPedidosBydataEntradaEstadia(LocalDateTime dataEntradaEstadia){
+        if(!estadiaMediator.findById(dataEntradaEstadia).isPresent()){
             
-            throw new IllegalArgumentException("Estadia com id "+ estadiaId+ " Não encontrada");
+            throw new IllegalArgumentException("Estadia com id "+ dataEntradaEstadia+ " Não encontrada");
         }
 
-        return pedidoRepository.findPedidosByEstadiaId(estadiaId);
+        return pedidoRepository.findPedidosBydataEntradaEstadia(dataEntradaEstadia);
     }
 
     //Retorna os pedidos da ultima estadia do paciente
@@ -80,7 +81,7 @@ public class PedidoMediator extends BaseMediator<Pedido> {
 
         if(!estadia.isPresent()) return List.of();// Se não houver estadia, retorna uma lista vazia
 
-        return this.findPedidosByEstadiaId(estadia.get().getId());
+        return this.findPedidosBydataEntradaEstadia(estadia.get().getId());
 
     }
 

@@ -31,7 +31,7 @@ public class FaturaControllerTest extends BaseControllerTest {
 
         Fatura fatura = new Fatura();
         fatura.setStatusPagamento(StatusPagamento.PENDENTE);
-        fatura.setEstadiaId(estadia.getId());
+        fatura.setDataEntradaEstadia(estadia.getId());
         fatura.setValorTotal(new BigDecimal("1500.00"));
         fatura.setMetodoPagamentoId(metodoPagamento.getId());
         
@@ -66,7 +66,7 @@ public class FaturaControllerTest extends BaseControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").exists())
-                .andExpect(jsonPath("$.estadiaId").value(fatura.getEstadiaId()))
+                .andExpect(jsonPath("$.dataEntradaEstadia").value(fatura.getDataEntradaEstadia()))
                 .andExpect(jsonPath("$.dataEmissao").exists())
                 .andExpect(jsonPath("$.statusPagamento").exists());
     }
@@ -82,7 +82,7 @@ public class FaturaControllerTest extends BaseControllerTest {
         mockMvc.perform(get("/api/faturas/{id}", fatura.getId()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.estadiaId").value(fatura.getEstadiaId()))
+                .andExpect(jsonPath("$.dataEntradaEstadia").value(fatura.getDataEntradaEstadia()))
                 .andExpect(jsonPath("$.valorTotal").value(fatura.getValorTotal().doubleValue()))
                 .andExpect(jsonPath("$.metodoPagamentoId").value(fatura.getMetodoPagamentoId()))
                 .andExpect(jsonPath("$.dataEmissao").exists())

@@ -2,6 +2,7 @@ package com.hospital.santajoana.rest.controller;
 
 import java.util.List;
 import java.util.Optional;
+import java.time.LocalDateTime;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +19,7 @@ import com.hospital.santajoana.domain.services.PedidoMediator;
 
 @RestController
 @RequestMapping("/api/estadias")
-public class EstadiaController extends BaseController<Estadia> {
+public class EstadiaController extends BaseController<Estadia, LocalDateTime> {
 
     private final PedidoMediator pedidoMediator;
 
@@ -38,17 +39,17 @@ public class EstadiaController extends BaseController<Estadia> {
         }
 
         Optional<Estadia> original = estadiaMediator.findById(entity.getId());
-        if(original.isPresent() && original.get().getPacienteId() != entity.getPacienteId()){
+        if(original.isPresent() && !original.get().getPacienteId().equals(entity.getPacienteId())){
             throw new IllegalArgumentException("Paciente não pode ser alterado.");
         }
 
         return super.update(entity);
     }
 
-    @GetMapping("/{estadiaId}/pedidos")
-    public ResponseEntity<List<Pedido>> findPedidosByEstadiaId(@PathVariable Long estadiaId){
+    @GetMapping("/{dataEntradaEstadia}/pedidos")
+    public ResponseEntity<List<Pedido>> findPedidosBydataEntradaEstadia(@PathVariable LocalDateTime dataEntradaEstadia){
         
-        var pedidos = pedidoMediator.findPedidosByEstadiaId(estadiaId);
+        var pedidos = pedidoMediator.findPedidosBydataEntradaEstadia(dataEntradaEstadia);
 
         return ResponseEntity.ok(pedidos);
     }

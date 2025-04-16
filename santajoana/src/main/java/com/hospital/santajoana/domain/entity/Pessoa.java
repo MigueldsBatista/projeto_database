@@ -10,8 +10,7 @@ import java.time.LocalDate;
 @EqualsAndHashCode(callSuper = false)//this will
 @NoArgsConstructor
 @AllArgsConstructor
-public class Pessoa extends Entity {
-
+public class Pessoa extends Entity<Long> {
     private String cpf;
     private String nome;
     private LocalDate dataNascimento;

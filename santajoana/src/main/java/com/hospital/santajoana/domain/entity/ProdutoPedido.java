@@ -5,15 +5,14 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
-public class ProdutoPedido extends Entity {
+public class ProdutoPedido {
     private Long produtoId;
     private Long pedidoId;
     private int quantidade;
-    
-    public ProdutoPedido(Long id, Long produtoId, Long pedidoId, int quantidade) {
-        super(id);
+    // Chave composta: produtoId + pedidoId
+    public ProdutoPedido(Long produtoId, Long pedidoId, int quantidade) {
         this.produtoId = produtoId;
         this.pedidoId = pedidoId;
         this.quantidade = quantidade;

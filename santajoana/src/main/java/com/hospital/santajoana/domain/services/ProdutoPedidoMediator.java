@@ -12,13 +12,12 @@ import com.hospital.santajoana.rest.dto.ProdutoPedidoDTO;
 
 
 @Service
-public class ProdutoPedidoMediator extends BaseMediator<ProdutoPedido>{
+public class ProdutoPedidoMediator {
 
     private final ProdutoRepository produtoRepository;
     private final ProdutoPedidoRepository produtoPedidoRepository;
 
     public ProdutoPedidoMediator(ProdutoRepository produtoRepository, ProdutoPedidoRepository produtoPedidoRepository){
-        super(produtoPedidoRepository);
         this.produtoPedidoRepository=produtoPedidoRepository;
         this.produtoRepository=produtoRepository;
     }
@@ -29,7 +28,7 @@ public class ProdutoPedidoMediator extends BaseMediator<ProdutoPedido>{
     }
     
     public ProdutoPedidoDTO addProdutoToPedido(Long pedidoId, Long produtoId, Integer quantidade) {
-        ProdutoPedido produtoPedido = new ProdutoPedido(null, produtoId, pedidoId, quantidade);
+        ProdutoPedido produtoPedido = new ProdutoPedido(produtoId, pedidoId, quantidade);
         ProdutoPedido saved = produtoPedidoRepository.save(produtoPedido);
         
         Produto produto = produtoRepository.findById(produtoId)
@@ -38,15 +37,12 @@ public class ProdutoPedidoMediator extends BaseMediator<ProdutoPedido>{
         return ProdutoPedidoDTO.fromEntities(produto, saved);
     }
 
-    
-
-
     public ProdutoPedido save(ProdutoPedido produtoPedido) {
         return produtoPedidoRepository.save(produtoPedido);
     }
 
-    public void delete(ProdutoPedido entity) {
-        produtoPedidoRepository.deleteById(entity.getId());
+    public void delete(Long produtoId, Long pedidoId) {
+        produtoPedidoRepository.deleteById(produtoId, pedidoId);
     }
 
     public ProdutoPedido update(ProdutoPedido produtoPedido) {

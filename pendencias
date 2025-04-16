@@ -1,0 +1,50 @@
+# Pendências de Implementação
+
+## Testes de Integridade de Dados
+
+1. Testar criar um paciente com CPF duplicado e esperar 409
+2. Testar criar uma enfermeira com CRE duplicado e esperar 409
+3. Testar criar um paciente com CPF inválido (menor que 11 dígitos) e esperar 400
+4. Testar criar um paciente com CPF inválido (maior que 11 dígitos) e esperar 400
+5. Testar criar um paciente com CPF inválido (não numérico) e esperar 400
+6. Testar criar uma estadia para um paciente que já possui uma estadia com status diferente de alta e esperar 400
+7. Testar criar uma estadia para um paciente que não existe e esperar 404
+8. Testar criar uma estadia para um quarto que não existe e esperar 404
+9. Testar criar uma fatura para um paciente que já possui uma fatura associada com status diferente de paga e esperar 400
+10. Testar criar uma fatura para um paciente com status de alta e esperar 400
+
+**Observação**: Se algum caso de teste falhar é preciso corrigir o trecho do código com problemas. Debugar os testes ajuda muito.
+
+## Endpoints a Implementar
+
+- Obter a estadia mais recente de um paciente DONE
+- Obter a fatura mais recente de um paciente DONE
+- Obter todos os pedidos de uma fatura:
+    - Opção de agrupar por dia
+    - Opção de obter todos os pedidos
+    - Considerar fazer isso também no endpoint dos pedidos de um paciente
+
+## Questões de Modelagem
+
+- E se uma camareira precisar virar paciente em algum momento?
+- Preicisamos criar um método que permita criar um paciente a partir do id de uma camareira
+
+- Saber justificar pq não usamos herança no código
+
+## Correções de Código
+
+Corrigir a implementação nova que usa datetime como primary key em:
+- Fatura
+- Estadia
+- Pedido
+- Mudar a implementação de produto_pedido considerando que agora tem uma chave primária composta
+
+* Ou seja:
+    atualizar as entities tirando o id da estadia e colocando data estadia
+    atualizar o repository, provavelmente n vai mais estender do repositorio base
+    atualizar mediator
+    atualizar controllers
+
+Corrigir no codigo pra que as entidades base possam escolher qual tipo do ID da entidade e não deixar Long predefinido
+
+Isso inclui, corrigir as entities, repository, mediators e controllers, e tests

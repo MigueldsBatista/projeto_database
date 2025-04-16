@@ -1,12 +1,15 @@
 package com.hospital.santajoana.domain.services;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 
 import com.hospital.santajoana.domain.entity.Camareira;
+import com.hospital.santajoana.domain.entity.Paciente;
 import com.hospital.santajoana.domain.repository.CamareiraRepository;
 
 @Service
-public class CamareiraMediator extends BaseMediator<Camareira> {
+public class CamareiraMediator extends BaseMediator<Camareira, Long> {
     
     private final CamareiraRepository CamareiraRepository;
     
@@ -26,5 +29,11 @@ public class CamareiraMediator extends BaseMediator<Camareira> {
     public Camareira update(Camareira camareira) {
         return CamareiraRepository.update(camareira);
     }
-    
+        public Optional<Camareira> findByCpf(String cpf) {
+        String sql = "SELECT * FROM CAMAREIRA WHERE CPF = ?";
+        return CamareiraRepository.findBySql(sql, cpf)
+        .stream().
+        findFirst();
+
+    }
 }

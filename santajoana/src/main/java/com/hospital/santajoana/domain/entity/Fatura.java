@@ -3,6 +3,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import lombok.Data;
@@ -12,8 +13,9 @@ import lombok.NoArgsConstructor;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-public class Fatura extends Entity {
-    private Long estadiaId;
+public class Fatura extends Entity<LocalDateTime> {
+
+    private LocalDateTime dataEntradaEstadia;
     private BigDecimal valorTotal;
     private StatusPagamento statusPagamento;
     private Long metodoPagamentoId;
@@ -48,10 +50,10 @@ public class Fatura extends Entity {
         }
     }
 
-    public Fatura(Long id, Long estadiaId, BigDecimal valorTotal, StatusPagamento statusPagamento, 
-                 Long metodoPagamentoId, LocalDateTime dataPagamento, LocalDateTime dataEmissao) {
-        super(id);
-        this.estadiaId = estadiaId;
+    public Fatura(LocalDateTime dataEmissao, LocalDateTime dataEntradaEstadia, BigDecimal valorTotal, StatusPagamento statusPagamento, 
+                 Long metodoPagamentoId, LocalDateTime dataPagamento) {
+        super(dataEmissao);
+        this.dataEntradaEstadia = dataEntradaEstadia;
         this.valorTotal = valorTotal;
         this.statusPagamento = statusPagamento;
         this.metodoPagamentoId = metodoPagamentoId;
@@ -59,21 +61,21 @@ public class Fatura extends Entity {
         this.dataEmissao = dataEmissao;
     }
     
-    public Fatura(Long estadiaId, BigDecimal valorTotal, StatusPagamento statusPagamento, Long metodoPagamentoId) {
-        this.estadiaId = estadiaId;
+    public Fatura(LocalDateTime dataEntradaEstadia, BigDecimal valorTotal, StatusPagamento statusPagamento, Long metodoPagamentoId) {
+        this.dataEntradaEstadia = dataEntradaEstadia;
         this.statusPagamento = statusPagamento;
         this.valorTotal = valorTotal;
         this.metodoPagamentoId = metodoPagamentoId;
     }
     
-    public Fatura(Long estadiaId) {
-        this.estadiaId = estadiaId;
+    public Fatura(LocalDateTime dataEntradaEstadia) {
+        this.dataEntradaEstadia = dataEntradaEstadia;
     }
     
     
-    public Fatura(Long estadiaId, BigDecimal valorTotal, StatusPagamento statusPagamento, 
+    public Fatura(LocalDateTime dataEntradaEstadia, BigDecimal valorTotal, StatusPagamento statusPagamento, 
                  LocalDateTime dataPagamento, Long metodoPagamentoId) {
-        this.estadiaId = estadiaId;
+        this.dataEntradaEstadia = dataEntradaEstadia;
         this.valorTotal = valorTotal;
         this.statusPagamento = statusPagamento;
         this.dataPagamento = dataPagamento;

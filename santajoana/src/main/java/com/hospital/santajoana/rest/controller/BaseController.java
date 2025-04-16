@@ -17,11 +17,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.hospital.santajoana.domain.entity.Entity;
 import com.hospital.santajoana.domain.services.BaseMediator;
 
-public abstract class BaseController<T extends Entity> {
+public abstract class BaseController<T extends Entity<PK>, PK> {
 
-    protected final BaseMediator<T> mediator;
+    protected final BaseMediator<T, PK> mediator;
 
-    public BaseController(BaseMediator<T> mediator) {
+    public BaseController(BaseMediator<T, PK> mediator) {
         this.mediator = mediator;
     }
 
@@ -34,7 +34,7 @@ public abstract class BaseController<T extends Entity> {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<T> findById(@PathVariable Long id) {
+    public ResponseEntity<T> findById(@PathVariable PK id) {
         Optional<T> entity = mediator.findById(id);
 
         if (entity.isEmpty()) {
@@ -68,7 +68,7 @@ public abstract class BaseController<T extends Entity> {
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable PK id) {
         Optional<T> entity = mediator.findById(id);
         if (entity.isEmpty()) {
             return ResponseEntity.notFound().build();

@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class CategoriaProduto extends Entity {
+public class CategoriaProduto extends Entity<Long> {
 
     private String nome;
     private String descricao;

@@ -3,9 +3,9 @@
     "endpoint": "http://localhost:8080/api/estadias"
   },
   {
+    "dataEntrada": "2023-06-01T10:00:00",
     "pacienteId": 1,
     "quartoId": 1,
-    "dataEntrada": "2023-06-01T10:00:00",
     "dataSaida": null
   }
 ]

@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-public class CategoriaQuarto extends Entity {
+public class CategoriaQuarto extends Entity <Long> {
     private String nome;
     private String descricao;
 

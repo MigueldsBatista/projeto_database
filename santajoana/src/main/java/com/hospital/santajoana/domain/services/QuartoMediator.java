@@ -8,7 +8,7 @@ import com.hospital.santajoana.domain.entity.Quarto;
 import com.hospital.santajoana.domain.repository.QuartoRepository;
 
 @Service
-public class QuartoMediator extends BaseMediator<Quarto> {
+public class QuartoMediator extends BaseMediator<Quarto, Long> {
     
     private final QuartoRepository quartoRepository;
     

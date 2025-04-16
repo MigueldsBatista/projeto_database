@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL) // Exclude null fields from JSON serialization
-public class Produto extends Entity {
+public class Produto extends Entity<Long> {
     private String nome;
     private String descricao;
     private BigDecimal preco;

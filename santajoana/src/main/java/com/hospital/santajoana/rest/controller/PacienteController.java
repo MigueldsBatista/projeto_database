@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/pacientes")
-public class PacienteController extends BaseController<Paciente> {
+public class PacienteController extends BaseController<Paciente, Long> {
 
     private final PacienteMediator pacienteMediator;
     private final PedidoMediator pedidoMediator;
@@ -42,6 +42,19 @@ public class PacienteController extends BaseController<Paciente> {
         List<Pedido> pedidos = pedidoMediator.findLatestPedidosByPacienteId(id);
 
         return ResponseEntity.ok(pedidos);
+    }
+
+    @PostMapping("/create/from-camareira")
+    public ResponseEntity<Paciente> createFromCamareira(@RequestBody Map<String, String> cpfMap) {
+
+        String cpf = cpfMap.get("cpf");
+
+        Paciente savedPaciente = pacienteMediator.saveFromCamareiraCpf(cpf);
+        
+        if (savedPaciente == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(savedPaciente);
     }
 
 }

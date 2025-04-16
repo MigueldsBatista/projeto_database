@@ -6,18 +6,20 @@ import org.springframework.stereotype.Repository;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
+import java.time.LocalDateTime;
 
 import com.hospital.santajoana.domain.entity.Fatura;
 import com.hospital.santajoana.domain.entity.Fatura.StatusPagamento;
 
 @Repository
-public class FaturaRepository extends BaseRepository<Fatura> {
+public class FaturaRepository extends BaseRepository<Fatura, LocalDateTime> {
 
     public FaturaRepository(JdbcTemplate jdbcTemplate) {
-        super("FATURA", "ID_FATURA", jdbcTemplate, (rs, rowNum) -> {
+        super("FATURA", "DATA_EMISSAO", jdbcTemplate, (rs, rowNum) -> {
             // Extrair valores das colunas
-            Long idFatura = rs.getLong("ID_FATURA");
-            Long idEstadia = rs.getLong("ID_ESTADIA");
+            Timestamp dataEntradaEstadia = rs.getTimestamp("DATA_ENTRADA_ESTADIA");
+            java.time.LocalDateTime dataEntradaEstadiaLocal = dataEntradaEstadia != null ? dataEntradaEstadia.toLocalDateTime() : null;
+
             Long idMetodoPagamento = rs.getLong("ID_METODO_PAGAMENTO");
             
             // Verificar se valores decimais são nulos
@@ -38,44 +40,42 @@ public class FaturaRepository extends BaseRepository<Fatura> {
             java.time.LocalDateTime dataEmissaoLocal = dataEmissao != null ? dataEmissao.toLocalDateTime() : null;
 
             return new Fatura(
-                    idFatura,
-                    idEstadia,
+                dataEntradaEstadiaLocal,
+                    dataEmissaoLocal,
                     valorTotal,
                     statusPagamento,
                     idMetodoPagamento,
-                    dataPagamentoLocal,
-                    dataEmissaoLocal);
+                    dataPagamentoLocal
+                    );
         });
     }
 
     public Fatura save(Fatura fatura) {
-        String insertSql = "INSERT INTO FATURA (ID_ESTADIA) VALUES (?)";
+        String insertSql = "INSERT INTO FATURA (DATA_ENTRADA_ESTADIA) VALUES (?)";
 
         jdbcTemplate.update(insertSql,
-                fatura.getEstadiaId()
-                );
+                fatura.getDataEntradaEstadia()
+        );
 
-                var savedFatura = findLastInserted();
-                
-        return savedFatura;
+        return findByDataEntradaEstadia(fatura.getDataEntradaEstadia()).orElse(null);
     }
 
     public Fatura update(Fatura fatura) {
-        String updateSql = "UPDATE FATURA SET ID_ESTADIA = ?, VALOR_TOTAL = ?, STATUS_PAGAMENTO = ?, DATA_PAGAMENTO = ?, ID_METODO_PAGAMENTO = ? WHERE ID_FATURA = ?";
+        String updateSql = "UPDATE FATURA SET DATA_ENTRADA_ESTADIA = ?, VALOR_TOTAL = ?, STATUS_PAGAMENTO = ?, DATA_PAGAMENTO = ?, ID_METODO_PAGAMENTO = ? WHERE DATA_EMISSAO = ?";
         jdbcTemplate.update(updateSql,
-                fatura.getEstadiaId(),
+                fatura.getDataEntradaEstadia(),
                 fatura.getValorTotal(),
-                fatura.getStatusPagamento().getDescricao(),
+                fatura.getStatusPagamento() != null ? fatura.getStatusPagamento().getDescricao() : null,
                 fatura.getDataPagamento() != null ? Timestamp.valueOf(fatura.getDataPagamento()) : null,
                 fatura.getMetodoPagamentoId(),
                 fatura.getId());
-            var updatedFatura = findById(fatura.getId());
-        return updatedFatura.get();
+
+        return findByDataEntradaEstadia(fatura.getDataEntradaEstadia()).orElse(null);
     }
 
-    public Optional<Fatura> findByEstadiaId(Long estadiaId) {
-        String sql = "SELECT * FROM FATURA WHERE ID_ESTADIA = ?";
-        return findBySql(sql, estadiaId).stream().findFirst();
+    public Optional<Fatura> findByDataEntradaEstadia(LocalDateTime dataEntradaEstadia) {
+        String sql = "SELECT * FROM FATURA WHERE DATA_ENTRADA_ESTADIA = ?";
+        return findBySql(sql, dataEntradaEstadia).stream().findFirst();
     }
 
     public List<Fatura> findByStatus(StatusPagamento status) {

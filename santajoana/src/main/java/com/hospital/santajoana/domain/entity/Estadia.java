@@ -10,23 +10,25 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL) // Exclude null fields from JSON serialization
-public class Estadia extends Entity{
+public class Estadia extends Entity<LocalDateTime> {
+    //OBS A COLUNA ID QUE VEM DA ENTITY É A DATA_ENTRADA
+    private LocalDateTime dataEntrada;
     private Long pacienteId;
     private Long quartoId;
-    private LocalDateTime dataEntrada;
     private LocalDateTime dataSaida;
     
+    // O id agora é dataEntrada (chave primária)
+    public Estadia(LocalDateTime dataEntrada, Long pacienteId, Long quartoId, LocalDateTime dataSaida) {
+        super(dataEntrada);
+        this.dataEntrada = dataEntrada;
+        this.pacienteId = pacienteId;
+        this.quartoId = quartoId;
+        this.dataSaida = dataSaida;
+    }
+
     public Estadia(Long pacienteId, Long quartoId) {
         this.pacienteId = pacienteId;
         this.quartoId = quartoId;
-    }
-
-    public Estadia(Long estadiaId, Long pacienteId, Long quartoId, LocalDateTime dataEntrada, LocalDateTime dataSaida) {
-        super(estadiaId);
-        this.pacienteId = pacienteId;
-        this.quartoId = quartoId;
-        this.dataEntrada = dataEntrada;
-        this.dataSaida = dataSaida;
     }
 
 }

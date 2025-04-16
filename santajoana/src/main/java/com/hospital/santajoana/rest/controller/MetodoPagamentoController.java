@@ -8,7 +8,7 @@ import com.hospital.santajoana.domain.services.MetodoPagamentoMediator;
 
 @RestController
 @RequestMapping("/api/metodos-pagamento")
-public class MetodoPagamentoController extends BaseController<MetodoPagamento> {
+public class MetodoPagamentoController extends BaseController<MetodoPagamento, Long> {
 
     private final MetodoPagamentoMediator metodoPagamentoMediator;
 

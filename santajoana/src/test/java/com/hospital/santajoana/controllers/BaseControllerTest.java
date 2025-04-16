@@ -269,7 +269,7 @@ public abstract class BaseControllerTest {
 
         Pedido pedido = new Pedido();
         
-        pedido.setEstadiaId(estadia.getId());
+        pedido.setDataEntradaEstadia(estadia.getId());
         pedido.setCamareiraId(camareira.getId());
         
         String pedidoJson = savePedidoEntity(pedido)
@@ -336,7 +336,7 @@ public abstract class BaseControllerTest {
         MetodoPagamento metodoPagamento = createDefaultMetodoPagamento();
         
         Fatura fatura = new Fatura(estadia.getId());
-        fatura.setEstadiaId(estadia.getId());
+        fatura.setDataEntradaEstadia(estadia.getId());
         fatura.setStatusPagamento(StatusPagamento.PENDENTE);
         fatura.setValorTotal(new BigDecimal("1000.00"));
         

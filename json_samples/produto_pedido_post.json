@@ -1,8 +1,8 @@
 [
-  {"endpoint": "http://localhost:8080/api/pedidos/items"},
+  {"endpoint": "http://localhost:8080/api/produto-pedidos"},
   {
     "produtoId": 1,
-    "pedidoId": 1,
+    "pedidoId": "2023-06-10T14:30:00",
     "quantidade": 2
   }
 ]

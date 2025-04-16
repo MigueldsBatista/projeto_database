@@ -8,7 +8,7 @@ import com.hospital.santajoana.domain.services.CategoriaQuartoMediator;
 
 @RequestMapping("/api/categoria-quarto")
 @RestController
-public class CategoriaQuartoController extends BaseController<CategoriaQuarto> {
+public class CategoriaQuartoController extends BaseController<CategoriaQuarto, Long> {
 
     private final CategoriaQuartoMediator mediator;
 

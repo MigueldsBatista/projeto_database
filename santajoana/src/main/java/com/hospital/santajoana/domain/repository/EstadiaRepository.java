@@ -4,30 +4,30 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import com.hospital.santajoana.domain.entity.Estadia;
 
 @Repository
-public class EstadiaRepository extends BaseRepository<Estadia> {
+public class EstadiaRepository extends BaseRepository<Estadia, LocalDateTime> {
+
 
     public EstadiaRepository(JdbcTemplate jdbcTemplate) {
         super(
        "ESTADIA",
-        "ID_ESTADIA",
+        "DATA_ENTRADA",
                 jdbcTemplate,
                 (rs, rowNum) -> { // Map the ResultSet to an Estadia object
             Timestamp dataEntrada = rs.getTimestamp("DATA_ENTRADA");
             Timestamp dataSaida = rs.getTimestamp("DATA_SAIDA");
-            Long idEstadia = rs.getLong("ID_ESTADIA");
             Long idPaciente = rs.getLong("ID_PACIENTE");
             Long idQuarto = rs.getLong("ID_QUARTO");
             
             return new Estadia(
-                idEstadia,
+                dataEntrada != null ? dataEntrada.toLocalDateTime() : null,
                 idPaciente,
                 idQuarto,
-                dataEntrada != null ? dataEntrada.toLocalDateTime() : null,
                 dataSaida != null ? dataSaida.toLocalDateTime() : null
             );
         });
@@ -39,21 +39,19 @@ public class EstadiaRepository extends BaseRepository<Estadia> {
             estadia.getPacienteId(),
             estadia.getQuartoId()
             );
-            var savedEstadia = findLastInserted();
 
-        return savedEstadia;
+        return findMostRecentEstadiaByPacienteId(estadia.getPacienteId()).orElse(null);
     }
 
     public Estadia update(Estadia estadia) {
-        String updateSql = "UPDATE ESTADIA SET ID_PACIENTE = ?, ID_QUARTO = ?, DATA_ENTRADA = ?, DATA_SAIDA = ? WHERE ID_ESTADIA = ?";
+        String updateSql = "UPDATE ESTADIA SET ID_PACIENTE = ?, ID_QUARTO = ?, DATA_SAIDA = ? WHERE DATA_ENTRADA = ?";
         jdbcTemplate.update(updateSql,
             estadia.getPacienteId(),
             estadia.getQuartoId(),
-            estadia.getDataEntrada() != null ? Timestamp.valueOf(estadia.getDataEntrada()) : null,
             estadia.getDataSaida() != null ? Timestamp.valueOf(estadia.getDataSaida()) : null,
             estadia.getId()
         );
-        return estadia;
+        return findMostRecentEstadiaByPacienteId(estadia.getPacienteId()).orElse(null);
     }
 
     public Optional<Estadia> findMostRecentEstadiaByPacienteId(Long pacienteId) {

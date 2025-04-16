@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Quarto extends Entity {
+public class Quarto extends Entity<Long> {
     private Integer numero;
     private Long categoriaId;
     

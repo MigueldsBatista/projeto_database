@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import com.hospital.santajoana.domain.entity.MetodoPagamento;
 
 @Repository
-public class MetodoPagamentoRepository extends BaseRepository<MetodoPagamento> {
+public class MetodoPagamentoRepository extends BaseRepository<MetodoPagamento, Long> {
 
     public MetodoPagamentoRepository(JdbcTemplate jdbcTemplate) {
         super("METODO_PAGAMENTO", "ID_METODO_PAGAMENTO", jdbcTemplate, (rs, rowNum) -> new MetodoPagamento(

@@ -1,11 +1,11 @@
 [
   {"endpoint": "http://localhost:8080/api/faturas"},
   {
-    "estadiaId": 1,
+    "dataEmissao": "2023-06-15T16:45:00",
+    "dataEntradaEstadia": 1,
     "statusPagamento": "Pendente",
     "valorTotal": 350.75,
     "dataPagamento": null,
-    "metodoId": 1,
-    "dataEmissao": "2023-06-15T16:45:00"
+    "metodoPagamentoId": 1
   }
 ]

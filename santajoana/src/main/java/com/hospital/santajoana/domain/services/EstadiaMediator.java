@@ -1,6 +1,7 @@
 package com.hospital.santajoana.domain.services;
 
 import java.util.Optional;
+import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Service;
 
@@ -11,7 +12,7 @@ import com.hospital.santajoana.domain.repository.EstadiaRepository;
 
 
 @Service
-public class EstadiaMediator extends BaseMediator<Estadia> {
+public class EstadiaMediator extends BaseMediator<Estadia, LocalDateTime> {
     private final EstadiaRepository repository;
     private final PacienteMediator pacienteMediator;
 
@@ -50,7 +51,7 @@ public class EstadiaMediator extends BaseMediator<Estadia> {
         return repository.update(estadia);
     }
 
-    public void deleteById(Long id) {
+    public void deleteById(LocalDateTime id) {
         repository.deleteById(id);
     }
 

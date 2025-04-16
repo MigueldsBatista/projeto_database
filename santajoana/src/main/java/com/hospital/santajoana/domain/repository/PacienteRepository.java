@@ -5,11 +5,12 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.Date;
 
+import com.hospital.santajoana.domain.entity.Camareira;
 import com.hospital.santajoana.domain.entity.Paciente;
 import com.hospital.santajoana.domain.entity.Paciente.StatusPaciente;
 
 @Repository
-public class PacienteRepository extends BaseRepository<Paciente> {
+public class PacienteRepository extends BaseRepository<Paciente, Long> {
 
     public PacienteRepository(JdbcTemplate jdbcTemplate) {
         super("PACIENTE", "ID_PACIENTE", jdbcTemplate, (rs, rowNum) -> {
@@ -92,4 +93,7 @@ public class PacienteRepository extends BaseRepository<Paciente> {
         
         return paciente;
     }
+
+
+
 }

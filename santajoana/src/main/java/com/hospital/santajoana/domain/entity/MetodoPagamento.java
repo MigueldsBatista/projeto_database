@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class MetodoPagamento extends Entity {
+public class MetodoPagamento extends Entity<Long> {
     private String tipo;
 
     public MetodoPagamento(Long id, String tipo) {

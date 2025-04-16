@@ -8,7 +8,7 @@ import com.hospital.santajoana.domain.services.QuartoMediator;
 
 @RestController
 @RequestMapping("/api/quartos")
-public class QuartoController extends BaseController<Quarto> {
+public class QuartoController extends BaseController<Quarto, Long> {
 
     public QuartoController(QuartoMediator quartoMediator) {
         super(quartoMediator);
