@@ -39,11 +39,16 @@ Corrigir a implementação nova que usa datetime como primary key em:
 - Pedido
 - Mudar a implementação de produto_pedido considerando que agora tem uma chave primária composta
 
+# OBS: Essas mudanças precisam refletir no modelo conceitual e lógico
+
+
 * Ou seja:
     atualizar as entities tirando o id da estadia e colocando data estadia
     atualizar o repository, provavelmente n vai mais estender do repositorio base
     atualizar mediator
     atualizar controllers
+
+
 
 Corrigir no codigo pra que as entidades base possam escolher qual tipo do ID da entidade e não deixar Long predefinido
 
