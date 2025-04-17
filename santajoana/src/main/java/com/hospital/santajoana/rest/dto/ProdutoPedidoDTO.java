@@ -22,7 +22,7 @@ public class ProdutoPedidoDTO {
     // Convert entity to DTO using product entity and product-order entity
     public static ProdutoPedidoDTO fromEntities(Produto produto, ProdutoPedido produtoPedido) {
         return new ProdutoPedidoDTO(
-            produtoPedido.getPedidoId(),
+            produtoPedido.getProdutoId(),
             produto.getId(),
             produto.getNome(),
             produto.getPreco(),

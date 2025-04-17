@@ -13,6 +13,7 @@ import com.hospital.santajoana.domain.entity.Estadia;
 public class EstadiaRepository extends BaseRepository<Estadia, LocalDateTime> {
 
 
+    @SuppressWarnings("unused")
     public EstadiaRepository(JdbcTemplate jdbcTemplate) {
         super(
        "ESTADIA",

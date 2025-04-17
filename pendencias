@@ -38,9 +38,10 @@ Corrigir a implementação nova que usa datetime como primary key em:
 - Estadia
 - Pedido
 - Mudar a implementação de produto_pedido considerando que agora tem uma chave primária composta
+- No estadia controller precisa ter um url param pra ver se quer puxar todas as estadias do paciente ou a mais recente
+algo como latest?=true ou false que ja vai se o padrao
 
-# OBS: Essas mudanças precisam refletir no modelo conceitual e lógico
-
+Adicionar tratamentos de erro pra quando uma constraint de referencia a uma chave falha
 
 * Ou seja:
     atualizar as entities tirando o id da estadia e colocando data estadia
@@ -48,7 +49,7 @@ Corrigir a implementação nova que usa datetime como primary key em:
     atualizar mediator
     atualizar controllers
 
-
+# OBS: Essas mudanças precisam refletir no modelo conceitual e lógico
 
 Corrigir no codigo pra que as entidades base possam escolher qual tipo do ID da entidade e não deixar Long predefinido
 

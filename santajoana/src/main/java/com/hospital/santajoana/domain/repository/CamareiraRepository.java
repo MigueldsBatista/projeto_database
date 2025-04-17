@@ -8,6 +8,7 @@ import com.hospital.santajoana.domain.entity.Camareira;
 @Repository
 public class CamareiraRepository extends BaseRepository<Camareira, Long> {
 
+    @SuppressWarnings("unused")
     public CamareiraRepository(JdbcTemplate jdbcTemplate) {
         super("CAMAREIRA", "ID_CAMAREIRA", jdbcTemplate, (rs, rowNum) -> {
             Camareira camareira = new Camareira(

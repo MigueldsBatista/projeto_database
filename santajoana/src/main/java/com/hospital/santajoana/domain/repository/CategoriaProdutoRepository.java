@@ -8,6 +8,7 @@ import com.hospital.santajoana.domain.entity.CategoriaProduto;
 @Repository
 public class CategoriaProdutoRepository extends BaseRepository<CategoriaProduto, Long> {
 
+    @SuppressWarnings("unused")
     public CategoriaProdutoRepository(JdbcTemplate jdbcTemplate) {
         super("CATEGORIA_PRODUTO", "ID_CATEGORIA", jdbcTemplate, (rs, rowNum) -> {
             CategoriaProduto categoriaProduto = new CategoriaProduto(

@@ -45,11 +45,11 @@ public class PedidoController extends BaseController<Pedido, LocalDateTime> {
     }
 
     @GetMapping("/{id}/produtos")
-    public ResponseEntity<List<ProdutoPedidoDTO>> findPedidoProdutos(@PathVariable Long id) {
+    public ResponseEntity<List<ProdutoPedidoDTO>> findPedidoProdutos(@PathVariable LocalDateTime id) {
         
         List<ProdutoPedidoDTO> dtos = new ArrayList<>();
 
-        List<ProdutoPedido> produtosPedidos = produtoPedidoMediator.findProdutosbyPedidoId(id);
+        List<ProdutoPedido> produtosPedidos = produtoPedidoMediator.findProdutosbyPedidoData(id);
 
         for (ProdutoPedido produtoPedido : produtosPedidos) {
 

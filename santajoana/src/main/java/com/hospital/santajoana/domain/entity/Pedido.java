@@ -6,13 +6,13 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
+@EqualsAndHashCode(callSuper = true) // Include superclass fields in equals and hashCode
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL) // Exclude null fields from JSON serialization
 public class Pedido extends Entity<LocalDateTime> {
@@ -29,6 +29,18 @@ public class Pedido extends Entity<LocalDateTime> {
         this.status = status;
     }
 
+    public Pedido(LocalDateTime dataEntradaEstadia, Long camareiraId) {
+        this.dataEntradaEstadia = dataEntradaEstadia;
+        this.camareiraId = camareiraId;
+    }
+
+    public Pedido(LocalDateTime dataEntradaEstadia, Long camareiraId, StatusPedido status, LocalDateTime dataPedido) {
+        super(dataPedido);
+        this.dataEntradaEstadia = dataEntradaEstadia;
+        this.camareiraId = camareiraId;
+        this.status = status;
+        this.dataPedido = dataPedido;
+    }
 
     @Getter
     public enum StatusPedido {

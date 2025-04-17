@@ -14,6 +14,7 @@ import com.hospital.santajoana.domain.entity.Fatura.StatusPagamento;
 @Repository
 public class FaturaRepository extends BaseRepository<Fatura, LocalDateTime> {
 
+    @SuppressWarnings("unused")
     public FaturaRepository(JdbcTemplate jdbcTemplate) {
         super("FATURA", "DATA_EMISSAO", jdbcTemplate, (rs, rowNum) -> {
             // Extrair valores das colunas

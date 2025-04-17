@@ -8,6 +8,7 @@ import com.hospital.santajoana.domain.entity.MetodoPagamento;
 @Repository
 public class MetodoPagamentoRepository extends BaseRepository<MetodoPagamento, Long> {
 
+    @SuppressWarnings("unused")
     public MetodoPagamentoRepository(JdbcTemplate jdbcTemplate) {
         super("METODO_PAGAMENTO", "ID_METODO_PAGAMENTO", jdbcTemplate, (rs, rowNum) -> new MetodoPagamento(
                 rs.getLong("ID_METODO_PAGAMENTO"),
