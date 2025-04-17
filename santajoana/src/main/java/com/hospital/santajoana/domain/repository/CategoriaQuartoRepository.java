@@ -10,12 +10,12 @@ public class CategoriaQuartoRepository extends BaseRepository<CategoriaQuarto, L
 
     @SuppressWarnings("unused")
     public CategoriaQuartoRepository(JdbcTemplate jdbcTemplate) {
-        super("CATEGORIA_QUARTO", "ID_CATEGORIA", jdbcTemplate, (rs, rowNum) -> {
+        super("CATEGORIA_QUARTO", "ID_CATEGORIA_QUARTO", jdbcTemplate, (rs, rowNum) -> {
             CategoriaQuarto categoriaQuarto = new CategoriaQuarto(
                 rs.getString("NOME"),
                 rs.getString("DESCRICAO")
             );
-            categoriaQuarto.setId(rs.getLong("ID_CATEGORIA"));
+            categoriaQuarto.setId(rs.getLong("ID_CATEGORIA_QUARTO"));
             return categoriaQuarto;
         });
     }
@@ -32,7 +32,7 @@ public class CategoriaQuartoRepository extends BaseRepository<CategoriaQuarto, L
     }
 
     public CategoriaQuarto update(CategoriaQuarto categoriaQuarto) {
-        String updateSql = "UPDATE CATEGORIA_QUARTO SET NOME = ?, DESCRICAO = ? WHERE ID_CATEGORIA = ?";
+        String updateSql = "UPDATE CATEGORIA_QUARTO SET NOME = ?, DESCRICAO = ? WHERE ID_CATEGORIA_QUARTO = ?";
         jdbcTemplate.update(updateSql,
             categoriaQuarto.getNome(),
             categoriaQuarto.getDescricao(),

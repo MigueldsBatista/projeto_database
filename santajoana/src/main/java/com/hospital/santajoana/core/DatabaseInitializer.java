@@ -81,20 +81,39 @@ public class DatabaseInitializer {
     }
 
     private String[] generateCreateTableStatements(boolean isH2) {
-        // For different database references
-        String categoriaQuartoCol = isH2 ? "ID_CATEGORIA" : "ID_CATEGORIA_QUARTO";
-        String categoriaProdutoCol = isH2 ? "ID_CATEGORIA" : "ID_CATEGORIA_PRODUTO";
-
+        // For different database references - we'll use consistent column names now
+        String categoriaQuartoIdCol = "ID_CATEGORIA_QUARTO";
+        String categoriaProdutoIdCol = "ID_CATEGORIA_PRODUTO";
+        
+        // Define datetime type based on database
+        String datetimeType = isH2 ? "TIMESTAMP" : "DATETIME(6)";
+        
+        // Different syntax for check constraints and defaults between H2 and MySQL
+        String checkSyntaxStart = isH2 ? "CONSTRAINT CHECK_ESTADIA_INTERVALO CHECK" : "CHECK";
+        
+        // Different ENUM handling for H2 vs MySQL
+        String statusPagamentoType = isH2 
+            ? "VARCHAR(10) DEFAULT 'Pendente' NOT NULL CHECK (STATUS_PAGAMENTO IN ('Pendente', 'Pago'))" 
+            : "ENUM('Pendente', 'Pago') DEFAULT 'Pendente' NOT NULL";
+            
+        String statusPedidoType = isH2 
+            ? "VARCHAR(20) DEFAULT 'Pendente' NOT NULL CHECK (STATUS IN ('Pendente', 'Em Preparo', 'Entregue', 'Cancelado'))" 
+            : "ENUM('Pendente', 'Em Preparo', 'Entregue', 'Cancelado') DEFAULT 'Pendente' NOT NULL";
+        
+        String statusPacienteType = isH2
+            ? "VARCHAR(10) NOT NULL CHECK (STATUS IN ('Internado', 'Alta'))"
+            : "ENUM('Internado', 'Alta') NOT NULL";
+        
         return new String[] {
-            // Create category tables first
+            // Create category tables first with consistent ID naming
             "CREATE TABLE IF NOT EXISTS CATEGORIA_QUARTO ("
-            + "ID_CATEGORIA INT PRIMARY KEY AUTO_INCREMENT,"
+            + categoriaQuartoIdCol + " INT PRIMARY KEY AUTO_INCREMENT,"
             + "NOME VARCHAR(50) NOT NULL UNIQUE,"
             + "DESCRICAO VARCHAR(255)"
             + ");",
 
             "CREATE TABLE IF NOT EXISTS CATEGORIA_PRODUTO ("
-            + "ID_CATEGORIA INT PRIMARY KEY AUTO_INCREMENT,"
+            + categoriaProdutoIdCol + " INT PRIMARY KEY AUTO_INCREMENT,"
             + "NOME VARCHAR(50) NOT NULL UNIQUE,"
             + "DESCRICAO VARCHAR(255)"
             + ");",
@@ -105,20 +124,20 @@ public class DatabaseInitializer {
             + "NUMERO INT NOT NULL,"
             + "ID_CATEGORIA_QUARTO INT,"
             + "CONSTRAINT UNIQUE_NUMERO UNIQUE (NUMERO),"
-            + "FOREIGN KEY (ID_CATEGORIA_QUARTO) REFERENCES CATEGORIA_QUARTO (" + categoriaQuartoCol + ")"
+            + "FOREIGN KEY (ID_CATEGORIA_QUARTO) REFERENCES CATEGORIA_QUARTO (" + categoriaQuartoIdCol + ")"
             + (isH2 ? "" : " ON DELETE SET NULL")
             + ");",
 
             "CREATE TABLE IF NOT EXISTS PACIENTE ("
             + "ID_PACIENTE INT PRIMARY KEY AUTO_INCREMENT,"
-            + "STATUS ENUM('Internado', 'Alta') NOT NULL,"
+            + "STATUS " + statusPacienteType + ","
             + "NOME VARCHAR(100) NOT NULL,"
             + "CPF VARCHAR(11) UNIQUE NOT NULL,"
             + "DATA_NASCIMENTO DATE NOT NULL,"
             + "TELEFONE VARCHAR(11),"
             + "ENDERECO VARCHAR(255),"
-            + "CONSTRAINT CHECK_E_CPF CHECK (LENGTH(CPF) = 11),"
-            + "CONSTRAINT CHECK_STATUS CHECK (STATUS IN ('Internado', 'Alta'))"
+            + "CONSTRAINT CHECK_E_CPF CHECK (LENGTH(CPF) = 11)"
+            + (isH2 ? "" : ",CONSTRAINT CHECK_STATUS CHECK (STATUS IN ('Internado', 'Alta'))")
             + ");",
 
             "CREATE TABLE IF NOT EXISTS PRODUTO ("
@@ -134,12 +153,10 @@ public class DatabaseInitializer {
             + "GORDURAS_G INT CHECK (GORDURAS_G >= 0),"
             + "SODIO_MG INT CHECK (SODIO_MG >= 0),"
             + "CONSTRAINT UNIQUE_NOME UNIQUE (NOME),"
-            + "FOREIGN KEY (ID_CATEGORIA_PRODUTO) REFERENCES CATEGORIA_PRODUTO (" + categoriaProdutoCol + ")"
+            + "FOREIGN KEY (ID_CATEGORIA_PRODUTO) REFERENCES CATEGORIA_PRODUTO (" + categoriaProdutoIdCol + ")"
             + (isH2 ? "" : " ON DELETE SET NULL")
             + ");",
 
-            // Rest of the tables remain largely unchanged
-            // ...existing code for CAMAREIRA...
             "CREATE TABLE IF NOT EXISTS CAMAREIRA ("
             + "ID_CAMAREIRA INT PRIMARY KEY AUTO_INCREMENT,"
             + "CRE VARCHAR(20) NOT NULL UNIQUE,"
@@ -153,53 +170,53 @@ public class DatabaseInitializer {
             + "CONSTRAINT CHECK_CPF CHECK (LENGTH(CPF) = 11)"
             + ");",
             
-            // ...existing code for METODO_PAGAMENTO...
             "CREATE TABLE IF NOT EXISTS METODO_PAGAMENTO ("
             + "ID_METODO_PAGAMENTO INT PRIMARY KEY AUTO_INCREMENT,"
             + "TIPO VARCHAR(50) NOT NULL UNIQUE"
             + ");",
             
-            // ...existing code for ESTADIA...
             "CREATE TABLE IF NOT EXISTS ESTADIA ("
             + "ID_PACIENTE INT NOT NULL,"
             + "ID_QUARTO INT NOT NULL,"
-            + "DATA_ENTRADA DATETIME DEFAULT CURRENT_TIMESTAMP,"
-            + "DATA_SAIDA DATETIME NULL,"
+            + "DATA_ENTRADA " + datetimeType + " DEFAULT CURRENT_TIMESTAMP" + (isH2 ? "" : "(6)") + ","
+            + "DATA_SAIDA " + datetimeType + " NULL,"
+            + "PRIMARY KEY (DATA_ENTRADA),"
             + "UNIQUE (ID_PACIENTE, ID_QUARTO, DATA_ENTRADA),"
             + "FOREIGN KEY (ID_QUARTO) REFERENCES QUARTO (ID_QUARTO),"
             + "FOREIGN KEY (ID_PACIENTE) REFERENCES PACIENTE (ID_PACIENTE),"
-            + "CONSTRAINT CHECK_ESTADIA_INTERVALO CHECK (DATA_ENTRADA <= DATA_SAIDA OR DATA_SAIDA IS NULL)"
+            + checkSyntaxStart + " (DATA_ENTRADA <= DATA_SAIDA OR DATA_SAIDA IS NULL)"
             + ");",
             
-            // ...existing code for FATURA...
             "CREATE TABLE IF NOT EXISTS FATURA ("
-            + "STATUS_PAGAMENTO ENUM('Pendente', 'Pago') DEFAULT 'Pendente' NOT NULL,"
+            + "STATUS_PAGAMENTO " + statusPagamentoType + ","
             + "VALOR_TOTAL DECIMAL(10, 2) DEFAULT 0,"
-            + "DATA_PAGAMENTO DATETIME(6) NULL,"
+            + "DATA_PAGAMENTO " + datetimeType + " NULL,"
             + "ID_METODO_PAGAMENTO INT NULL,"
-            + "DATA_EMISSAO DATETIME(6) PRIMARY KEY DEFAULT CURRENT_TIMESTAMP(6),"
-            + "DATA_ENTRADA_ESTADIA DATETIME(6) NOT NULL,"
+            + "DATA_EMISSAO " + datetimeType + " DEFAULT CURRENT_TIMESTAMP" + (isH2 ? "" : "(6)") + ","
+            + "DATA_ENTRADA_ESTADIA " + datetimeType + " NOT NULL,"
+            + "PRIMARY KEY (DATA_EMISSAO),"
             + "FOREIGN KEY (DATA_ENTRADA_ESTADIA) REFERENCES ESTADIA (DATA_ENTRADA) ON DELETE CASCADE,"
             + "FOREIGN KEY (ID_METODO_PAGAMENTO) REFERENCES METODO_PAGAMENTO(ID_METODO_PAGAMENTO),"
             + "CONSTRAINT CHECK_VALOR_TOTAL CHECK (VALOR_TOTAL >= 0)"
             + ");",
             
-            // ...existing code for PEDIDO...
             "CREATE TABLE IF NOT EXISTS PEDIDO ("
-            + "DATA_ENTRADA_ESTADIA DATETIME(6) NOT NULL,"
+            + "DATA_ENTRADA_ESTADIA " + datetimeType + " NOT NULL,"
             + "ID_CAMAREIRA INT NULL,"
-            + "STATUS ENUM('Pendente', 'Em Preparo', 'Entregue', 'Cancelado') DEFAULT 'Pendente' NOT NULL,"
-            + "DATA_PEDIDO DATETIME(6) PRIMARY KEY DEFAULT CURRENT_TIMESTAMP(6),"
+            + "STATUS " + statusPedidoType + ","
+            + "DATA_PEDIDO " + datetimeType + " DEFAULT CURRENT_TIMESTAMP" + (isH2 ? "" : "(6)") + ","
+            + "PRIMARY KEY (DATA_PEDIDO),"
             + "FOREIGN KEY (DATA_ENTRADA_ESTADIA) REFERENCES ESTADIA (DATA_ENTRADA) ON DELETE CASCADE,"
             + "FOREIGN KEY (ID_CAMAREIRA) REFERENCES CAMAREIRA (ID_CAMAREIRA) ON DELETE SET NULL"
             + ");",
 
-            // Updated PRODUTO_PEDIDO table with ON DELETE CASCADE constraints
             "CREATE TABLE IF NOT EXISTS PRODUTO_PEDIDO ("
             + "ID_PRODUTO INT NOT NULL,"
-            + "DATA_PEDIDO DATETIME(6) NOT NULL,"
+            + "DATA_PEDIDO " + datetimeType + " NOT NULL,"
             + "QUANTIDADE INT NOT NULL,"
-            + "CRIADO_EM DATETIME(6) PRIMARY_KEY DEFAULT CURRENT_TIMESTAMP(6),"
+            + "CRIADO_EM " + datetimeType + " DEFAULT CURRENT_TIMESTAMP" + (isH2 ? "" : "(6)") + ","
+            + "PRIMARY KEY (CRIADO_EM),"
+            + "FOREIGN KEY (ID_PRODUTO) REFERENCES PRODUTO (ID_PRODUTO) ON DELETE CASCADE,"
             + "FOREIGN KEY (DATA_PEDIDO) REFERENCES PEDIDO (DATA_PEDIDO) ON DELETE CASCADE,"
             + "CONSTRAINT CHECK_QUANTIDADE CHECK (QUANTIDADE > 0)"
             + ");"

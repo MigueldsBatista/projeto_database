@@ -83,6 +83,7 @@ public class PacienteMediator extends BaseMediator<Paciente, Long> {
         
         return save(paciente);
     }
+
     public Paciente saveFromCamareiraCpf(String cpf) {
 
         var existingCamareira = camareiraMediator.findByCpf(cpf);
@@ -92,6 +93,7 @@ public class PacienteMediator extends BaseMediator<Paciente, Long> {
         }
 
         Camareira camareira = existingCamareira.get();
+        
         var existingPaciente = this.findByCpf(camareira.getCpf());
 
         if (existingPaciente.isPresent()) {
