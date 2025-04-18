@@ -3,7 +3,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import lombok.Data;
@@ -50,35 +49,26 @@ public class Fatura extends Entity<LocalDateTime> {
         }
     }
 
-    public Fatura(LocalDateTime dataEmissao, LocalDateTime dataEntradaEstadia, BigDecimal valorTotal, StatusPagamento statusPagamento, 
-                 Long metodoPagamentoId, LocalDateTime dataPagamento) {
-        super(dataEmissao);
-        this.dataEntradaEstadia = dataEntradaEstadia;
-        this.valorTotal = valorTotal;
-        this.statusPagamento = statusPagamento;
-        this.metodoPagamentoId = metodoPagamentoId;
-        this.dataPagamento = dataPagamento;
-        this.dataEmissao = dataEmissao;
-    }
-    
-    public Fatura(LocalDateTime dataEntradaEstadia, BigDecimal valorTotal, StatusPagamento statusPagamento, Long metodoPagamentoId) {
-        this.dataEntradaEstadia = dataEntradaEstadia;
-        this.statusPagamento = statusPagamento;
-        this.valorTotal = valorTotal;
-        this.metodoPagamentoId = metodoPagamentoId;
-    }
-    
+
     public Fatura(LocalDateTime dataEntradaEstadia) {
         this.dataEntradaEstadia = dataEntradaEstadia;
     }
     
     
-    public Fatura(LocalDateTime dataEntradaEstadia, BigDecimal valorTotal, StatusPagamento statusPagamento, 
-                 LocalDateTime dataPagamento, Long metodoPagamentoId) {
+    public Fatura(
+        LocalDateTime dataEntradaEstadia,
+        LocalDateTime dataEmissao,
+        BigDecimal valorTotal,
+        StatusPagamento statusPagamento,
+        Long metodoPagamentoId,
+        LocalDateTime dataPagamento
+    ){
+        super(dataEmissao);
         this.dataEntradaEstadia = dataEntradaEstadia;
         this.valorTotal = valorTotal;
         this.statusPagamento = statusPagamento;
         this.dataPagamento = dataPagamento;
         this.metodoPagamentoId = metodoPagamentoId;
+        this.dataEmissao = dataEmissao;
     }
 }

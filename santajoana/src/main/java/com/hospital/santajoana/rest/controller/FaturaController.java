@@ -15,8 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -62,19 +60,4 @@ public class FaturaController extends BaseController<Fatura, LocalDateTime> {
     }
 
 
-@PostMapping("/create")
-public ResponseEntity<Fatura> create(@RequestBody Fatura entity) {
-    // Exemplo de conversão manual, se necessário:
-    // if (entity.getDataEntradaEstadia() instanceof String) {
-    //     entity.setDataEntradaEstadia(LocalDateTime.parse((String) entity.getDataEntradaEstadia()));
-    // }
-    return super.create(entity);
-}
-
-
-    @Override
-    @PutMapping("/update")
-    public ResponseEntity<Fatura> update(@RequestBody Fatura entity) {
-        return super.update(entity);
-    }
 }

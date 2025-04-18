@@ -75,6 +75,7 @@ public abstract class BaseControllerTest {
         }
     }
     
+    @SuppressWarnings("null")
     @AfterEach
     public void cleanup() {
         boolean isH2 = isH2Database();
@@ -358,16 +359,7 @@ public abstract class BaseControllerTest {
         // First ensure we have an estadia
         var estadia = createDefaultEstadia();
         
-        // Create method first and then use it
-        MetodoPagamento metodoPagamento = createDefaultMetodoPagamento();
-        
         Fatura fatura = new Fatura(estadia.getId());
-        fatura.setDataEntradaEstadia(estadia.getId());
-        fatura.setStatusPagamento(StatusPagamento.PENDENTE);
-        fatura.setValorTotal(new BigDecimal("1000.00"));
-        
-        // Use the id directly from the created method to avoid toString conversion issues
-        fatura.setMetodoPagamentoId(metodoPagamento.getId());
         
         String faturaJson = saveFaturaEntity(fatura)
             .andReturn()
@@ -429,5 +421,7 @@ public abstract class BaseControllerTest {
 
         return objectMapper.readValue(metodoPagamentoJson, MetodoPagamento.class);
     }
+
+
 
 }

@@ -57,8 +57,8 @@ public class FaturaRepository extends BaseRepository<Fatura, LocalDateTime> {
         jdbcTemplate.update(insertSql,
                 fatura.getDataEntradaEstadia()
         );
-
-        return findByDataEntradaEstadia(fatura.getDataEntradaEstadia()).orElse(null);
+        var faturaIns = findByDataEntradaEstadia(fatura.getDataEntradaEstadia()).orElse(null);
+        return faturaIns;
     }
 
     public Fatura update(Fatura fatura) {

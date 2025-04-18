@@ -37,8 +37,13 @@ public class PedidoControllerTest extends BaseControllerTest {
         // Create necessary dependencies first
         
         // Create a test pedido
-        Pedido pedido = createDefaultPedido();
+        var estadia = createDefaultEstadia();
+        var camareira = createDefaultCamareira();
         
+        Pedido pedido = new Pedido();
+        pedido.setDataEntradaEstadia(estadia.getDataEntrada());
+        pedido.setCamareiraId(camareira.getId());
+
         // Test creating a pedido
         String pedidoJson = objectMapper.writeValueAsString(pedido);
         
@@ -61,7 +66,7 @@ public class PedidoControllerTest extends BaseControllerTest {
         mockMvc.perform(get("/api/pedidos/{id}", pedido.getId()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.dataEntradaEstadia").value(pedido.getDataEntradaEstadia()))
+                .andExpect(jsonPath("$.dataEntradaEstadia").value(pedido.getDataEntradaEstadia().toString()))
                 .andExpect(jsonPath("$.camareiraId").value(pedido.getCamareiraId()))
                 .andExpect(jsonPath("$.status").value(pedido.getStatus().getDescricao()))
                 .andExpect(jsonPath("$.dataPedido").exists());

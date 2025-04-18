@@ -73,14 +73,15 @@ public class EstadiaControllerTest extends BaseControllerTest {
         Estadia estadia = createDefaultEstadia();
         
         // Update the estadia with a checkout date
-        estadia.setDataSaida(LocalDateTime.now());
+        LocalDateTime now = LocalDateTime.now().truncatedTo(java.time.temporal.ChronoUnit.MICROS);
+        estadia.setDataSaida(now);
         String estadiaJson = objectMapper.writeValueAsString(estadia);
         
         mockMvc.perform(put("/api/estadias/update")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(estadiaJson))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.dataSaida").exists());
+                .andExpect(jsonPath("$.dataSaida").value(now.toString()));
     }
     
     @Test

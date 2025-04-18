@@ -82,8 +82,8 @@ public class DatabaseInitializer {
 
     private String[] generateCreateTableStatements(boolean isH2) {
         // For different database references - we'll use consistent column names now
-        String categoriaQuartoIdCol = "ID_CATEGORIA_QUARTO";
-        String categoriaProdutoIdCol = "ID_CATEGORIA_PRODUTO";
+        String categoriaQuartoIdCol = "ID_CATEGORIA";
+        String categoriaProdutoIdCol = "ID_CATEGORIA";
         
         // Define datetime type based on database
         String datetimeType = isH2 ? "TIMESTAMP" : "DATETIME(6)";
