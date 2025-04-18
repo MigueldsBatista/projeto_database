@@ -68,4 +68,14 @@ public class FaturaMediator extends BaseMediator<Fatura, LocalDateTime> {
         return faturaRepository.findByDataEntradaEstadia(dataEntradaEstadia);
     }
 
+    public Optional<Fatura> findMostRecentFaturaByPacienteId(Long pacienteId){
+
+        var estadia = estadiaMediator.findMostRecentEstadiaByPacienteId(pacienteId);
+        
+        if(estadia.isEmpty()){
+            return Optional.empty();
+        }
+
+        return faturaRepository.findByDataEntradaEstadia(estadia.get().getDataEntrada());
+    }
 }

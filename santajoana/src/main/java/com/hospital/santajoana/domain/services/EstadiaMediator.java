@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 
 import com.hospital.santajoana.domain.entity.Estadia;
+import com.hospital.santajoana.domain.entity.Fatura;
 import com.hospital.santajoana.domain.entity.Paciente;
 import com.hospital.santajoana.domain.entity.Paciente.StatusPaciente;
 import com.hospital.santajoana.domain.repository.EstadiaRepository;
@@ -63,5 +64,7 @@ public class EstadiaMediator extends BaseMediator<Estadia, LocalDateTime> {
 
         return repository.findMostRecentEstadiaByPacienteId(pacienteId);
     }
+
+
 
 }

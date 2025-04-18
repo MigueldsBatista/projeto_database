@@ -1,5 +1,6 @@
 package com.hospital.santajoana.domain.repository;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -84,4 +85,6 @@ public class FaturaRepository extends BaseRepository<Fatura, LocalDateTime> {
         String descricao = status.getDescricao();
         return findBySql(sql, descricao);
     }
+
+
 }

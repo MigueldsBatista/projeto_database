@@ -3,9 +3,11 @@ package com.hospital.santajoana.rest.controller;
 import org.springframework.http.ResponseEntity;
 
 import com.hospital.santajoana.domain.entity.Estadia;
+import com.hospital.santajoana.domain.entity.Fatura;
 import com.hospital.santajoana.domain.entity.Paciente;
 import com.hospital.santajoana.domain.entity.Paciente.StatusPaciente;
 import com.hospital.santajoana.domain.services.EstadiaMediator;
+import com.hospital.santajoana.domain.services.FaturaMediator;
 import com.hospital.santajoana.domain.services.PacienteMediator;
 import com.hospital.santajoana.domain.services.PedidoMediator;
 import com.hospital.santajoana.domain.entity.Pedido;
@@ -21,12 +23,14 @@ public class PacienteController extends BaseController<Paciente, Long> {
     private final PacienteMediator pacienteMediator;
     private final PedidoMediator pedidoMediator;
     private final EstadiaMediator estadiaMediator;
+    private final FaturaMediator faturaMediator;
 
-    public PacienteController(PacienteMediator pacienteMediator, PedidoMediator pedidoMediator, EstadiaMediator estadiaMediator) {
+    public PacienteController(PacienteMediator pacienteMediator, PedidoMediator pedidoMediator, EstadiaMediator estadiaMediator, FaturaMediator faturaMediator) {
         super(pacienteMediator);
         this.pacienteMediator = pacienteMediator;
         this.pedidoMediator=pedidoMediator;
         this.estadiaMediator=estadiaMediator;
+        this.faturaMediator=faturaMediator;
     }
     
     @PatchMapping("/update/status/{id}")
@@ -68,6 +72,16 @@ public class PacienteController extends BaseController<Paciente, Long> {
         }
 
         return ResponseEntity.ok(estadia.get());
+    }
+    @GetMapping("/fatura-recente/{id}")
+    public ResponseEntity<Fatura> findFaturaByPacienteId(@PathVariable Long id) {
+        var fatura = faturaMediator.findMostRecentFaturaByPacienteId(id);
+
+        if (fatura.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(fatura.get());
     }
 
 }

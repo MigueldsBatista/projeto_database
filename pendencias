@@ -1,56 +1,82 @@
-# Pendências de Implementação
+🗓️ Dia 1 – Estrutura Base + Login
+🔧 Back-end: Estrutura e Login
+ Criar função de login (repository, mediator, controller)
 
-## Testes de Integridade de Dados
+ Corrigir backend para criar fatura e estadia ao logar paciente
 
-1. Testar criar um paciente com CPF duplicado e esperar 409
-2. Testar criar uma enfermeira com CRE duplicado e esperar 409
-3. Testar criar um paciente com CPF inválido (menor que 11 dígitos) e esperar 400
-4. Testar criar um paciente com CPF inválido (maior que 11 dígitos) e esperar 400
-5. Testar criar um paciente com CPF inválido (não numérico) e esperar 400
-6. Testar criar uma estadia para um paciente que já possui uma estadia com status diferente de alta e esperar 400
-7. Testar criar uma estadia para um paciente que não existe e esperar 404
-8. Testar criar uma estadia para um quarto que não existe e esperar 404
-9. Testar criar uma fatura para um paciente que já possui uma fatura associada com status diferente de paga e esperar 400
-10. Testar criar uma fatura para um paciente com status de alta e esperar 400
+ Permitir cadastro de camareira
 
-**Observação**: Se algum caso de teste falhar é preciso corrigir o trecho do código com problemas. Debugar os testes ajuda muito.
+ Adicionar tratamento para erro de constraint de referência (FK inexistente)
 
-## Endpoints a Implementar
+🖥️ Front-end
+ Tela de cadastro/login e perfil
 
-- Obter a estadia mais recente de um paciente DONE
-- Obter a fatura mais recente de um paciente DONE
-- Obter todos os pedidos de uma fatura:
-    - Opção de agrupar por dia
-    - Opção de obter todos os pedidos
-    - Considerar fazer isso também no endpoint dos pedidos de um paciente
+ Início da persistência do login (token/localStorage)
 
-## Questões de Modelagem
+🗓️ Dia 2 – Testes e Perfil
+✅ Testes de Integridade de Dados
+ CPF duplicado → 409
 
-- E se uma camareira precisar virar paciente em algum momento?
-- Preicisamos criar um método que permita criar um paciente a partir do id de uma camareira
+ CRE duplicado → 409
 
-- Saber justificar pq não usamos herança no código
+ CPF inválido (< 11) → 400
 
-## Correções de Código
+ CPF inválido (> 11) → 400
 
-Corrigir a implementação nova que usa datetime como primary key em:
-- Fatura
-- Estadia
-- Pedido
-- Mudar a implementação de produto_pedido considerando que agora tem uma chave primária composta
-- No estadia controller precisa ter um url param pra ver se quer puxar todas as estadias do paciente ou a mais recente
-algo como latest?=true ou false que ja vai se o padrao
+ CPF inválido (não numérico) → 400
 
-Adicionar tratamentos de erro pra quando uma constraint de referencia a uma chave falha
+ Estadia já existente (status ≠ alta) → 400
 
-* Ou seja:
-    atualizar as entities tirando o id da estadia e colocando data estadia
-    atualizar o repository, provavelmente n vai mais estender do repositorio base
-    atualizar mediator
-    atualizar controllers
+ Estadia para paciente inexistente → 404
 
-# OBS: Essas mudanças precisam refletir no modelo conceitual e lógico
+ Estadia para quarto inexistente → 404
 
-Corrigir no codigo pra que as entidades base possam escolher qual tipo do ID da entidade e não deixar Long predefinido
+ Fatura existente (status ≠ paga) → 400
 
-Isso inclui, corrigir as entities, repository, mediators e controllers, e tests
+ Fatura com paciente de alta → 400
+
+⚠️ Corrigir o código onde os testes falharem!
+
+👤 Tela de Perfil
+ Implementar tela simples que consome o endpoint de do usuário paciente
+
+🗓️ Dia 3 – Pedidos, Fatura e Carrinho
+🧾 Endpoint e Tela de Fatura
+ Backend: listar pedidos da fatura agrupados por dia
+
+ Tela de fatura (com agrupamento e datas)
+
+🛒 Carrinho
+ Finalizar lógica no localStorage
+
+ Conectar com criação de pedidos
+
+🗓️ Dia 4 – Cardápio, Filtros e Refinamento
+🍽️ Tela de Cardápio
+ Backend: adicionar filtro por categoria (?categoria=...)
+
+ Frontend: implementar filtro visual
+
+📦 Tela de Pedidos do Paciente
+ Mostrar pedidos do paciente com informações corretas
+
+ Filtros por data/categoria (mínimo viável)
+
+📘 Questões de Modelagem
+ Justificar por que não foi usada herança:
+
+Regras de negócio distintas
+
+Entidades não compartilham comportamento suficiente
+
+Preferência por composição e menor acoplamento
+
+✨ Bônus: Fechamento
+Se sobrar tempo:
+
+ Refatorar código com feedback dos testes
+
+ Revisar modelo conceitual e lógico atualizado
+
+ Melhorar UX (mensagens, validações visuais, loading, etc.)
+

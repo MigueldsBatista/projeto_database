@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import com.hospital.santajoana.domain.entity.Estadia;
+import com.hospital.santajoana.domain.entity.Fatura;
 
 @Repository
 public class EstadiaRepository extends BaseRepository<Estadia, LocalDateTime> {
@@ -23,12 +24,12 @@ public class EstadiaRepository extends BaseRepository<Estadia, LocalDateTime> {
             Timestamp dataEntrada = rs.getTimestamp("DATA_ENTRADA");
             Timestamp dataSaida = rs.getTimestamp("DATA_SAIDA");
             Long idPaciente = rs.getLong("ID_PACIENTE");
-            Long idQuarto = rs.getLong("ID_QUARTO");
+            Long quartoId = rs.getLong("ID_QUARTO");
             
             return new Estadia(
                 dataEntrada != null ? dataEntrada.toLocalDateTime() : null,
                 idPaciente,
-                idQuarto,
+                quartoId,
                 dataSaida != null ? dataSaida.toLocalDateTime() : null
             );
         });
@@ -61,6 +62,7 @@ public class EstadiaRepository extends BaseRepository<Estadia, LocalDateTime> {
             .stream()
             .findFirst();
     }
+
 
 
 }

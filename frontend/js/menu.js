@@ -1,179 +1,160 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Menu items data
-    const menuItems = [
-        {
-            id: 1,
-            name: 'Café da Manhã Completo',
-            description: 'Pão, manteiga, queijo, presunto, café e suco',
-            price: 19.90,
-            image: 'img/products/breakfast.jpg',
-            category: 'breakfast'
-        },
-        {
-            id: 2,
-            name: 'Café com Leite',
-            description: '300ml',
-            price: 5.50,
-            image: 'img/products/coffee.jpg',
-            category: 'breakfast'
-        },
-        {
-            id: 3,
-            name: 'Pão com Manteiga',
-            description: '2 unidades',
-            price: 4.50,
-            image: 'img/products/bread.jpg',
-            category: 'breakfast'
-        },
-        {
-            id: 4,
-            name: 'Almoço Executivo',
-            description: 'Arroz, feijão, proteína do dia e salada',
-            price: 27.90,
-            image: 'img/products/lunch.jpg',
-            category: 'lunch'
-        },
-        {
-            id: 5,
-            name: 'Filé de Frango Grelhado',
-            description: 'Com arroz, legumes e purê',
-            price: 32.90,
-            image: 'img/products/chicken.jpg',
-            category: 'lunch'
-        },
-        {
-            id: 6,
-            name: 'Jantar Leve',
-            description: 'Sopa do dia com pão integral',
-            price: 18.90,
-            image: 'img/products/dinner.jpg',
-            category: 'dinner'
-        },
-        {
-            id: 7,
-            name: 'Omelete com Salada',
-            description: 'Omelete com legumes e salada verde',
-            price: 22.50,
-            image: 'img/products/omelet.jpg',
-            category: 'dinner'
-        },
-        {
-            id: 8,
-            name: 'Pudim de Leite',
-            description: 'Porção individual',
-            price: 8.50,
-            image: 'img/products/pudding.jpg',
-            category: 'dessert'
-        },
-        {
-            id: 9,
-            name: 'Salada de Frutas',
-            description: 'Frutas da estação',
-            price: 7.90,
-            image: 'img/products/fruits.jpg',
-            category: 'dessert'
-        },
-        {
-            id: 10,
-            name: 'Água Mineral',
-            description: 'Garrafa 500ml',
-            price: 3.50,
-            image: 'img/products/water.jpg',
-            category: 'all'
-        },
-        {
-            id: 11,
-            name: 'Suco Natural',
-            description: 'Laranja ou maçã, 300ml',
-            price: 7.90,
-            image: 'img/products/juice.jpg',
-            category: 'all'
-        }
-    ];
+document.addEventListener('DOMContentLoaded', async function() {
+    const API_URL = 'http://localhost:8080';
+    let allProducts = [];
     
-    // Save menu items to localStorage
-    localStorage.setItem('menuItems', JSON.stringify(menuItems));
-    
-    // Get URL parameters
-    const urlParams = new URLSearchParams(window.location.search);
-    const categoryParam = urlParams.get('category');
-    
-    // Set active tab based on URL parameter or default to 'all'
-    const activeCategory = categoryParam || 'all';
-    document.querySelector(`.tab-item[data-category="${activeCategory}"]`).classList.add('active');
-    
-    // Display products based on selected category
-    displayProducts(activeCategory);
-    
-    // Tab click event listeners
-    document.querySelectorAll('.tab-item').forEach(tab => {
-        tab.addEventListener('click', function() {
-            const category = this.getAttribute('data-category');
-            
-            // Update active tab
-            document.querySelectorAll('.tab-item').forEach(t => {
-                t.classList.remove('active');
-            });
-            this.classList.add('active');
-            
-            // Display filtered products
-            displayProducts(category);
-        });
-    });
-    
-    // Search toggle
-    document.getElementById('search-toggle').addEventListener('click', function() {
-        const searchBar = document.getElementById('search-bar');
-        searchBar.style.display = searchBar.style.display === 'none' ? 'block' : 'none';
-        if (searchBar.style.display === 'block') {
-            document.getElementById('search-input').focus();
-        }
-    });
-    
-    // Search functionality
-    document.getElementById('search-input').addEventListener('input', function() {
-        const searchTerm = this.value.toLowerCase();
+    try {
+        // Fetch product categories and products from API
+        const categories = await fetchCategories();
+        allProducts = await fetchProducts();
         
-        if (searchTerm) {
-            document.getElementById('clear-search').style.display = 'block';
+        // Update category tabs dynamically if we have categories
+        if (categories && categories.length > 0) {
+            updateCategoryTabs(categories);
+        }
+        
+        // Get URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const categoryParam = urlParams.get('category');
+        
+        // Set active tab based on URL parameter or default to 'all'
+        const activeCategory = categoryParam || 'all';
+        const activeTab = document.querySelector(`.tab-item[data-category="${activeCategory}"]`);
+        if (activeTab) activeTab.classList.add('active');
+        
+        // Display products based on selected category
+        displayProducts(activeCategory);
+        
+        // Tab click event listeners
+        document.querySelectorAll('.tab-item').forEach(tab => {
+            tab.addEventListener('click', function() {
+                const category = this.getAttribute('data-category');
+                
+                // Update active tab
+                document.querySelectorAll('.tab-item').forEach(t => {
+                    t.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                // Display filtered products
+                displayProducts(category);
+            });
+        });
+        
+        // Search toggle
+        document.getElementById('search-toggle').addEventListener('click', function() {
+            const searchBar = document.getElementById('search-bar');
+            searchBar.style.display = searchBar.style.display === 'none' ? 'block' : 'none';
+            if (searchBar.style.display === 'block') {
+                document.getElementById('search-input').focus();
+            }
+        });
+        
+        // Search functionality
+        document.getElementById('search-input').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
             
-            // Filter products by search term
-            const filteredItems = menuItems.filter(item => 
-                item.name.toLowerCase().includes(searchTerm) || 
-                item.description.toLowerCase().includes(searchTerm)
-            );
-            
-            renderProducts(filteredItems);
-        } else {
-            document.getElementById('clear-search').style.display = 'none';
+            if (searchTerm) {
+                document.getElementById('clear-search').style.display = 'block';
+                
+                // Filter products by search term
+                const filteredItems = allProducts.filter(item => 
+                    item.nome.toLowerCase().includes(searchTerm) || 
+                    item.descricao.toLowerCase().includes(searchTerm)
+                );
+                
+                renderProducts(filteredItems);
+            } else {
+                document.getElementById('clear-search').style.display = 'none';
+                
+                // Reset to active category
+                const activeCategory = document.querySelector('.tab-item.active').getAttribute('data-category');
+                displayProducts(activeCategory);
+            }
+        });
+        
+        // Clear search
+        document.getElementById('clear-search').addEventListener('click', function() {
+            document.getElementById('search-input').value = '';
+            this.style.display = 'none';
             
             // Reset to active category
             const activeCategory = document.querySelector('.tab-item.active').getAttribute('data-category');
             displayProducts(activeCategory);
-        }
-    });
-    
-    // Clear search
-    document.getElementById('clear-search').addEventListener('click', function() {
-        document.getElementById('search-input').value = '';
-        this.style.display = 'none';
+        });
         
-        // Reset to active category
-        const activeCategory = document.querySelector('.tab-item.active').getAttribute('data-category');
-        displayProducts(activeCategory);
-    });
+        // Update cart badge
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        updateCartBadge(cart.reduce((total, item) => total + item.quantity, 0));
+    } catch (error) {
+        console.error('Error loading menu data:', error);
+        showToast('Erro ao carregar os produtos. Usando dados offline.', 'error');
+        
+        // Fallback to offline data if API fails
+        loadOfflineData();
+    }
     
-    // Update cart badge
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    updateCartBadge(cart.reduce((total, item) => total + item.quantity, 0));
+    async function fetchCategories() {
+        try {
+            const response = await fetch(`${API_URL}/api/categoria-produto`, {
+                headers: { 'Accept': 'application/json' },
+                mode: 'cors'
+            });
+            
+            if (!response.ok) throw new Error('Failed to fetch categories');
+            return await response.json();
+        } catch (error) {
+            console.error('Error fetching categories:', error);
+            return null;
+        }
+    }
     
-    function displayProducts(category) {
+    async function fetchProducts() {
+        try {
+            const response = await fetch(`${API_URL}/api/produtos`, {
+                headers: { 'Accept': 'application/json' },
+                mode: 'cors'
+            });
+            
+            if (!response.ok) throw new Error('Failed to fetch products');
+            return await response.json();
+        } catch (error) {
+            console.error('Error fetching products:', error);
+            return [];
+        }
+    }
+    
+    function updateCategoryTabs(categories) {
+        const tabsContainer = document.querySelector('.tabs-container');
+        if (!tabsContainer) return;
+        
+        // Keep the "All" tab as the first item
+        const allTab = tabsContainer.querySelector('.tab-item[data-category="all"]');
+        
+        // Clear existing tabs except "All"
+        tabsContainer.innerHTML = '';
+        if (allTab) tabsContainer.appendChild(allTab);
+        
+        // Add category tabs
+        categories.forEach(category => {
+            const tab = document.createElement('div');
+            tab.className = 'tab-item';
+            tab.setAttribute('data-category', category.id.toString());
+            tab.textContent = category.nome;
+            
+            tabsContainer.appendChild(tab);
+        });
+    }
+    
+    function displayProducts(categoryId) {
         let filteredItems;
         
-        if (category === 'all') {
-            filteredItems = menuItems;
+        if (categoryId === 'all') {
+            filteredItems = allProducts;
         } else {
-            filteredItems = menuItems.filter(item => item.category === category || item.category === 'all');
+            // Filter by category ID
+            filteredItems = allProducts.filter(item => 
+                item.categoriaId === parseInt(categoryId) || item.categoriaId === null
+            );
         }
         
         renderProducts(filteredItems);
@@ -183,19 +164,28 @@ document.addEventListener('DOMContentLoaded', function() {
         const container = document.getElementById('products-container');
         container.innerHTML = '';
         
+        if (!items || items.length === 0) {
+            container.innerHTML = '<div class="empty-state">Nenhum produto encontrado</div>';
+            return;
+        }
+        
         items.forEach(item => {
             const productCard = document.createElement('div');
             productCard.className = 'product-card';
             productCard.setAttribute('data-id', item.id);
+            
+            // Use placeholder image if no image available
+            const imageSrc = item.image || 'img/products/placeholder.jpg';
+            
             productCard.innerHTML = `
                 <div class="product-image">
-                    <img src="${item.image}" alt="${item.name}">
+                    <img src="${imageSrc}" alt="${item.nome}">
                 </div>
                 <div class="product-info">
-                    <h3>${item.name}</h3>
-                    <p class="product-description">${item.description}</p>
+                    <h3>${item.nome}</h3>
+                    <p class="product-description">${item.descricao}</p>
                     <div class="product-price-action">
-                        <p class="product-price">R$ ${item.price.toFixed(2).replace('.', ',')}</p>
+                        <p class="product-price">R$ ${formatCurrency(item.preco)}</p>
                         <button class="add-to-cart-button">
                             <i class="fas fa-plus"></i>
                         </button>
@@ -230,9 +220,9 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             cart.push({
                 id: product.id,
-                name: product.name,
-                price: product.price,
-                image: product.image,
+                name: product.nome,
+                price: product.preco,
+                image: product.image || 'img/products/placeholder.jpg',
                 quantity: 1
             });
         }
@@ -244,7 +234,124 @@ document.addEventListener('DOMContentLoaded', function() {
         updateCartBadge(cart.reduce((total, item) => total + item.quantity, 0));
         
         // Show toast notification
-        showToast(`${product.name} adicionado ao carrinho`, 'success');
+        showToast(`${product.nome} adicionado ao carrinho`, 'success');
+    }
+    
+    // Fallback to offline data if API fails
+    function loadOfflineData() {
+        const offlineProducts = [
+            {
+                id: 1,
+                nome: 'Café da Manhã Completo',
+                descricao: 'Pão, manteiga, queijo, presunto, café e suco',
+                preco: 19.90,
+                image: 'img/products/breakfast.jpg',
+                categoriaId: 1
+            },
+            {
+                id: 2,
+                nome: 'Café com Leite',
+                descricao: '300ml',
+                preco: 5.50,
+                image: 'img/products/coffee.jpg',
+                categoriaId: 1
+            },
+            {
+                id: 3,
+                nome: 'Pão com Manteiga',
+                descricao: '2 unidades',
+                preco: 4.50,
+                image: 'img/products/bread.jpg',
+                categoriaId: 1
+            },
+            {
+                id: 4,
+                nome: 'Almoço Executivo',
+                descricao: 'Arroz, feijão, proteína do dia e salada',
+                preco: 27.90,
+                image: 'img/products/lunch.jpg',
+                categoriaId: 2
+            },
+            {
+                id: 5,
+                nome: 'Filé de Frango Grelhado',
+                descricao: 'Com arroz, legumes e purê',
+                preco: 32.90,
+                image: 'img/products/chicken.jpg',
+                categoriaId: 2
+            },
+            {
+                id: 6,
+                nome: 'Jantar Leve',
+                descricao: 'Sopa do dia com pão integral',
+                preco: 18.90,
+                image: 'img/products/dinner.jpg',
+                categoriaId: 3
+            },
+            {
+                id: 7,
+                nome: 'Omelete com Salada',
+                descricao: 'Omelete com legumes e salada verde',
+                preco: 22.50,
+                image: 'img/products/omelet.jpg',
+                categoriaId: 3
+            },
+            {
+                id: 8,
+                nome: 'Pudim de Leite',
+                descricao: 'Porção individual',
+                preco: 8.50,
+                image: 'img/products/pudding.jpg',
+                categoriaId: 4
+            },
+            {
+                id: 9,
+                nome: 'Salada de Frutas',
+                descricao: 'Frutas da estação',
+                preco: 7.90,
+                image: 'img/products/fruits.jpg',
+                categoriaId: 4
+            },
+            {
+                id: 10,
+                nome: 'Água Mineral',
+                descricao: 'Garrafa 500ml',
+                preco: 3.50,
+                image: 'img/products/water.jpg',
+                categoriaId: 5
+            },
+            {
+                id: 11,
+                nome: 'Suco Natural',
+                descricao: 'Laranja ou maçã, 300ml',
+                preco: 7.90,
+                image: 'img/products/juice.jpg',
+                categoriaId: 5
+            }
+        ];
+        
+        const offlineCategories = [
+            { id: 1, nome: 'Café da Manhã', descricao: 'Itens de café da manhã' },
+            { id: 2, nome: 'Almoço', descricao: 'Itens de almoço' },
+            { id: 3, nome: 'Jantar', descricao: 'Itens de jantar' },
+            { id: 4, nome: 'Sobremesas', descricao: 'Sobremesas e doces' },
+            { id: 5, nome: 'Bebidas', descricao: 'Bebidas diversas' }
+        ];
+        
+        // Update UI with offline data
+        allProducts = offlineProducts;
+        updateCategoryTabs(offlineCategories);
+        
+        // Set active tab based on URL parameter or default to 'all'
+        const urlParams = new URLSearchParams(window.location.search);
+        const categoryParam = urlParams.get('category');
+        
+        const activeCategory = categoryParam || 'all';
+        const activeTab = document.querySelector(`.tab-item[data-category="${activeCategory}"]`);
+        if (activeTab) activeTab.classList.add('active');
+        
+        // Display products based on selected category
+        displayProducts(activeCategory);
     }
     
     function updateCartBadge(count) {
@@ -254,6 +361,10 @@ document.addEventListener('DOMContentLoaded', function() {
             badge.textContent = count;
             badge.style.display = count > 0 ? 'flex' : 'none';
         });
+    }
+    
+    function formatCurrency(value) {
+        return Number(value).toFixed(2).replace('.', ',');
     }
     
     function showToast(message, type = 'default', duration = 3000) {

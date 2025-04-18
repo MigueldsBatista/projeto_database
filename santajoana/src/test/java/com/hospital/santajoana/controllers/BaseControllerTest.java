@@ -19,14 +19,10 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.sql.Connection;
-import java.sql.SQLException;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import javax.sql.DataSource;
 
 @SpringBootTest(webEnvironment = WebEnvironment.MOCK)
 @AutoConfigureMockMvc
@@ -40,9 +36,6 @@ public abstract class BaseControllerTest {
     
     @Autowired
     protected JdbcTemplate jdbcTemplate;
-    
-    @Autowired
-    protected DataSource dataSource;
     
     @BeforeEach
     public void setUp() {
@@ -65,59 +58,38 @@ public abstract class BaseControllerTest {
         }
     }
     
-    private boolean isH2Database() {
-        try (Connection connection = dataSource.getConnection()) {
-            String dbProductName = connection.getMetaData().getDatabaseProductName().toLowerCase();
-            return dbProductName.contains("h2");
-        } catch (SQLException e) {
-            System.err.println("Error detecting database type: " + e.getMessage());
-            return false;
-        }
-    }
-    
-    @SuppressWarnings("null")
     @AfterEach
     public void cleanup() {
-        boolean isH2 = isH2Database();
-        System.out.println("Test database cleanup using " + (isH2 ? "H2" : "MySQL") + " strategy");
-        
+        // Enhance cleanup to be more thorough
         try {
-            if (isH2) {
-                // H2-specific approach
-                jdbcTemplate.execute("SET REFERENTIAL_INTEGRITY FALSE");
-                jdbcTemplate.execute("TRUNCATE TABLE PRODUTO_PEDIDO");
-                jdbcTemplate.execute("TRUNCATE TABLE PEDIDO");
-                jdbcTemplate.execute("TRUNCATE TABLE FATURA");
-                jdbcTemplate.execute("TRUNCATE TABLE ESTADIA");
-                jdbcTemplate.execute("TRUNCATE TABLE PACIENTE");
-                jdbcTemplate.execute("TRUNCATE TABLE QUARTO");
-                jdbcTemplate.execute("TRUNCATE TABLE CAMAREIRA");
-                jdbcTemplate.execute("TRUNCATE TABLE METODO_PAGAMENTO");
-                jdbcTemplate.execute("TRUNCATE TABLE PRODUTO");
-                jdbcTemplate.execute("TRUNCATE TABLE CATEGORIA_PRODUTO");
-                jdbcTemplate.execute("TRUNCATE TABLE CATEGORIA_QUARTO");
-                jdbcTemplate.execute("SET REFERENTIAL_INTEGRITY TRUE");
-            } else {
-                // MySQL-specific approach
-                // Temporarily disable foreign key checks
-                jdbcTemplate.execute("SET FOREIGN_KEY_CHECKS = 0");
-                
-                // Truncate tables in proper order
-                jdbcTemplate.execute("TRUNCATE TABLE PRODUTO_PEDIDO");
-                jdbcTemplate.execute("TRUNCATE TABLE PEDIDO");
-                jdbcTemplate.execute("TRUNCATE TABLE FATURA");
-                jdbcTemplate.execute("TRUNCATE TABLE ESTADIA");
-                jdbcTemplate.execute("TRUNCATE TABLE PACIENTE");
-                jdbcTemplate.execute("TRUNCATE TABLE QUARTO");
-                jdbcTemplate.execute("TRUNCATE TABLE CAMAREIRA");
-                jdbcTemplate.execute("TRUNCATE TABLE METODO_PAGAMENTO");
-                jdbcTemplate.execute("TRUNCATE TABLE PRODUTO");
-                jdbcTemplate.execute("TRUNCATE TABLE CATEGORIA_PRODUTO");
-                jdbcTemplate.execute("TRUNCATE TABLE CATEGORIA_QUARTO");
-                
-                // Re-enable foreign key checks
-                jdbcTemplate.execute("SET FOREIGN_KEY_CHECKS = 1");
-            }
+            // First try to delete records instead of truncate
+            // In reverse order of dependencies to avoid constraint violations
+            jdbcTemplate.execute("DELETE FROM PRODUTO_PEDIDO");
+            jdbcTemplate.execute("DELETE FROM PEDIDO");
+            jdbcTemplate.execute("DELETE FROM FATURA");
+            jdbcTemplate.execute("DELETE FROM ESTADIA");
+            jdbcTemplate.execute("DELETE FROM PACIENTE");
+            jdbcTemplate.execute("DELETE FROM QUARTO");
+            jdbcTemplate.execute("DELETE FROM CAMAREIRA");
+            jdbcTemplate.execute("DELETE FROM METODO_PAGAMENTO");
+            jdbcTemplate.execute("DELETE FROM PRODUTO"); // Make sure PRODUTO is cleaned
+            jdbcTemplate.execute("DELETE FROM CATEGORIA_PRODUTO");
+            jdbcTemplate.execute("DELETE FROM CATEGORIA_QUARTO");
+            
+            // Now try the H2 specific approach as fallback
+            jdbcTemplate.execute("SET REFERENTIAL_INTEGRITY FALSE");
+            jdbcTemplate.execute("TRUNCATE TABLE PRODUTO_PEDIDO");
+            jdbcTemplate.execute("TRUNCATE TABLE PEDIDO");
+            jdbcTemplate.execute("TRUNCATE TABLE FATURA");
+            jdbcTemplate.execute("TRUNCATE TABLE ESTADIA");
+            jdbcTemplate.execute("TRUNCATE TABLE PACIENTE");
+            jdbcTemplate.execute("TRUNCATE TABLE QUARTO");
+            jdbcTemplate.execute("TRUNCATE TABLE CAMAREIRA");
+            jdbcTemplate.execute("TRUNCATE TABLE METODO_PAGAMENTO");
+            jdbcTemplate.execute("TRUNCATE TABLE PRODUTO"); // Make sure PRODUTO is explicitly truncated
+            jdbcTemplate.execute("TRUNCATE TABLE CATEGORIA_PRODUTO");
+            jdbcTemplate.execute("TRUNCATE TABLE CATEGORIA_QUARTO");
+            jdbcTemplate.execute("SET REFERENTIAL_INTEGRITY TRUE");
             
             // Verify all tables are empty
             String[] tables = {"PRODUTO_PEDIDO", "PEDIDO", "FATURA", "ESTADIA", "PACIENTE", 
@@ -130,6 +102,7 @@ public abstract class BaseControllerTest {
                     System.err.println("WARNING: " + table + " table still has " + count + " records after cleanup!");
                 }
             }
+            
         } catch (Exception e) {
             System.err.println("Failed to clean up test database: " + e.getMessage());
             e.printStackTrace();
@@ -359,7 +332,10 @@ public abstract class BaseControllerTest {
         // First ensure we have an estadia
         var estadia = createDefaultEstadia();
         
+        
         Fatura fatura = new Fatura(estadia.getId());
+        fatura.setDataEntradaEstadia(estadia.getId());
+        
         
         String faturaJson = saveFaturaEntity(fatura)
             .andReturn()
@@ -421,7 +397,5 @@ public abstract class BaseControllerTest {
 
         return objectMapper.readValue(metodoPagamentoJson, MetodoPagamento.class);
     }
-
-
 
 }

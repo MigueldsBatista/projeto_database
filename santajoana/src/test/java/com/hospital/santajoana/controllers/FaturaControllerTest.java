@@ -97,6 +97,7 @@ void testUpdateFatura() throws Exception {
         Fatura fatura = createDefaultFatura();
         
         var metodoPagamento = createDefaultMetodoPagamento();
+        
         fatura.setMetodoPagamentoId(metodoPagamento.getId());
         fatura.setValorTotal(new BigDecimal("2000.00"));
         // Update the fatura

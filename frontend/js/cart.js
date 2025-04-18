@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
+    const API_URL = 'http://localhost:8080';
+    
     // Load cart from localStorage
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
     
@@ -32,33 +34,147 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Checkout button
-    document.getElementById('checkout-btn').addEventListener('click', function() {
-        const notes = document.getElementById('order-notes').value;
+    document.getElementById('checkout-btn').addEventListener('click', async function() {
+        if (cart.length === 0) {
+            showToast('Seu carrinho está vazio', 'error');
+            return;
+        }
         
-        // Create order object
-        const order = {
-            id: Date.now(),
-            date: new Date(),
-            items: cart,
-            notes: notes,
-            subtotal: calculateSubtotal(),
-            serviceFee: calculateServiceFee(),
-            total: calculateTotal(),
-            status: 'pending'
-        };
-        
-        // Save order to localStorage
-        const orders = JSON.parse(localStorage.getItem('orders')) || [];
-        orders.push(order);
-        localStorage.setItem('orders', JSON.stringify(orders));
-        
-        // Clear cart
-        localStorage.setItem('cart', JSON.stringify([]));
-        
-        // Redirect to order confirmation
-        window.location.href = `order-confirmation.html?id=${order.id}`;
+        try {
+            const checkoutBtn = this;
+            checkoutBtn.disabled = true;
+            checkoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...';
+            
+            // Get patient ID from localStorage
+            const pacienteId = localStorage.getItem('pacienteId') || 1;
+            
+            // Get patient's estadia (stay)
+            const estadia = await fetchPacienteEstadia(pacienteId);
+            if (!estadia) {
+                throw new Error('Não foi possível encontrar uma estadia ativa');
+            }
+            
+            // Get user notes
+            const notes = document.getElementById('order-notes').value;
+            
+            // Create the order object for the backend
+            const order = {
+                dataEntradaEstadia: estadia.id, // Using estadia ID as required by the API
+                status: 'PENDENTE',
+                notes: notes // Note: This might not be in your API but can be useful
+            };
+            
+            // Submit the order to the API
+            const savedOrder = await submitOrder(order);
+            
+            // Add items to the order
+            const orderItems = await Promise.all(cart.map(item => {
+                return submitOrderItem({
+                    idProduto: item.id,
+                    dataPedido: savedOrder.dataPedido,
+                    quantidade: item.quantity
+                });
+            }));
+            
+            // Clear cart after successful order
+            localStorage.setItem('cart', JSON.stringify([]));
+            
+            // Save order info for the confirmation page
+            localStorage.setItem('lastOrder', JSON.stringify({
+                id: savedOrder.dataPedido,
+                date: new Date(savedOrder.dataPedido),
+                items: cart,
+                notes: notes,
+                subtotal: calculateSubtotal(),
+                serviceFee: calculateServiceFee(),
+                total: calculateTotal()
+            }));
+            
+            // Redirect to order confirmation page
+            window.location.href = `order-confirmation.html?id=${encodeURIComponent(savedOrder.dataPedido)}`;
+            
+        } catch (error) {
+            console.error('Error submitting order:', error);
+            showToast('Erro ao enviar pedido. Por favor, tente novamente.', 'error');
+            
+            // Re-enable checkout button
+            const checkoutBtn = document.getElementById('checkout-btn');
+            checkoutBtn.disabled = false;
+            checkoutBtn.innerHTML = 'Finalizar Pedido';
+        }
     });
     
+    async function fetchPacienteEstadia(pacienteId) {
+        try {
+            const response = await fetch(`${API_URL}/api/pacientes/estadia-recente/${pacienteId}`, {
+                headers: { 'Accept': 'application/json' },
+                mode: 'cors'
+            });
+            
+            if (!response.ok) {
+                if (response.status === 404) {
+                    showToast('Não foi encontrada uma estadia ativa para este paciente', 'error');
+                    return null;
+                }
+                throw new Error(`Network response was not ok: ${response.status}`);
+            }
+            
+            return await response.json();
+        } catch (error) {
+            console.error('Error fetching estadia:', error);
+            showToast('Erro ao obter informações da estadia', 'error');
+            return null;
+        }
+    }
+    
+    async function submitOrder(orderData) {
+        try {
+            const response = await fetch(`${API_URL}/api/pedidos/create`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                mode: 'cors',
+                body: JSON.stringify(orderData)
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Network response was not ok: ${response.status}`);
+            }
+            
+            return await response.json();
+        } catch (error) {
+            console.error('Error submitting order:', error);
+            throw error;
+        }
+    }
+    
+    async function submitOrderItem(orderItemData) {
+        try {
+            const response = await fetch(`${API_URL}/api/produto-pedidos/create`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                mode: 'cors',
+                body: JSON.stringify(orderItemData)
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Network response was not ok: ${response.status}`);
+            }
+            
+            return await response.json();
+        } catch (error) {
+            console.error('Error submitting order item:', error);
+            throw error;
+        }
+    }
+    
+    // Rest of the functions remain the same
+
     function updateCartDisplay() {
         const cart = JSON.parse(localStorage.getItem('cart')) || [];
         
