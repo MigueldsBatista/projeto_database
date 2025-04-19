@@ -16,6 +16,9 @@ public class Pessoa extends Entity<Long> {
     private LocalDate dataNascimento;
     private String telefone;
     private String endereco;
+    private String senha;
+    private String email;
+    private String fotoPerfilBase64;
     
     public Pessoa(String cpf, String nome, LocalDate dataNascimento) {
         this.cpf = cpf;

@@ -67,57 +67,27 @@ const appState = {
     }
 };
 
-// Helper Functions
-function formatCurrency(value) {
-    return value.toFixed(2).replace('.', ',');
-}
+// Common utility functions for the entire app
 
-function formatDate(date) {
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
+const APP_NAME = 'Hospital Santa Joana';
+const API_URL = 'http://localhost:8080';
+
+// Check authentication state
+function checkAuth() {
+    const user = JSON.parse(localStorage.getItem('user'));
     
-    if (date.getDate() === today.getDate() && 
-        date.getMonth() === today.getMonth() && 
-        date.getFullYear() === today.getFullYear()) {
-        return `Hoje, ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
-    } else if (date.getDate() === yesterday.getDate() && 
-               date.getMonth() === yesterday.getMonth() && 
-               date.getFullYear() === yesterday.getFullYear()) {
-        return `Ontem, ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
-    } else {
-        return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}, ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
-    }
-}
-
-function getCartTotal() {
-    return appState.cart.reduce((total, item) => total + (item.price * item.quantity), 0);
-}
-
-function findProductById(id) {
-    return appState.products.find(product => product.id === id);
-}
-
-function getCartItemCount() {
-    return appState.cart.reduce((total, item) => total + item.quantity, 0);
-}
-
-// UI Functions
-function showScreen(screenId) {
-    // Hide all screens
-    document.querySelectorAll('.screen').forEach(screen => {
-        screen.classList.remove('active');
-    });
+    const isAuthPage = window.location.pathname.includes('login.html') || 
+                      window.location.pathname.includes('register.html');
     
-    // Show the requested screen
-    const screen = document.getElementById(screenId);
-    if (screen) {
-        screen.classList.add('active');
-        appState.currentScreen = screenId;
+    if (!user && !isAuthPage) {
+        window.location.href = 'login.html';
+        return null;
     }
+    
+    return user;
 }
 
+// Common toast notification function
 function showToast(message, type = 'default', duration = 3000) {
     // Remove any existing toasts
     const existingToast = document.querySelector('.toast');
@@ -146,233 +116,288 @@ function showToast(message, type = 'default', duration = 3000) {
     }, duration);
 }
 
-function updateCartBadge() {
-    const count = getCartItemCount();
-    const badges = document.querySelectorAll('.nav-item[data-screen="cart"] .badge');
+// Update cart badge count
+function updateCartBadge(count) {
+    const badges = document.querySelectorAll('.cart-badge');
     
     badges.forEach(badge => {
         badge.textContent = count;
-        if (count > 0) {
-            badge.style.display = 'flex';
-        } else {
-            badge.style.display = 'none';
-        }
+        badge.style.display = count > 0 ? 'flex' : 'none';
     });
 }
 
-// Initialize App
+// Format currency values
+function formatCurrency(value) {
+    return Number(value).toFixed(2).replace('.', ',');
+}
+
+// Format date to PT-BR format
+function formatDate(date) {
+    if (!(date instanceof Date)) {
+        date = new Date(date);
+    }
+    
+    return date.toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    });
+}
+
+// Format date and time to PT-BR format
+function formatDateTime(date) {
+    if (!(date instanceof Date)) {
+        date = new Date(date);
+    }
+    
+    return date.toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+}
+
+// Generic status mappers
+function getStatusText(status) {
+    if (!status) return 'Desconhecido';
+    
+    // Convert to uppercase for case-insensitive comparison
+    const upperStatus = status.toUpperCase();
+    
+    switch(upperStatus) {
+        case 'PENDENTE':
+        case 'PENDING':
+            return 'Pendente';
+        case 'EM_PREPARO':
+        case 'EM PREPARO':
+        case 'IN-PROGRESS':
+        case 'IN_PROGRESS':
+            return 'Em Preparo';
+        case 'ENTREGUE':
+        case 'DELIVERED':
+            return 'Entregue';
+        case 'CANCELADO':
+        case 'CANCELLED':
+        case 'CANCELED':
+            return 'Cancelado';
+        default:
+            return status;
+    }
+}
+
+function getStatusClass(status) {
+    if (!status) return 'status-default';
+    
+    // Convert to uppercase for case-insensitive comparison
+    const upperStatus = status.toUpperCase();
+    
+    switch(upperStatus) {
+        case 'PENDENTE':
+        case 'PENDING':
+            return 'pending';
+        case 'EM_PREPARO':
+        case 'EM PREPARO':
+        case 'IN-PROGRESS':
+        case 'IN_PROGRESS':
+            return 'in-progress';
+        case 'ENTREGUE':
+        case 'DELIVERED':
+            return 'delivered';
+        case 'CANCELADO':
+        case 'CANCELLED':
+        case 'CANCELED':
+            return 'cancelled';
+        default:
+            return 'status-default';
+    }
+}
+
+// Run on every page load
+document.addEventListener('DOMContentLoaded', () => {
+    // Check authentication
+    const user = checkAuth();
+    
+    // Update cart badge if on authorized pages
+    if (!user) return;
+    
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+    updateCartBadge(totalItems);
+});
+
+// Helper Functions
+function getCartTotal() {
+    return appState.cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+}
+
+function findProductById(id) {
+    return appState.products.find(product => product.id === id);
+}
+
+function getCartItemCount() {
+    return appState.cart.reduce((total, item) => total + item.quantity, 0);
+}
+
+// UI Functions
+function showScreen(screenId) {
+    // Hide all screens
+    document.querySelectorAll('.screen').forEach(screen => {
+        screen.classList.remove('active');
+    });
+    
+    // Show the requested screen
+    const screen = document.getElementById(screenId);
+    if (screen) {
+        screen.classList.add('active');
+        appState.currentScreen = screenId;
+    }
+}
+
+function updateCartBadge() {
+    const count = getCartItemCount();
+    const badges = document.querySelectorAll('.cart-badge');
+    
+    badges.forEach(badge => {
+        badge.textContent = count;
+        badge.style.display = count > 0 ? 'flex' : 'none';
+    });
+}
+
+// Initialize App - simplified to work with existing HTML structure
 function initApp() {
-    // Inject templates
-    const app = document.getElementById('app');
-    const loginTemplate = document.getElementById('login-template').innerHTML;
-    const dashboardTemplate = document.getElementById('dashboard-template').innerHTML;
-    const catalogTemplate = document.getElementById('catalog-template').innerHTML;
+    // Check if we're on the login page
+    if (window.location.pathname.includes('login.html')) {
+        setupLoginPage();
+        return;
+    }
     
-    app.innerHTML += loginTemplate;
-    app.innerHTML += dashboardTemplate;
-    app.innerHTML += catalogTemplate;
-    
-    // Simulate loading
-    setTimeout(() => {
-        showScreen('login-screen');
-    }, 2000);
-    
-    // Setup event listeners
+    // For other pages, setup general event listeners
     setupEventListeners();
+    
+    // Check auth and load user data
+    const user = checkAuth();
+    if (user) {
+        // Update cart badge
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        updateCartBadge(cart.reduce((total, item) => total + item.quantity, 0));
+    }
+}
+
+function setupLoginPage() {
+    // Login form submission
+    const loginForm = document.getElementById('login-form');
+    if (!loginForm) return;
+    
+    loginForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        
+        // Simple validation
+        if (!email || !password) {
+            showToast('Por favor, preencha todos os campos', 'error');
+            return;
+        }
+        
+        // In a real app, we would authenticate with the server
+        // For now, simulate a successful login
+        const user = {
+            id: 1,
+            name: 'Maria Silva',
+            room: '302',
+            email: email
+        };
+        
+        // Store user in localStorage
+        localStorage.setItem('user', JSON.stringify(user));
+        
+        showToast('Login realizado com sucesso!', 'success');
+        
+        // Redirect to dashboard
+        setTimeout(() => {
+            window.location.href = 'dashboard.html';
+        }, 1000);
+    });
 }
 
 function setupEventListeners() {
-    // Login form submission
-    const loginForm = document.getElementById('login-form');
-    if (loginForm) {
-        loginForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const cpf = document.getElementById('cpf').value;
-            const password = document.getElementById('password').value;
-            
-            // Simple validation
-            if (cpf && password) {
-                // Simulate login
-                appState.user = {
-                    id: 1,
-                    name: 'Maria Silva',
-                    room: '302'
-                };
-                
-                showScreen('dashboard-screen');
-                
-                // Update user info
-                document.getElementById('patient-name').textContent = appState.user.name;
-                document.getElementById('room-number').textContent = appState.user.room;
-                
-                // Update invoice info
-                document.getElementById('invoice-total').textContent = formatCurrency(appState.invoice.total);
-            } else {
-                showToast('Por favor, preencha todos os campos', 'error');
-            }
-        });
-    }
-    
     // Bottom navigation
     document.querySelectorAll('.nav-item').forEach(item => {
         item.addEventListener('click', function(e) {
-            e.preventDefault();
-            const screenId = this.getAttribute('data-screen');
-            
-            if (screenId) {
-                // Update active state
-                document.querySelectorAll('.nav-item').forEach(navItem => {
-                    navItem.classList.remove('active');
-                });
-                this.classList.add('active');
-                
-                // Show screen
-                showScreen(`${screenId}-screen`);
+            // Only prevent default if it's an anchor without a specific href
+            const href = this.getAttribute('href');
+            if (!href || href === '#') {
+                e.preventDefault();
             }
+            
+            // Handle nav item activation
+            document.querySelectorAll('.nav-item').forEach(navItem => {
+                navItem.classList.remove('active');
+            });
+            this.classList.add('active');
         });
     });
     
     // Back buttons
     document.querySelectorAll('.back-button').forEach(button => {
-        button.addEventListener('click', function() {
-            showScreen('dashboard-screen');
-            
-            // Update active nav
-            document.querySelectorAll('.nav-item').forEach(navItem => {
-                navItem.classList.remove('active');
-            });
-            document.querySelector('.nav-item[data-screen="dashboard"]').classList.add('active');
-        });
-    });
-    
-    // Add to cart buttons
-    document.querySelectorAll('.add-to-cart-button').forEach(button => {
-        button.addEventListener('click', function() {
-            const productCard = this.closest('.product-card');
-            const productId = parseInt(productCard.getAttribute('data-id'), 10);
-            const product = findProductById(productId);
-            
-            if (product) {
-                // Check if product is already in cart
-                const existingItem = appState.cart.find(item => item.id === productId);
-                
-                if (existingItem) {
-                    existingItem.quantity += 1;
-                } else {
-                    appState.cart.push({
-                        id: product.id,
-                        name: product.name,
-                        price: product.price,
-                        image: product.image,
-                        quantity: 1
-                    });
-                }
-                
-                // Update cart badge
-                updateCartBadge();
-                
-                showToast(`${product.name} adicionado ao carrinho`, 'success');
+        button.addEventListener('click', function(e) {
+            // If it's a button without an onclick, prevent default and go back
+            if (!this.getAttribute('onclick')) {
+                e.preventDefault();
+                window.history.back();
             }
         });
     });
     
+    // Search functionality if we're on a page with search
+    setupSearchFunctionality();
+    
+    // Category tabs if we're on a page with categories
+    setupCategoryTabs();
+}
+
+function setupSearchFunctionality() {
+    const searchInput = document.querySelector('.search-input input');
+    const clearSearch = document.querySelector('.clear-search');
+    
+    if (!searchInput || !clearSearch) return;
+    
+    searchInput.addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        
+        if (searchTerm) {
+            clearSearch.style.display = 'block';
+            
+            // Product filtering logic would go here
+            // This depends on the page structure
+        } else {
+            clearSearch.style.display = 'none';
+        }
+    });
+    
+    clearSearch.addEventListener('click', function() {
+        if (!searchInput) return;
+        
+        searchInput.value = '';
+        this.style.display = 'none';
+    });
+}
+
+function setupCategoryTabs() {
     // Category tabs
     document.querySelectorAll('.tab-item').forEach(tab => {
         tab.addEventListener('click', function() {
-            const category = this.getAttribute('data-category');
-            
             // Update active tab
             document.querySelectorAll('.tab-item').forEach(t => {
                 t.classList.remove('active');
             });
             this.classList.add('active');
             
-            // Filter products
-            if (category === 'all') {
-                document.querySelectorAll('.product-card').forEach(card => {
-                    card.style.display = 'block';
-                });
-            } else {
-                document.querySelectorAll('.product-card').forEach(card => {
-                    const product = findProductById(parseInt(card.getAttribute('data-id'), 10));
-                    if (product && product.category === category) {
-                        card.style.display = 'block';
-                    } else {
-                        card.style.display = 'none';
-                    }
-                });
-            }
+            // Category filtering logic would depend on page structure
         });
     });
-    
-    // Category items in dashboard
-    document.querySelectorAll('.category-item').forEach(item => {
-        item.addEventListener('click', function() {
-            const category = this.getAttribute('data-category');
-            
-            // Show catalog screen
-            showScreen('catalog-screen');
-            
-            // Update active nav
-            document.querySelectorAll('.nav-item').forEach(navItem => {
-                navItem.classList.remove('active');
-            });
-            document.querySelector('.nav-item[data-screen="catalog"]').classList.add('active');
-            
-            // Set active tab
-            document.querySelectorAll('.tab-item').forEach(tab => {
-                tab.classList.remove('active');
-                if (tab.getAttribute('data-category') === category) {
-                    tab.classList.add('active');
-                    tab.click(); // Trigger click to filter products
-                }
-            });
-        });
-    });
-    
-    // Search functionality
-    const searchInput = document.querySelector('.search-input input');
-    const clearSearch = document.querySelector('.clear-search');
-    
-    if (searchInput && clearSearch) {
-        searchInput.addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            
-            if (searchTerm) {
-                clearSearch.style.display = 'block';
-                
-                // Filter products
-                document.querySelectorAll('.product-card').forEach(card => {
-                    const product = findProductById(parseInt(card.getAttribute('data-id'), 10));
-                    if (product && (product.name.toLowerCase().includes(searchTerm) || 
-                                    product.description.toLowerCase().includes(searchTerm))) {
-                        card.style.display = 'block';
-                    } else {
-                        card.style.display = 'none';
-                    }
-                });
-            } else {
-                clearSearch.style.display = 'none';
-                
-                // Reset filters to current active tab
-                const activeTab = document.querySelector('.tab-item.active');
-                if (activeTab) {
-                    activeTab.click();
-                }
-            }
-        });
-        
-        clearSearch.addEventListener('click', function() {
-            searchInput.value = '';
-            this.style.display = 'none';
-            
-            // Reset filters to current active tab
-            const activeTab = document.querySelector('.tab-item.active');
-            if (activeTab) {
-                activeTab.click();
-            }
-        });
-    }
 }
 
 // Initialize the app when DOM is ready

@@ -2,6 +2,7 @@ package com.hospital.santajoana.rest.controller;
 
 import org.springframework.http.ResponseEntity;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.hospital.santajoana.domain.entity.Estadia;
 import com.hospital.santajoana.domain.entity.Fatura;
 import com.hospital.santajoana.domain.entity.Paciente;
@@ -10,6 +11,12 @@ import com.hospital.santajoana.domain.services.EstadiaMediator;
 import com.hospital.santajoana.domain.services.FaturaMediator;
 import com.hospital.santajoana.domain.services.PacienteMediator;
 import com.hospital.santajoana.domain.services.PedidoMediator;
+import com.hospital.santajoana.domain.services.QuartoMediator;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import com.hospital.santajoana.domain.entity.Pedido;
 import java.util.List;
 import java.util.Map;
@@ -24,15 +31,52 @@ public class PacienteController extends BaseController<Paciente, Long> {
     private final PedidoMediator pedidoMediator;
     private final EstadiaMediator estadiaMediator;
     private final FaturaMediator faturaMediator;
-
-    public PacienteController(PacienteMediator pacienteMediator, PedidoMediator pedidoMediator, EstadiaMediator estadiaMediator, FaturaMediator faturaMediator) {
+    private final QuartoMediator quartoMediator;
+    
+    public PacienteController(PacienteMediator pacienteMediator, PedidoMediator pedidoMediator, EstadiaMediator estadiaMediator, FaturaMediator faturaMediator, QuartoMediator quartoMediator) {
         super(pacienteMediator);
         this.pacienteMediator = pacienteMediator;
         this.pedidoMediator=pedidoMediator;
         this.estadiaMediator=estadiaMediator;
         this.faturaMediator=faturaMediator;
+        this.quartoMediator=quartoMediator;
+
     }
-    
+
+    @PostMapping("/create")
+    @Override
+    public ResponseEntity<Paciente> create(@RequestBody Paciente paciente) {
+
+
+        Paciente savedPaciente = pacienteMediator.save(paciente);
+
+        var quartosOptional = quartoMediator.findFreeQuarto();
+
+        if (quartosOptional.isEmpty()) {
+            throw new IllegalArgumentException("Não há quartos disponíveis.");
+        }
+
+        var quartos = quartosOptional.get();
+        if (quartos.isEmpty()) {
+            throw new IllegalArgumentException("Não há quartos disponíveis.");
+        }
+
+        var estadia = estadiaMediator.save(new Estadia(savedPaciente.getId(), quartos.get(0).getId()));
+
+        if (estadia == null) {
+            throw new IllegalArgumentException("Não foi possível criar a estadia.");
+        }
+
+        var fatura = faturaMediator.save(new Fatura(estadia.getId()));
+        
+        if (fatura == null) {
+            throw new IllegalArgumentException("Não foi possível criar a fatura.");
+        }
+
+        return ResponseEntity.ok(savedPaciente);
+    }
+
+
     @PatchMapping("/update/status/{id}")
     public ResponseEntity<Paciente> updateStatus(@PathVariable Long id, @RequestBody Map<String, String> statusMap) throws IllegalArgumentException{
             
@@ -75,6 +119,7 @@ public class PacienteController extends BaseController<Paciente, Long> {
     }
     @GetMapping("/fatura-recente/{id}")
     public ResponseEntity<Fatura> findFaturaByPacienteId(@PathVariable Long id) {
+
         var fatura = faturaMediator.findMostRecentFaturaByPacienteId(id);
 
         if (fatura.isEmpty()) {
@@ -83,5 +128,6 @@ public class PacienteController extends BaseController<Paciente, Long> {
 
         return ResponseEntity.ok(fatura.get());
     }
+    
 
 }

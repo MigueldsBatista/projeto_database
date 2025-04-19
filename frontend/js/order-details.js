@@ -29,8 +29,11 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Update status
     const statusElement = document.getElementById('order-status');
-    statusElement.className = `order-status-large ${order.status}`;
-    statusElement.textContent = getStatusText(order.status);
+    if (statusElement) {
+        const statusClass = getStatusClass(order.status);
+        statusElement.className = `order-status-large ${statusClass}`;
+        statusElement.textContent = getStatusText(order.status);
+    }
     
     // Render timeline
     renderTimeline(order);
@@ -160,18 +163,19 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    function getStatusText(status) {
-        switch (status) {
-            case 'pending':
-                return 'Pendente';
-            case 'in-progress':
-                return 'Em Preparo';
-            case 'delivered':
-                return 'Entregue';
-            default:
-                return status;
-        }
-    }
+    // Remove the duplicated statusText function since we're using the one from app.js
+    // function getStatusText(status) {
+    //     switch (status) {
+    //         case 'pending':
+    //             return 'Pendente';
+    //         case 'in-progress':
+    //             return 'Em Preparo';
+    //         case 'delivered':
+    //             return 'Entregue';
+    //         default:
+    //             return status;
+    //     }
+    // }
     
     function formatDate(date) {
         const now = new Date();

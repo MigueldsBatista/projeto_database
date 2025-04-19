@@ -1,5 +1,6 @@
 package com.hospital.santajoana.domain.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -43,6 +44,20 @@ public class QuartoRepository extends BaseRepository<Quarto, Long> {
             quarto.getId()
         );
         return quarto;
+    }
+
+
+    public Optional<List<Quarto>> findFreeQuarto(){
+        String sql="SELECT * \n" + //
+                        "FROM QUARTO Q\n" + //
+                        "WHERE NOT EXISTS (\n" + //
+                        "    SELECT 1 \n" + //
+                        "    FROM ESTADIA E\n" + //
+                        "    WHERE E.ID_QUARTO = Q.ID_QUARTO\n" + //
+                        "      AND E.DATA_SAIDA IS NULL\n" + //
+                        ") ORDER BY NUMERO;";
+
+        return Optional.ofNullable(super.findBySql(sql, new Object[]{}));
     }
     
 }

@@ -31,7 +31,7 @@ public class PedidoMediator extends BaseMediator<Pedido, LocalDateTime> {
         var dataEntradaEstadia = pedido.getDataEntradaEstadia();
         var camareiraId = pedido.getCamareiraId();
 
-        if(camareiraMediator.findById(camareiraId).isEmpty()){
+        if(camareiraId != null && camareiraMediator.findById(camareiraId).isEmpty()){
             throw new IllegalArgumentException("Camareira não encontrada.");
         }
 

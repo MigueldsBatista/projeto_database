@@ -70,10 +70,11 @@ document.addEventListener('DOMContentLoaded', function() {
             // Add items to the order
             const orderItems = await Promise.all(cart.map(item => {
                 return submitOrderItem({
-                    idProduto: item.id,
+                    produtoId: item.id,
                     dataPedido: savedOrder.dataPedido,
                     quantidade: item.quantity
-                });
+                }
+            );
             }));
             
             // Clear cart after successful order
@@ -129,6 +130,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
     async function submitOrder(orderData) {
         try {
+            console.log(orderData);
+            
             const response = await fetch(`${API_URL}/api/pedidos/create`, {
                 method: 'POST',
                 headers: {

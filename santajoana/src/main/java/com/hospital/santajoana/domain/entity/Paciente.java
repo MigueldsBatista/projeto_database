@@ -26,16 +26,19 @@ public class Paciente extends Pessoa {
         this.status = status;
     }
 
-    
     public Paciente(String cpf, String nome, LocalDate dataNascimento, String telefone, String endereco, StatusPaciente status) {
-        super(cpf, nome, dataNascimento, telefone, endereco);
+        super(cpf, nome, dataNascimento);
+        super.setTelefone(telefone);
+        super.setEndereco(endereco);
         this.status = status;
     }
 
     public Paciente(String cpf, String nome, LocalDate dataNascimento, String telefone, String endereco) {
-        super(cpf, nome, dataNascimento, telefone, endereco);
+        super(cpf, nome, dataNascimento);
+        super.setTelefone(telefone);
+        super.setEndereco(endereco);
+        this.status = StatusPaciente.INTERNADO; // Default status
     }
-        
 
     public enum StatusPaciente {
         INTERNADO("Internado"),

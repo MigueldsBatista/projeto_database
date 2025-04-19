@@ -20,9 +20,29 @@ public class Camareira extends Pessoa {
     private String cargo;
     private String setor;
 
-    // Fix the constructor by using a constructor that exists in Pessoa
-    public Camareira(String cpf, String nome, LocalDate dataNascimento, String telefone, String endereco, String cre, String cargo, String setor) {
-        super(cpf, nome, dataNascimento, telefone, endereco); 
+    // Fix the constructor to match available constructors in Pessoa
+    public Camareira(
+        String cpf,/* */
+        String nome,/**/
+        LocalDate dataNascimento,/**/
+        String telefone,/**/
+        String endereco,/**/
+        String senha,/**/
+        String email,/**/
+        String fotoPerfilBase64,
+        String cre,/**/
+        String cargo,/**/
+        String setor/**/
+        ){
+        super(cpf, nome, dataNascimento, telefone, endereco, senha, email, fotoPerfilBase64); 
+        this.cre = cre;
+        this.cargo = cargo;
+        this.setor = setor;
+    }
+    
+    // Alternative constructor using the 3-parameter constructor in Pessoa
+    public Camareira(String cpf, String nome, LocalDate dataNascimento, String cre, String cargo, String setor) {
+        super(cpf, nome, dataNascimento);
         this.cre = cre;
         this.cargo = cargo;
         this.setor = setor;

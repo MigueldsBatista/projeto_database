@@ -1,50 +1,50 @@
 document.addEventListener('DOMContentLoaded', function() {
-    if (!localStorage.getItem('orders')) {
-        const sampleOrders = [
-            {
-                id: 1,
-                date: new Date(Date.now() - 2 * 60 * 60 * 1000), 
-                items: [
-                    { id: 1, name: 'Café da manhã', price: 18.90, quantity: 1 },
-                    { id: 10, name: 'Água Mineral', price: 3.50, quantity: 2 }
-                ],
-                notes: "",
-                subtotal: 25.90,
-                serviceFee: 2.59,
-                total: 28.49,
-                status: 'delivered'
-            },
-            {
-                id: 2,
-                date: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
-                items: [
-                    { id: 6, name: 'Jantar Leve', price: 18.90, quantity: 1 },
-                    { id: 11, name: 'Suco Natural', price: 7.90, quantity: 1 },
-                    { id: 8, name: 'Pudim de Leite', price: 8.50, quantity: 1 }
-                ],
-                notes: "Sem sal no jantar, por favor.",
-                subtotal: 35.30,
-                serviceFee: 3.53,
-                total: 38.83,
-                status: 'delivered'
-            },
-            {
-                id: 3,
-                date: new Date(), // Now
-                items: [
-                    { id: 4, name: 'Almoço Executivo', price: 27.90, quantity: 1 },
-                    { id: 10, name: 'Água Mineral', price: 3.50, quantity: 1 }
-                ],
-                notes: "Sem pimenta, por favor.",
-                subtotal: 31.40,
-                serviceFee: 3.14,
-                total: 34.54,
-                status: 'pending'
-            }
-        ];
+    // if (!localStorage.getItem('orders')) {
+    //     const sampleOrders = [
+    //         {
+    //             id: 1,
+    //             date: new Date(Date.now() - 2 * 60 * 60 * 1000), 
+    //             items: [
+    //                 { id: 1, name: 'Café da manhã', price: 18.90, quantity: 1 },
+    //                 { id: 10, name: 'Água Mineral', price: 3.50, quantity: 2 }
+    //             ],
+    //             notes: "",
+    //             subtotal: 25.90,
+    //             serviceFee: 2.59,
+    //             total: 28.49,
+    //             status: 'delivered'
+    //         },
+    //         {
+    //             id: 2,
+    //             date: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
+    //             items: [
+    //                 { id: 6, name: 'Jantar Leve', price: 18.90, quantity: 1 },
+    //                 { id: 11, name: 'Suco Natural', price: 7.90, quantity: 1 },
+    //                 { id: 8, name: 'Pudim de Leite', price: 8.50, quantity: 1 }
+    //             ],
+    //             notes: "Sem sal no jantar, por favor.",
+    //             subtotal: 35.30,
+    //             serviceFee: 3.53,
+    //             total: 38.83,
+    //             status: 'delivered'
+    //         },
+    //         {
+    //             id: 3,
+    //             date: new Date(), // Now
+    //             items: [
+    //                 { id: 4, name: 'Almoço Executivo', price: 27.90, quantity: 1 },
+    //                 { id: 10, name: 'Água Mineral', price: 3.50, quantity: 1 }
+    //             ],
+    //             notes: "Sem pimenta, por favor.",
+    //             subtotal: 31.40,
+    //             serviceFee: 3.14,
+    //             total: 34.54,
+    //             status: 'pending'
+    //         }
+    //     ];
         
-        localStorage.setItem('orders', JSON.stringify(sampleOrders));
-    }
+    //     localStorage.setItem('orders', JSON.stringify(sampleOrders));
+    // }
     
     // Get cart count from localStorage
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -106,24 +106,9 @@ document.addEventListener('DOMContentLoaded', function() {
             orderCard.className = 'order-card';
             orderCard.setAttribute('data-id', order.id);
             
-            // Format the status display
-            let statusClass = '';
-            let statusText = '';
-            
-            switch(order.status) {
-                case 'pending':
-                    statusClass = 'pending';
-                    statusText = 'Pendente';
-                    break;
-                case 'in-progress':
-                    statusClass = 'in-progress';
-                    statusText = 'Em preparo';
-                    break;
-                case 'delivered':
-                    statusClass = 'delivered';
-                    statusText = 'Entregue';
-                    break;
-            }
+            // Use the standardized functions from app.js
+            const statusClass = getStatusClass(order.status);
+            const statusText = getStatusText(order.status);
             
             orderCard.innerHTML = `
                 <div class="order-info">

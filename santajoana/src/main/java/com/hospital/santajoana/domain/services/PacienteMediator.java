@@ -24,7 +24,11 @@ public class PacienteMediator extends BaseMediator<Paciente, Long> {
     
     public Paciente save(Paciente paciente) {
         if(this.findByCpf(paciente.getCpf()).isPresent()){
-            throw new IllegalArgumentException("Paciente já cadastrado.");
+            throw new IllegalArgumentException("Paciente com esse CPF já cadastrado.");
+        }
+
+        if(this.findByEmail(paciente.getEmail()).isPresent()){
+            throw new IllegalArgumentException("Paciente com esse email já cadastrado.");
         }
 
         return pacienteRepository.save(paciente);
@@ -64,7 +68,7 @@ public class PacienteMediator extends BaseMediator<Paciente, Long> {
         var existingPaciente = findByCpf(camareira.getCpf());
 
         if (existingPaciente.isPresent()) {
-            throw new IllegalArgumentException("Paciente já cadastrado.");
+            throw new IllegalArgumentException("Paciente com esse CPF já cadastrado.");
         }
 
         var existingCamareira = camareiraMediator.findByCpf(camareira.getCpf());
@@ -97,20 +101,50 @@ public class PacienteMediator extends BaseMediator<Paciente, Long> {
         var existingPaciente = this.findByCpf(camareira.getCpf());
 
         if (existingPaciente.isPresent()) {
-            throw new IllegalArgumentException("Paciente já cadastrado.");
+            throw new IllegalArgumentException("Paciente com esse CPF já cadastrado.");
         }
 
-        Paciente paciente = new Paciente(
-            camareira.getCpf(),
-            camareira.getNome(),
-            camareira.getDataNascimento(),
-            camareira.getEndereco(),
-            camareira.getTelefone(),
-            StatusPaciente.INTERNADO
-        );
+
+        Paciente paciente = new Paciente();
+        paciente.setCpf(camareira.getCpf());
+        paciente.setNome(camareira.getNome());
+        paciente.setDataNascimento(camareira.getDataNascimento());
+        paciente.setTelefone(camareira.getTelefone());
+        paciente.setEndereco(camareira.getEndereco());
+        paciente.setSenha(camareira.getSenha());
+        paciente.setEmail(camareira.getEmail());
+        paciente.setFotoPerfilBase64(camareira.getFotoPerfilBase64());
 
         return save(paciente);
     }
 
+    /**
+     * Authenticate a user by email and password
+     * @param email The user's email
+     * @param senha The user's password
+     * @return true if authentication is successful, false otherwise
+     */
+    public boolean authenticate(String email, String senha) {
+        return pacienteRepository.authenticate(email, senha);
+    }
+    
+    /**
+     * Find a paciente by their email
+     * @param email The paciente's email
+     * @return The paciente if found, null otherwise
+     */
+    public Optional<Paciente> findByEmail(String email) {
+        return pacienteRepository.findByEmail(email);
+    }
+
+    /**
+     * Update profile picture for a paciente
+     * @param id The paciente ID
+     * @param fotoPerfilBase64 The base64 string of the profile picture
+     * @return The updated paciente
+     */
+    public Paciente updateProfilePicture(Long id, String fotoPerfilBase64) {
+        return pacienteRepository.updateProfilePicture(id, fotoPerfilBase64);
+    }
 
 }

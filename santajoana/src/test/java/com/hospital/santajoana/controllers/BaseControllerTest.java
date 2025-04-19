@@ -3,8 +3,6 @@ package com.hospital.santajoana.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hospital.santajoana.domain.entity.*;
 import com.hospital.santajoana.domain.entity.Paciente.StatusPaciente;
-import com.hospital.santajoana.domain.entity.Pedido.StatusPedido;
-import com.hospital.santajoana.domain.entity.Fatura.StatusPagamento;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -130,6 +128,10 @@ public abstract class BaseControllerTest {
             LocalDate.of(1980, 1, 1), 
             StatusPaciente.INTERNADO
         );
+        paciente.setEmail("joao.silva@example.com");
+        paciente.setSenha("senha123");
+        // Note: fotoPerfilBase64 is intentionally left null
+        
         String responseJson = savePacienteEntity(paciente)
             .andReturn()
             .getResponse()
@@ -365,6 +367,9 @@ public abstract class BaseControllerTest {
         camareira.setCre("123456789");
         camareira.setSetor("Limpeza");
         camareira.setDataNascimento(LocalDate.of(1990, 1, 1));
+        camareira.setEmail("maria.silva@example.com");
+        camareira.setSenha("senha123");
+        // Note: fotoPerfilBase64 is intentionally left null
         
         String camareiraJson = saveCamareiraEntity(camareira)
             .andReturn()

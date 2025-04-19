@@ -1,5 +1,6 @@
 package com.hospital.santajoana.domain.services;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -36,4 +37,9 @@ public class QuartoMediator extends BaseMediator<Quarto, Long> {
     public Quarto update(Quarto quarto) {
         return quartoRepository.update(quarto);
     }
+
+    public Optional<List<Quarto>> findFreeQuarto() {
+        return quartoRepository.findFreeQuarto();
+    }
+    
 }

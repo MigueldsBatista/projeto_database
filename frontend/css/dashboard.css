@@ -1,0 +1,110 @@
+/* Recent orders section styling */
+.orders-section {
+    margin-bottom: var(--spacing-lg);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-sm);
+}
+
+.section-title {
+    font-size: var(--font-h3);
+    font-weight: 700;
+    margin: 0;
+}
+
+.view-all {
+    color: var(--primary-blue);
+    font-size: var(--font-sm);
+    font-weight: 500;
+    text-decoration: none;
+}
+
+/* Order card styling - shared with orders.css */
+.order-card {
+    background-color: white;
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-sm);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.order-card:active {
+    background-color: var(--background);
+}
+
+.order-info {
+    flex: 1;
+}
+
+.order-date {
+    font-size: var(--font-sm);
+    color: var(--text-secondary);
+    margin: 0 0 var(--spacing-xs) 0;
+}
+
+.order-items {
+    font-size: var(--font-body);
+    font-weight: 500;
+    margin: 0 0 var(--spacing-xs) 0;
+}
+
+.order-price {
+    font-size: var(--font-body);
+    font-weight: 700;
+    color: var(--primary-blue);
+    margin: 0;
+}
+
+/* Status pills */
+.status-pill {
+    padding: 4px 12px;
+    border-radius: var(--radius-full);
+    font-size: 12px;
+    font-weight: 500;
+    text-align: center;
+    min-width: 80px;
+}
+
+.status-pill.pending {
+    background-color: var(--warning);
+    color: white;
+}
+
+.status-pill.in-progress {
+    background-color: var(--secondary-blue);
+    color: white;
+}
+
+.status-pill.delivered {
+    background-color: var(--success);
+    color: white;
+}
+
+.status-pill.cancelled {
+    background-color: var(--error);
+    color: white;
+}
+
+/* Empty state */
+.empty-state {
+    padding: var(--spacing-lg);
+    text-align: center;
+    color: var(--text-secondary);
+}
+
+.view-all-btn {
+    display: block;
+    text-align: center;
+    padding: var(--spacing-sm);
+    color: var(--primary-blue);
+    font-weight: 500;
+    text-decoration: none;
+}

@@ -603,3 +603,215 @@ html, body {
     align-items: center;
     justify-content: center;
 }
+
+/* User Profile Styles */
+.profile-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--spacing-lg);
+    background-color: white;
+    border-bottom: 1px solid var(--border);
+}
+
+.profile-picture {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: var(--primary-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 40px;
+    margin-bottom: var(--spacing-md);
+    overflow: hidden;
+    position: relative;
+}
+
+.profile-picture img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-picture .edit-icon {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background-color: var(--secondary-blue);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.profile-name {
+    font-size: var(--font-h2);
+    font-weight: 700;
+    margin-bottom: var(--spacing-xs);
+}
+
+.profile-info {
+    font-size: var(--font-caption);
+    color: var(--text-secondary);
+}
+
+.profile-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    background-color: var(--border);
+}
+
+.profile-menu-item {
+    display: flex;
+    align-items: center;
+    padding: var(--spacing-md);
+    background-color: white;
+    text-decoration: none;
+    color: var(--text-primary);
+}
+
+.profile-menu-item i {
+    width: 24px;
+    font-size: 18px;
+    margin-right: var(--spacing-md);
+    color: var (--text-secondary);
+}
+
+.profile-menu-item.logout {
+    color: var(--error);
+}
+
+.profile-menu-item.logout i {
+    color: var(--error);
+}
+
+/* Register Screen */
+.register-link, .login-link {
+    text-align: center;
+    margin-top: var(--spacing-xl);
+    color: var(--text-secondary);
+    font-size: var(--font-caption);
+}
+
+.register-link a, .login-link a {
+    color: var (--primary-blue);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+/* User Avatar in Dashboard */
+.user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: var(--primary-blue);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    font-size: 16px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.user-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Logout Button */
+.logout-button {
+    color: var(--error);
+    background-color: transparent;
+    border: none;
+    font-size: var(--font-body);
+    display: flex;
+    align-items: center;
+    padding: var(--spacing-md);
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+}
+
+.logout-button i {
+    margin-right: var(--spacing-sm);
+}
+
+/* Profile Page Styles */
+.profile-section {
+    background-color: white;
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+}
+
+.section-header h3 {
+    font-size: var(--font-h3);
+    font-weight: 600;
+    margin: 0;
+}
+
+.info-row {
+    display: flex;
+    margin-bottom: var(--spacing-sm);
+}
+
+.info-row label {
+    width: 150px;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.info-row span {
+    font-weight: 400;
+    color: var(--text-primary);
+}
+
+.form-group {
+    margin-bottom: var(--spacing-md);
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: var(--spacing-xs);
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.form-input {
+    width: 100%;
+    height: 48px;
+    padding: 0 var(--spacing-md);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    font-size: var(--font-body);
+    color: var(--text-primary);
+}
+
+.form-input:focus {
+    border-color: var(--primary-blue);
+    outline: none;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-lg);
+}

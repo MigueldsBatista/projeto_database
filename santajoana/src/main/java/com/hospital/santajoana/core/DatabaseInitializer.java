@@ -100,9 +100,10 @@ public class DatabaseInitializer {
             ? "VARCHAR(20) DEFAULT 'Pendente' NOT NULL CHECK (STATUS IN ('Pendente', 'Em Preparo', 'Entregue', 'Cancelado'))" 
             : "ENUM('Pendente', 'Em Preparo', 'Entregue', 'Cancelado') DEFAULT 'Pendente' NOT NULL";
         
+        // Fix for H2: DEFAULT must come before CHECK constraint
         String statusPacienteType = isH2
-            ? "VARCHAR(10) NOT NULL CHECK (STATUS IN ('Internado', 'Alta'))"
-            : "ENUM('Internado', 'Alta') NOT NULL";
+            ? "VARCHAR(10) DEFAULT 'Internado' NOT NULL CHECK (STATUS IN ('Internado', 'Alta'))"
+            : "ENUM('Internado', 'Alta') NOT NULL DEFAULT 'Internado'";
         
         return new String[] {
             // Create category tables first with consistent ID naming
@@ -136,6 +137,9 @@ public class DatabaseInitializer {
             + "DATA_NASCIMENTO DATE NOT NULL,"
             + "TELEFONE VARCHAR(11),"
             + "ENDERECO VARCHAR(255),"
+            + "EMAIL VARCHAR(100),"
+            + "SENHA VARCHAR(255),"
+            + "FOTO_PERFIL_BASE64 TEXT NULL," // Explicitly mark as NULL
             + "CONSTRAINT CHECK_E_CPF CHECK (LENGTH(CPF) = 11)"
             + (isH2 ? "" : ",CONSTRAINT CHECK_STATUS CHECK (STATUS IN ('Internado', 'Alta'))")
             + ");",
@@ -167,6 +171,9 @@ public class DatabaseInitializer {
             + "ENDERECO VARCHAR(255),"
             + "CARGO VARCHAR(50) NOT NULL,"
             + "SETOR VARCHAR(50) NOT NULL,"
+            + "EMAIL VARCHAR(100),"
+            + "SENHA VARCHAR(255),"
+            + "FOTO_PERFIL_BASE64 TEXT NULL," // Explicitly mark as NULL
             + "CONSTRAINT CHECK_CPF CHECK (LENGTH(CPF) = 11)"
             + ");",
             
