@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', function() {
     const registerForm = document.getElementById('register-form');
     
@@ -29,8 +28,6 @@ document.addEventListener('DOMContentLoaded', function() {
             try {
                 showToast('Criando sua conta...', 'info');
                 
-                console.log(birthDate);
-                
                 // Create user object for API
                 const userData = {
                     nome: name,
@@ -52,7 +49,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
                 
                 const result = await response.json();
-                console.log(result);
                 
                 if (response.ok) {
                     showToast('Conta criada com sucesso!', 'success');
@@ -102,9 +98,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 e.target.value = value;
             });
         }
-        
-        const birthDateInput = document.getElementById('birth-date');
-
     }
     
     function showToast(message, type = 'default', duration = 3000) {

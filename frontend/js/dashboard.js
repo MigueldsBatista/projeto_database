@@ -1,64 +1,94 @@
 document.addEventListener('DOMContentLoaded', async function() {
     try {
-
+        // Check if user is logged in
         const user = JSON.parse(localStorage.getItem('user')) || null;
         
-
-        if (!user) throw new Error('Failed to load patient data');
+        if (!user) {
+            // If no user data, redirect to login page
+            window.location.href = 'login.html';
+            return;
+        }
         
         // Store patient ID for other pages
         localStorage.setItem('pacienteId', user.id);
         
-        // Fetch related data
-        const estadia = await fetchPacienteEstadia(user.id);
-        const quarto = estadia ? await fetchQuarto(estadia.quartoId) : null;
-        const fatura = await fetchPacienteFatura(user.id);
+        // Update UI with basic patient info that we already have
+        document.getElementById('patient-name').textContent = user.name || 'Nome Indisponível';
+        
+        // Fetch related data - handle possible errors without redirecting
+        let estadia = null;
+        let quarto = null;
+        let fatura = null;
 
-        if (!fatura) throw new Error('Failed to load invoice data');
-
-        if (!quarto) {
-            throw new Error('Failed to load room data');
+        try {
+            estadia = await fetchPacienteEstadia(user.id);
+            if (estadia) {
+                quarto = await fetchQuarto(estadia.quartoId);
+            }
+        } catch (estadiaError) {
+            console.error('Error fetching estadia data:', estadiaError);
+            showToast('Não foi possível obter dados da internação', 'warning');
         }
-    
-        console.log(user);
-        console.log(estadia);
-        console.log(fatura);
 
-        // Update UI with basic patient info
-        document.getElementById('patient-name').textContent = user.name;
+        try {
+            fatura = await fetchPacienteFatura(user.id);
+        } catch (faturaError) {
+            console.error('Error fetching invoice data:', faturaError);
+            showToast('Não foi possível obter dados da fatura', 'warning');
+        }
+        
+        // Update UI with room info if available
         document.getElementById('room-number').textContent = quarto ? quarto.numero : 'N/A';
         
-        // Update dashboard widgets
+        // Update dashboard widgets with whatever data is available
         updateDashboardSummary(user, estadia, fatura);
         
-        // Fetch recent orders
-        const pedidos = await fetchRecentOrders(user.id);
-
-        // Process orders and fetch product details for each
-        const enhancedPedidos = [];
-        
-        for (const pedido of pedidos) {
-            // Fetch products for this order
-            const produtos = await fetchProdutosFromPedido(pedido.dataPedido);
+        // Fetch and display recent orders if possible
+        let pedidos = [];
+        try {
+            pedidos = await fetchRecentOrders(user.id);
             
-            // Create enhanced order with details
-            const enhancedPedido = {
-            ...pedido,
-            // Format details as product names separated by commas
-            detalhes: produtos && produtos.length > 0 
-                ? produtos.map(p => p.nome).join(', ')
-                : 'Sem produtos',
-            // Calculate or use the total value from products if available
-            valor: produtos && produtos.length > 0
-                ? produtos.reduce((total, p) => total + (p.preco * p.quantidade), 0)
-                : pedido.valor || 0
-            };
+            // Process orders and fetch product details for each
+            const enhancedPedidos = [];
             
-            enhancedPedidos.push(enhancedPedido);
+            for (const pedido of pedidos) {
+                try {
+                    // Fetch products for this order
+                    const produtos = await fetchProdutosFromPedido(pedido.dataPedido);
+                    
+                    // Create enhanced order with details
+                    const enhancedPedido = {
+                        ...pedido,
+                        // Format details as product names separated by commas
+                        detalhes: produtos && produtos.length > 0 
+                            ? produtos.map(p => p.nome).join(', ')
+                            : 'Sem produtos',
+                        // Calculate or use the total value from products if available
+                        valor: produtos && produtos.length > 0
+                            ? produtos.reduce((total, p) => total + (p.preco * p.quantidade), 0)
+                            : pedido.valor || 0
+                    };
+                    
+                    enhancedPedidos.push(enhancedPedido);
+                } catch (produtoError) {
+                    console.error('Error fetching products for order:', produtoError);
+                    // Still add the order without product details
+                    enhancedPedidos.push({
+                        ...pedido,
+                        detalhes: 'Detalhes indisponíveis',
+                        valor: pedido.valor || 0
+                    });
+                }
+            }
+            
+            // Display the enhanced orders
+            displayRecentOrders(enhancedPedidos);
+        } catch (ordersError) {
+            console.error('Error fetching orders:', ordersError);
+            showToast('Não foi possível obter pedidos recentes', 'warning');
+            // Display empty state for orders
+            displayRecentOrders([]);
         }
-        
-        // Display the enhanced orders
-        displayRecentOrders(enhancedPedidos);
         
         // Update cart badge
         const cart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -101,6 +131,7 @@ const fetchPacienteEstadia = async (pacienteId) => {
             headers: { 'Accept': 'application/json' },
             mode: 'cors'
         });
+        
         if (!response.ok) {
             if (response.status === 404) {
                 console.warn('No active estadia found for patient');
@@ -108,10 +139,10 @@ const fetchPacienteEstadia = async (pacienteId) => {
             }
             throw new Error(`Network response was not ok: ${response.status}`);
         }
+        
         return await response.json();
     } catch (error) {
         console.error('Error fetching estadia data:', error);
-        showToast('Não foi possível obter dados da estadia', 'error');
         return null;
     }
 };
@@ -122,6 +153,7 @@ const fetchPacienteFatura = async (pacienteId) => {
             headers: { 'Accept': 'application/json' },
             mode: 'cors'
         });
+        
         if (!response.ok) {
             if (response.status === 404) {
                 console.warn('No invoice found for patient');
@@ -130,14 +162,13 @@ const fetchPacienteFatura = async (pacienteId) => {
             
             throw new Error(`Network response was not ok: ${response.status}`);
         }
+        
         return await response.json();
     } catch (error) {
         console.error('Error fetching invoice data:', error);
-        showToast('Não foi possível obter dados da fatura', 'error');
         return null;
     }
 };
-
 
 const fetchProdutosFromPedido = async (dataPedido) => {
     try {
@@ -204,7 +235,7 @@ function updateDashboardSummary(paciente, estadia, fatura) {
     // Update patient status indicator
     const statusElement = document.getElementById('patient-status');
     if (statusElement) {
-        const status = paciente.status;
+        const status = paciente.status || 'Status Indisponível';
         statusElement.textContent = status;
         statusElement.className = `status-badge ${status === 'Internado' ? 'status-active' : 'status-inactive'}`;
     }
@@ -223,6 +254,17 @@ function updateDashboardSummary(paciente, estadia, fatura) {
             const days = Math.floor((now - admissionDate) / (1000 * 60 * 60 * 24));
             stayDurationElement.textContent = `${days} dia${days !== 1 ? 's' : ''}`;
         }
+    } else {
+        // Handle case where estadia is not available
+        const admissionDateElement = document.getElementById('admission-date');
+        if (admissionDateElement) {
+            admissionDateElement.textContent = 'N/A';
+        }
+        
+        const stayDurationElement = document.getElementById('stay-duration');
+        if (stayDurationElement) {
+            stayDurationElement.textContent = 'N/A';
+        }
     }
     
     // Update invoice information if available
@@ -237,6 +279,18 @@ function updateDashboardSummary(paciente, estadia, fatura) {
         const invoiceTotalElement = document.getElementById('invoice-total-value');
         if (invoiceTotalElement) {
             invoiceTotalElement.textContent = `R$ ${formatCurrency(fatura.valorTotal || 0)}`;
+        }
+    } else {
+        // Handle case where fatura is not available
+        const invoiceStatusElement = document.getElementById('invoice-status');
+        if (invoiceStatusElement) {
+            invoiceStatusElement.textContent = 'N/A';
+            invoiceStatusElement.className = 'status-badge status-default';
+        }
+        
+        const invoiceTotalElement = document.getElementById('invoice-total-value');
+        if (invoiceTotalElement) {
+            invoiceTotalElement.textContent = 'R$ 0,00';
         }
     }
 }

@@ -21,7 +21,7 @@
                 
                 <form id="login-form">
                     <div class="input-group">
-                        <label for="email">E-MAIL do Paciente</label>
+                        <label for="email">E-mail do Paciente</label>
                         <input type="text" id="email" placeholder="Digite seu email" required>
                     </div>
                     
@@ -29,6 +29,9 @@
                         <label for="password">Senha</label>
                         <input type="password" id="password" placeholder="Digite sua senha" required>
                     </div>
+                    
+                    <!-- Add error message container -->
+                    <div id="error-message" class="error-message" style="display: none; color: red; margin: 10px 0; text-align: center;"></div>
                     
                     <button type="submit" class="btn-primary">Entrar</button>
                 </form>
@@ -47,6 +50,7 @@
         </div>
     </div>
 
+    <script src="js/utils.js"></script>
     <script src="js/app.js"></script>
     <script src="js/login.js"></script>
 

@@ -67,167 +67,7 @@ const appState = {
     }
 };
 
-// Common utility functions for the entire app
-
-const APP_NAME = 'Hospital Santa Joana';
-const API_URL = 'http://localhost:8080';
-
-// Check authentication state
-function checkAuth() {
-    const user = JSON.parse(localStorage.getItem('user'));
-    
-    const isAuthPage = window.location.pathname.includes('login.html') || 
-                      window.location.pathname.includes('register.html');
-    
-    if (!user && !isAuthPage) {
-        window.location.href = 'login.html';
-        return null;
-    }
-    
-    return user;
-}
-
-// Common toast notification function
-function showToast(message, type = 'default', duration = 3000) {
-    // Remove any existing toasts
-    const existingToast = document.querySelector('.toast');
-    if (existingToast) {
-        existingToast.remove();
-    }
-    
-    // Create new toast
-    const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    toast.textContent = message;
-    
-    document.body.appendChild(toast);
-    
-    // Show the toast
-    setTimeout(() => {
-        toast.classList.add('show');
-    }, 10);
-    
-    // Hide and remove the toast after duration
-    setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => {
-            toast.remove();
-        }, 300);
-    }, duration);
-}
-
-// Update cart badge count
-function updateCartBadge(count) {
-    const badges = document.querySelectorAll('.cart-badge');
-    
-    badges.forEach(badge => {
-        badge.textContent = count;
-        badge.style.display = count > 0 ? 'flex' : 'none';
-    });
-}
-
-// Format currency values
-function formatCurrency(value) {
-    return Number(value).toFixed(2).replace('.', ',');
-}
-
-// Format date to PT-BR format
-function formatDate(date) {
-    if (!(date instanceof Date)) {
-        date = new Date(date);
-    }
-    
-    return date.toLocaleDateString('pt-BR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-    });
-}
-
-// Format date and time to PT-BR format
-function formatDateTime(date) {
-    if (!(date instanceof Date)) {
-        date = new Date(date);
-    }
-    
-    return date.toLocaleDateString('pt-BR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-    });
-}
-
-// Generic status mappers
-function getStatusText(status) {
-    if (!status) return 'Desconhecido';
-    
-    // Convert to uppercase for case-insensitive comparison
-    const upperStatus = status.toUpperCase();
-    
-    switch(upperStatus) {
-        case 'PENDENTE':
-        case 'PENDING':
-            return 'Pendente';
-        case 'EM_PREPARO':
-        case 'EM PREPARO':
-        case 'IN-PROGRESS':
-        case 'IN_PROGRESS':
-            return 'Em Preparo';
-        case 'ENTREGUE':
-        case 'DELIVERED':
-            return 'Entregue';
-        case 'CANCELADO':
-        case 'CANCELLED':
-        case 'CANCELED':
-            return 'Cancelado';
-        default:
-            return status;
-    }
-}
-
-function getStatusClass(status) {
-    if (!status) return 'status-default';
-    
-    // Convert to uppercase for case-insensitive comparison
-    const upperStatus = status.toUpperCase();
-    
-    switch(upperStatus) {
-        case 'PENDENTE':
-        case 'PENDING':
-            return 'pending';
-        case 'EM_PREPARO':
-        case 'EM PREPARO':
-        case 'IN-PROGRESS':
-        case 'IN_PROGRESS':
-            return 'in-progress';
-        case 'ENTREGUE':
-        case 'DELIVERED':
-            return 'delivered';
-        case 'CANCELADO':
-        case 'CANCELLED':
-        case 'CANCELED':
-            return 'cancelled';
-        default:
-            return 'status-default';
-    }
-}
-
-// Run on every page load
-document.addEventListener('DOMContentLoaded', () => {
-    // Check authentication
-    const user = checkAuth();
-    
-    // Update cart badge if on authorized pages
-    if (!user) return;
-    
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
-    updateCartBadge(totalItems);
-});
-
-// Helper Functions
+// Helper Functions specific to app functionality
 function getCartTotal() {
     return appState.cart.reduce((total, item) => total + (item.price * item.quantity), 0);
 }
@@ -240,7 +80,7 @@ function getCartItemCount() {
     return appState.cart.reduce((total, item) => total + item.quantity, 0);
 }
 
-// UI Functions
+// UI Functions specific to app navigation
 function showScreen(screenId) {
     // Hide all screens
     document.querySelectorAll('.screen').forEach(screen => {
@@ -255,71 +95,19 @@ function showScreen(screenId) {
     }
 }
 
-function updateCartBadge() {
-    const count = getCartItemCount();
-    const badges = document.querySelectorAll('.cart-badge');
-    
-    badges.forEach(badge => {
-        badge.textContent = count;
-        badge.style.display = count > 0 ? 'flex' : 'none';
-    });
-}
-
-// Initialize App - simplified to work with existing HTML structure
+// Initialize App
 function initApp() {
-    // Check if we're on the login page
-    if (window.location.pathname.includes('login.html')) {
-        setupLoginPage();
-        return;
-    }
-    
-    // For other pages, setup general event listeners
-    setupEventListeners();
-    
-    // Check auth and load user data
+    // Check auth and load user data (if not on login page)
     const user = checkAuth();
+    
+    // For authorized pages, update cart badge
     if (user) {
-        // Update cart badge
         const cart = JSON.parse(localStorage.getItem('cart')) || [];
         updateCartBadge(cart.reduce((total, item) => total + item.quantity, 0));
+        
+        // Setup event listeners for navigation, search, etc.
+        setupEventListeners();
     }
-}
-
-function setupLoginPage() {
-    // Login form submission
-    const loginForm = document.getElementById('login-form');
-    if (!loginForm) return;
-    
-    loginForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        
-        // Simple validation
-        if (!email || !password) {
-            showToast('Por favor, preencha todos os campos', 'error');
-            return;
-        }
-        
-        // In a real app, we would authenticate with the server
-        // For now, simulate a successful login
-        const user = {
-            id: 1,
-            name: 'Maria Silva',
-            room: '302',
-            email: email
-        };
-        
-        // Store user in localStorage
-        localStorage.setItem('user', JSON.stringify(user));
-        
-        showToast('Login realizado com sucesso!', 'success');
-        
-        // Redirect to dashboard
-        setTimeout(() => {
-            window.location.href = 'dashboard.html';
-        }, 1000);
-    });
 }
 
 function setupEventListeners() {

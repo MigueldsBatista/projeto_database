@@ -345,18 +345,20 @@ function setupChangePasswordFunctionality(user) {
             try {
                 showToast('Atualizando senha...', 'info');
                 
-                const response = await fetch(`${API_URL}/api/pacientes/update`, {
-                    method: 'PUT',
+                const response = await fetch(`${API_URL}/api/auth/pacientes/update/password`, {
+                    method: 'PATCH',
                     headers: {
                         'Content-Type': 'application/json',
                     },
+
                     body: JSON.stringify({
                         id: user.id,
-                        senha: currentPassword,
+                        senhaAtual: currentPassword,
+                        novaSenha: newPassword
                     }),
                 });
                 
-                if (response.ok) {
+                if (response.status === 204) {
                     // Reset the form and hide it
                     passwordForm.reset();
                     passwordForm.style.display = 'none';

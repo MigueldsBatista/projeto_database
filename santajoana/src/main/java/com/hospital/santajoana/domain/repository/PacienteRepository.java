@@ -173,4 +173,12 @@ public class PacienteRepository extends BaseRepository<Paciente, Long> {
 
         return user.stream().findFirst();
     }
+
+    public boolean updatePassword(Long id, String senha) {
+        String updateSql = "UPDATE PACIENTE SET SENHA = ? WHERE ID_PACIENTE = ?";
+        int rowsAffected = jdbcTemplate.update(updateSql, senha, id);
+        
+        // Check if any rows were affected by the update
+        return rowsAffected > 0;
+    }
 }

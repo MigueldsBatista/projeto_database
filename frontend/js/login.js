@@ -8,6 +8,10 @@ document.addEventListener('DOMContentLoaded', function() {
     setupPageTitle();
 });
 
+/**
+ * Handle login form submission
+ * @param {Event} e - Form submission event
+ */
 async function handleLogin(e) {
     e.preventDefault();
     
@@ -18,6 +22,7 @@ async function handleLogin(e) {
     // Simple validation
     if (!email || !password) {
         showToast('Por favor, preencha todos os campos', 'error');
+        showLoginError(errorMessage, 'Por favor, preencha todos os campos');
         return;
     }
     
@@ -35,13 +40,13 @@ async function handleLogin(e) {
         
         let userData = await patientResponse.json();
         
-        // If patient login failed, try camareira login
+        // If patient login failed, try staff login
         if (!userData.authenticated && patientResponse.status === 401) {
             userData = await tryStaffLogin(email, password);
         }
         
         if (!userData.authenticated) {
-            showLoginError(errorMessage);
+            showLoginError(errorMessage, 'Email ou senha incorretos');
             return;
         }
         
@@ -51,9 +56,16 @@ async function handleLogin(e) {
     } catch (error) {
         console.error('Error during login:', error);
         showToast('Erro ao fazer login. Por favor, tente novamente.', 'error');
+        showLoginError(errorMessage, 'Erro ao conectar com o servidor. Tente novamente mais tarde.');
     }
 }
 
+/**
+ * Try to authenticate as staff member
+ * @param {string} email - Staff email
+ * @param {string} password - Staff password
+ * @returns {Object} Authentication response
+ */
 async function tryStaffLogin(email, password) {
     const staffResponse = await fetch(`${API_URL}/api/auth/camareiras/login`, {
         method: 'POST',
@@ -66,14 +78,44 @@ async function tryStaffLogin(email, password) {
     return await staffResponse.json();
 }
 
-function showLoginError(errorMessageElement) {
-    showToast('Email ou senha incorretos', 'error');
+/**
+ * Display login error in the UI
+ * @param {HTMLElement} errorMessageElement - The error container
+ * @param {string} message - The error message to show
+ */
+function showLoginError(errorMessageElement, message) {
+    // If there's an error element in the form, use it
     if (errorMessageElement) {
-        errorMessageElement.textContent = 'Email ou senha incorretos';
+        errorMessageElement.textContent = message;
         errorMessageElement.style.display = 'block';
+        return;
+    }
+    
+    // Otherwise, create a new error element
+    const loginForm = document.getElementById('login-form');
+    if (!loginForm) return;
+    
+    const errorDiv = document.createElement('div');
+    errorDiv.id = 'error-message';
+    errorDiv.className = 'error-message';
+    errorDiv.textContent = message;
+    errorDiv.style.color = 'red';
+    errorDiv.style.marginTop = '10px';
+    errorDiv.style.textAlign = 'center';
+    
+    // Find the submit button and insert the error message before it
+    const submitBtn = loginForm.querySelector('button[type="submit"]');
+    if (submitBtn) {
+        loginForm.insertBefore(errorDiv, submitBtn);
+    } else {
+        loginForm.appendChild(errorDiv);
     }
 }
 
+/**
+ * Handle successful login
+ * @param {Object} userData - The authenticated user data
+ */
 function handleSuccessfulLogin(userData) {
     // Store user data in localStorage
     localStorage.setItem('user', JSON.stringify(userData));
@@ -90,6 +132,9 @@ function handleSuccessfulLogin(userData) {
     setTimeout(() => { window.location.href = redirectUrl; }, 1000);
 }
 
+/**
+ * Setup page title based on URL parameters
+ */
 function setupPageTitle() {
     const urlParams = new URLSearchParams(window.location.search);
     const userType = urlParams.get('type');

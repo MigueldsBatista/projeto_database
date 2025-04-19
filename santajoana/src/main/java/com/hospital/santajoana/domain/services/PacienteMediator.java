@@ -147,4 +147,33 @@ public class PacienteMediator extends BaseMediator<Paciente, Long> {
         return pacienteRepository.updateProfilePicture(id, fotoPerfilBase64);
     }
 
+
+    public boolean updatePassword(Long id, String candidatePassword, String newPassword) {
+        Optional<Paciente> paciente = findById(id);
+        
+
+        if (candidatePassword == null || candidatePassword.isEmpty() || newPassword == null || newPassword.isEmpty()) {
+            throw new IllegalArgumentException("Senha atual ou antiga não pode ser vazia");
+        }
+
+        if (candidatePassword==newPassword) {
+            throw new IllegalArgumentException("A nova senha não pode ser igual à senha atual");
+        }
+
+        if (paciente == null || paciente.isEmpty()) {
+            throw new IllegalArgumentException("Paciente não encontrado");
+        }
+        
+        if (!paciente.get().getSenha().equals(candidatePassword)) {
+            throw new IllegalArgumentException("Senha atual inválida");
+        }
+        if (newPassword == null || newPassword.isEmpty()) {
+            throw new IllegalArgumentException("Nova senha não pode ser vazia");
+        }
+
+        Paciente pacienteEntity = paciente.get();
+        pacienteEntity.setSenha(newPassword);
+
+        return pacienteRepository.updatePassword(id, newPassword);
+    }
 }

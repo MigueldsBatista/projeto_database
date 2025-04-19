@@ -1,9 +1,11 @@
 package com.hospital.santajoana.rest.controller;
 
 import java.time.LocalDate;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -91,8 +93,26 @@ public class AuthenticationController {
         
         return ResponseEntity.ok(response);
     }
+
+    @PatchMapping("/pacientes/update/password")
+    public ResponseEntity<AuthResponse> updatePacientePassword(
+            @RequestBody Map<String, String> request) {
+
+            Long id = Long.valueOf(request.get("id"));
+            String candidate = request.get("senhaAtual");
+            String newPassword = request.get("novaSenha");
+
+            boolean updated = pacienteMediator.updatePassword(id, candidate, newPassword);
+            
+            if (!updated) {
+                return ResponseEntity.badRequest().build();
+            }
+            
+            return ResponseEntity.noContent().build();
+
+    }
     
-    @PostMapping("/paciente/profile-picture/{id}")
+    @PostMapping("/pacientes/profile-picture/{id}")
     public ResponseEntity<AuthResponse> updatePacienteProfilePicture(
             @PathVariable Long id, 
             @RequestBody ProfilePictureRequest request) {
@@ -114,7 +134,7 @@ public class AuthenticationController {
         }
     }
     
-    @PostMapping("/camareira/profile-picture/{id}")
+    @PostMapping("/camareiras/profile-picture/{id}")
     public ResponseEntity<AuthResponse> updateCamareiraProfilePicture(
             @PathVariable Long id, 
             @RequestBody ProfilePictureRequest request) {
