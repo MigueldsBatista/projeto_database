@@ -87,4 +87,24 @@ public class FaturaRepository extends BaseRepository<Fatura, LocalDateTime> {
     }
 
 
+    public void updateValorTotal(LocalDateTime dataEmissao){
+        String updateSql = "UPDATE FATURA\r\n" + //
+                        "SET VALOR_TOTAL = (\r\n" + //
+                        "    SELECT SUM(PRODUTO_PEDIDO.QUANTIDADE * PRODUTO.PRECO)\r\n" + //
+                        "    FROM PEDIDO\r\n" + //
+                        "    JOIN PRODUTO_PEDIDO ON PEDIDO.DATA_PEDIDO = PRODUTO_PEDIDO.DATA_PEDIDO\r\n" + //
+                        "    JOIN PRODUTO ON PRODUTO_PEDIDO.ID_PRODUTO = PRODUTO.ID_PRODUTO\r\n" + //
+                        "    WHERE PEDIDO.DATA_ENTRADA_ESTADIA = FATURA.DATA_ENTRADA_ESTADIA\r\n" + //
+                        ")\r\n" + //
+                        "WHERE FATURA.DATA_EMISSAO = '?';";
+        jdbcTemplate.update(updateSql, dataEmissao);
+    }
+
+
+    public Fatura findByDataPedido(LocalDateTime dataPedido) {
+        String sql = "SELECT * FROM FATURA INNER JOIN PEDIDO ON FATURA.DATA_ENTRADA_ESTADIA = PEDIDO.DATA_ENTRADA_ESTADIA WHERE PEDIDO.DATA_PEDIDO = ?";
+        return findBySql(sql, dataPedido).stream().findFirst().orElse(null);
+    }
+
+
 }

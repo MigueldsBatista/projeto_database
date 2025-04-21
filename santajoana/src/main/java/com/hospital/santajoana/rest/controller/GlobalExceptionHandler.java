@@ -2,6 +2,7 @@ package com.hospital.santajoana.rest.controller;
 
 
 import java.time.LocalDateTime;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
@@ -82,6 +83,15 @@ public class GlobalExceptionHandler {
             HttpStatus.BAD_REQUEST.value(),
             "VALIDATION_ERROR",
            ex.getMessage()
+        );
+    }
+
+    @ExceptionHandler(NoSuchElementException.class)
+    public ResponseEntity<ErrorResponse> handleNoSuchElementException(NoSuchElementException ex) {
+        return this.buildResponse(
+            HttpStatus.NOT_FOUND.value(),
+            "RESOURCE_NOT_FOUND",
+            ex.getMessage()
         );
     }
 

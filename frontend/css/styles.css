@@ -379,7 +379,7 @@ html, body {
 
 .order-items {
     font-size: var(--font-body);
-    color: var(--text-primary);
+    color: var (--text-primary);
     margin-bottom: var(--spacing-xs);
 }
 
@@ -688,6 +688,18 @@ html, body {
 }
 
 .profile-menu-item.logout i {
+    color: var(--error);
+}
+
+.profile-menu-item.delete-account {
+    color: var(--error);
+    font-weight: 500;
+    border-top: 1px solid var(--border);
+    margin-top: 8px;
+    padding-top: 16px;
+}
+
+.profile-menu-item.delete-account i {
     color: var(--error);
 }
 

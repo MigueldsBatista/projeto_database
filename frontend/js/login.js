@@ -116,7 +116,7 @@ function showLoginError(errorMessageElement, message) {
  * Handle successful login
  * @param {Object} userData - The authenticated user data
  */
-function handleSuccessfulLogin(userData) {
+async function handleSuccessfulLogin(userData) {
     // Store user data in localStorage
     localStorage.setItem('user', JSON.stringify(userData));
     
@@ -127,9 +127,117 @@ function handleSuccessfulLogin(userData) {
     
     showToast('Login realizado com sucesso!', 'success');
     
-    // Redirect based on user role
+    // If user is a patient, check for active estadia
+    if (userData.role !== 'camareira') {
+        try {
+            // Check if user has an active estadia
+            const estadiaResponse = await fetch(`${API_URL}/api/pacientes/estadia-ativa/${userData.id}`, {
+                headers: { 'Accept': 'application/json' },
+            });
+            
+            if (!estadiaResponse.ok) {
+                // No active estadia found, show estadia prompt
+                setTimeout(() => {
+                    showEstadiaPrompt(userData.id);
+                }, 1000);
+                return; // Exit function early to prevent immediate redirect
+            }
+        } catch (error) {
+            console.error('Error checking estadia:', error);
+            // Continue with normal login flow on error
+        }
+    }
+    
+    // Redirect based on user role (only if we didn't show estadia prompt)
     const redirectUrl = userData.role === 'camareira' ? 'staff-dashboard.html' : 'dashboard.html';
     setTimeout(() => { window.location.href = redirectUrl; }, 1000);
+}
+
+/**
+ * Show prompt asking if user wants to create an estadia
+ * @param {number} pacienteId - ID of the patient
+ */
+function showEstadiaPrompt(pacienteId) {
+    // Create modal overlay
+    const overlay = document.createElement('div');
+    overlay.className = 'modal-overlay';
+    
+    // Create modal content
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    
+    modal.innerHTML = `
+        <h2>Bem-vindo ao Hospital Santa Joana!</h2>
+        <p>Você não possui uma internação ativa no momento.</p>
+        <p>Deseja iniciar uma internação hospitalar?</p>
+        <div class="modal-actions">
+            <button id="btn-skip-estadia" class="btn-secondary">Não, continuar sem internação</button>
+            <button id="btn-create-estadia" class="btn-primary">Sim, iniciar internação</button>
+        </div>
+    `;
+    
+    // Add modal to overlay
+    overlay.appendChild(modal);
+    
+    // Add overlay to body
+    document.body.appendChild(overlay);
+    
+    // Handle skip estadia
+    document.getElementById('btn-skip-estadia').addEventListener('click', function() {
+        overlay.remove();
+        redirectToDashboard();
+    });
+    
+    // Handle create estadia
+    document.getElementById('btn-create-estadia').addEventListener('click', async function() {
+        try {
+            this.disabled = true;
+            this.textContent = 'Processando...';
+            
+            const estadiaResponse = await fetch(`${API_URL}/api/pacientes/create-estadia/${pacienteId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+            
+            if (estadiaResponse.ok) {
+                showToast('Internação iniciada com sucesso!', 'success');
+                overlay.remove();
+                redirectToDashboard();
+            } else {
+                // Handle estadia creation error specifically
+                const errorData = await estadiaResponse.json().catch(() => ({}));
+                let errorMessage = errorData.message || 'Não foi possível iniciar a internação';
+                
+                // Map specific error messages
+                if (errorMessage.includes('não existem quartos disponiveis')) {
+                    errorMessage = 'Não há quartos disponíveis no momento. Por favor, entre em contato com a recepção.';
+                }
+                
+                showToast(errorMessage, 'error');
+                // Even with error, we should allow the user to continue
+                setTimeout(() => {
+                    overlay.remove();
+                    redirectToDashboard();
+                }, 3000);
+            }
+        } catch (error) {
+            console.error('Error creating estadia:', error);
+            showToast('Erro ao iniciar internação. Por favor, tente novamente mais tarde ou entre em contato com a recepção.', 'error');
+            setTimeout(() => {
+                overlay.remove();
+                redirectToDashboard();
+            }, 3000);
+        }
+    });
+}
+
+/**
+ * Redirect to dashboard
+ */
+function redirectToDashboard() {
+    window.location.href = 'dashboard.html';
 }
 
 /**

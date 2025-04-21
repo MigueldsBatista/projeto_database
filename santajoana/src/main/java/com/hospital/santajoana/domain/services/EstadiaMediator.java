@@ -27,11 +27,11 @@ public class EstadiaMediator extends BaseMediator<Estadia, LocalDateTime> {
 
         Optional<Paciente> paciente = pacienteMediator.findById(estadia.getPacienteId());
 
-
         if(
             existingEstadia.isPresent() &&
             paciente.isPresent() && 
             !paciente.get().getStatus().equals(StatusPaciente.ALTA)
+            && existingEstadia.get().getDataSaida() == null
             ){
             throw new IllegalArgumentException("Paciente já possui uma estadia ativa.");
         }

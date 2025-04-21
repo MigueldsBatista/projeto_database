@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', function() {
     // Get user data from localStorage
     const user = JSON.parse(localStorage.getItem('user')) || null;
@@ -21,6 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
     setupEditProfileFunctionality(user);
     setupChangePasswordFunctionality(user);
     setupLogoutButton();
+    setupDeleteAccountButton(user);  // Add this line
     
     // Update cart badge
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -378,7 +378,7 @@ function setupChangePasswordFunctionality(user) {
 
 async function fetchEstadiaAndRoom(patientId) {
     try {
-        const estadiaResponse = await fetch(`${API_URL}/api/pacientes/estadia-recente/${patientId}`, {
+        const estadiaResponse = await fetch(`${API_URL}/api/pacientes/estadia-ativa/${patientId}`, {
             headers: { 'Accept': 'application/json' },
             mode: 'cors'
         });
@@ -420,6 +420,53 @@ function setupLogoutButton() {
         
         // Redirect to login
         window.location.href = 'login.html';
+    });
+}
+
+// Add the new function for delete account functionality
+function setupDeleteAccountButton(user) {
+    const deleteAccountBtn = document.getElementById('delete-account-btn');
+    if (!deleteAccountBtn) return;
+    
+    deleteAccountBtn.addEventListener('click', async function(e) {
+        e.preventDefault();
+        
+        // Show confirmation dialog with warning
+        const isConfirmed = confirm('ATENÇÃO: Esta ação é irreversível. Todos os seus dados serão excluídos permanentemente. Deseja realmente excluir sua conta?');
+        
+        if (!isConfirmed) return;
+        
+        try {
+            showToast('Excluindo conta...', 'info');
+            
+            const response = await fetch(`${API_URL}/api/pacientes/delete/${user.id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            if (response.ok) {
+                showToast('Conta excluída com sucesso', 'success');
+                
+                // Clear all user data from localStorage
+                localStorage.removeItem('user');
+                localStorage.removeItem('profileImage');
+                localStorage.removeItem('cart');
+                localStorage.removeItem('pacienteId');
+                
+                // Redirect to login page after a short delay
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
+            } else {
+                const errorData = await response.json().catch(() => ({}));
+                showToast(errorData.message || 'Erro ao excluir conta', 'error');
+            }
+        } catch (error) {
+            console.error('Error deleting account:', error);
+            showToast('Erro ao excluir conta. Por favor, tente novamente mais tarde.', 'error');
+        }
     });
 }
 

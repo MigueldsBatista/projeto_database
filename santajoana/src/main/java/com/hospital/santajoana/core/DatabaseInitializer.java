@@ -105,6 +105,11 @@ public class DatabaseInitializer {
             ? "VARCHAR(10) DEFAULT 'Internado' NOT NULL CHECK (STATUS IN ('Internado', 'Alta'))"
             : "ENUM('Internado', 'Alta') NOT NULL DEFAULT 'Internado'";
         
+        // Fix the constraint syntax for H2 and MySQL
+        String dataEntradaSaidaConstraint = isH2 
+            ? "CONSTRAINT CHECK_ESTADIA_INTERVALO CHECK ((DATA_SAIDA IS NULL) OR (DATA_ENTRADA <= DATA_SAIDA))"
+            : "CONSTRAINT CHECK_ESTADIA_INTERVALO CHECK (DATA_SAIDA IS NULL OR DATA_ENTRADA <= DATA_SAIDA)";
+        
         return new String[] {
             // Create category tables first with consistent ID naming
             "CREATE TABLE IF NOT EXISTS CATEGORIA_QUARTO ("
@@ -184,14 +189,14 @@ public class DatabaseInitializer {
             
             "CREATE TABLE IF NOT EXISTS ESTADIA ("
             + "ID_PACIENTE INT NOT NULL,"
-            + "ID_QUARTO INT NOT NULL,"
+            + "ID_QUARTO INT NULL,"
             + "DATA_ENTRADA " + datetimeType + " DEFAULT CURRENT_TIMESTAMP" + (isH2 ? "" : "(6)") + ","
             + "DATA_SAIDA " + datetimeType + " NULL,"
             + "PRIMARY KEY (DATA_ENTRADA),"
             + "UNIQUE (ID_PACIENTE, ID_QUARTO, DATA_ENTRADA),"
-            + "FOREIGN KEY (ID_QUARTO) REFERENCES QUARTO (ID_QUARTO),"
-            + "FOREIGN KEY (ID_PACIENTE) REFERENCES PACIENTE (ID_PACIENTE),"
-            + checkSyntaxStart + " (DATA_ENTRADA <= DATA_SAIDA OR DATA_SAIDA IS NULL)"
+            + "FOREIGN KEY (ID_QUARTO) REFERENCES QUARTO (ID_QUARTO)" + (isH2 ? "" : " ON DELETE SET NULL") + ","
+            + "FOREIGN KEY (ID_PACIENTE) REFERENCES PACIENTE (ID_PACIENTE)" + (isH2 ? "" : " ON DELETE CASCADE") + ","
+            + dataEntradaSaidaConstraint
             + ");",
             
             "CREATE TABLE IF NOT EXISTS FATURA ("

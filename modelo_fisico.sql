@@ -1,4 +1,4 @@
--- Active: 1743591236116@@127.0.0.1@3307@hospital_db
+-- Active: 1743551470150@@127.0.0.1@3307@hospital_db
 DROP DATABASE hospital_db;
 CREATE DATABASE IF NOT EXISTS hospital_db;
 USE hospital_db;
@@ -85,17 +85,17 @@ CREATE TABLE IF NOT EXISTS METODO_PAGAMENTO (
     ID_METODO_PAGAMENTO INT PRIMARY KEY AUTO_INCREMENT,
     TIPO VARCHAR(50) NOT NULL UNIQUE
 );
+
 CREATE TABLE IF NOT EXISTS ESTADIA (
     ID_PACIENTE INT NOT NULL,
-    ID_QUARTO INT NOT NULL,
+    ID_QUARTO INT NULL,
     DATA_ENTRADA DATETIME(6) PRIMARY KEY DEFAULT CURRENT_TIMESTAMP(6),
     DATA_SAIDA DATETIME(6) NULL,
     UNIQUE (ID_PACIENTE, ID_QUARTO, DATA_ENTRADA),
-    FOREIGN KEY (ID_QUARTO) REFERENCES QUARTO (ID_QUARTO),
-    FOREIGN KEY (ID_PACIENTE) REFERENCES PACIENTE (ID_PACIENTE),
+    FOREIGN KEY (ID_QUARTO) REFERENCES QUARTO (ID_QUARTO) ON DELETE SET NULL,
+    FOREIGN KEY (ID_PACIENTE) REFERENCES PACIENTE (ID_PACIENTE) ON DELETE CASCADE,
     CONSTRAINT CHECK_ESTADIA_INTERVALO CHECK (
-        DATA_ENTRADA <= DATA_SAIDA
-        OR DATA_SAIDA IS NULL
+        DATA_SAIDA IS NULL OR DATA_ENTRADA <= DATA_SAIDA
     )
 );
 
@@ -135,91 +135,121 @@ CREATE TABLE IF NOT EXISTS PRODUTO_PEDIDO (
     FOREIGN KEY (DATA_PEDIDO) REFERENCES PEDIDO (DATA_PEDIDO) ON DELETE CASCADE,
     CONSTRAINT CHECK_QUANTIDADE CHECK (QUANTIDADE > 0)
 );
+
+-- Replace the problematic direct update with a stored function approach
 DELIMITER //
 
 -- Drop existing triggers if they exist
-DROP TRIGGER IF EXISTS update_fatura_total_after_produto_pedido_insert;
-DROP TRIGGER IF EXISTS update_fatura_total_after_produto_pedido_update;
-DROP TRIGGER IF EXISTS update_fatura_total_after_produto_pedido_delete;
+DROP FUNCTION IF EXISTS calculate_fatura_total//
+DROP PROCEDURE IF EXISTS update_fatura_total//
+
+-- Function to calculate the total value of a fatura based on related orders and products
+CREATE FUNCTION calculate_fatura_total(estadia_entrada DATETIME(6)) RETURNS DECIMAL(10,2)
+DETERMINISTIC
+BEGIN
+    DECLARE total DECIMAL(10,2);
+    
+    SELECT COALESCE(SUM(pp.QUANTIDADE * p.PRECO), 0) INTO total
+    FROM PEDIDO pd
+    JOIN PRODUTO_PEDIDO pp ON pd.DATA_PEDIDO = pp.DATA_PEDIDO
+    JOIN PRODUTO p ON pp.ID_PRODUTO = p.ID_PRODUTO
+    WHERE pd.DATA_ENTRADA_ESTADIA = estadia_entrada;
+    
+    RETURN total;
+END//
+
+-- Procedure to update a specific fatura
+CREATE PROCEDURE update_fatura_total(IN fatura_data DATETIME(6))
+BEGIN
+    DECLARE estadia_entrada DATETIME(6);
+    
+    -- Get the estadia entrada date for this fatura
+    SELECT DATA_ENTRADA_ESTADIA INTO estadia_entrada 
+    FROM FATURA 
+    WHERE DATA_EMISSAO = fatura_data;
+    
+    -- Update the fatura total
+    UPDATE FATURA
+    SET VALOR_TOTAL = calculate_fatura_total(estadia_entrada)
+    WHERE DATA_EMISSAO = fatura_data;
+END//
+
+-- Create triggers to automatically update fatura when products change
+DROP TRIGGER IF EXISTS update_fatura_total_after_produto_pedido_insert//
+DROP TRIGGER IF EXISTS update_fatura_total_after_produto_pedido_update//
+DROP TRIGGER IF EXISTS update_fatura_total_after_produto_pedido_delete//
 
 -- Trigger for INSERT operations
 CREATE TRIGGER update_fatura_total_after_produto_pedido_insert
 AFTER INSERT ON PRODUTO_PEDIDO
 FOR EACH ROW
 BEGIN
-    DECLARE v_preco DECIMAL(10,2);
     DECLARE v_data_entrada DATETIME(6);
-
-    -- Get the product price
-    SELECT PRECO INTO v_preco
-    FROM PRODUTO
-    WHERE ID_PRODUTO = NEW.ID_PRODUTO;
 
     -- Get the estadia entry date associated with the order
     SELECT DATA_ENTRADA_ESTADIA INTO v_data_entrada
     FROM PEDIDO
     WHERE DATA_PEDIDO = NEW.DATA_PEDIDO;
 
-    -- Update the invoice total by adding the new product price * quantity
+    -- Update the invoice total
     UPDATE FATURA 
-    SET VALOR_TOTAL = VALOR_TOTAL + (NEW.QUANTIDADE * v_preco)
+    SET VALOR_TOTAL = calculate_fatura_total(v_data_entrada)
     WHERE DATA_ENTRADA_ESTADIA = v_data_entrada;
-END //
+END//
 
 -- Trigger for UPDATE operations
 CREATE TRIGGER update_fatura_total_after_produto_pedido_update
 AFTER UPDATE ON PRODUTO_PEDIDO
 FOR EACH ROW
 BEGIN
-    DECLARE v_preco_old DECIMAL(10,2);
-    DECLARE v_preco_new DECIMAL(10,2);
-    DECLARE v_data_entrada DATETIME(6);
+    DECLARE v_data_entrada_old DATETIME(6);
+    DECLARE v_data_entrada_new DATETIME(6);
 
-    -- Get the old product price
-    SELECT PRECO INTO v_preco_old
-    FROM PRODUTO
-    WHERE ID_PRODUTO = OLD.ID_PRODUTO;
+    -- Get the estadia entry date for old and new order (they might differ if order changed)
+    SELECT DATA_ENTRADA_ESTADIA INTO v_data_entrada_old
+    FROM PEDIDO
+    WHERE DATA_PEDIDO = OLD.DATA_PEDIDO;
     
-    -- Get the new product price (may be the same or different if product changed)
-    SELECT PRECO INTO v_preco_new
-    FROM PRODUTO
-    WHERE ID_PRODUTO = NEW.ID_PRODUTO;
-
-    -- Get the estadia entry date associated with the order
-    SELECT DATA_ENTRADA_ESTADIA INTO v_data_entrada
+    SELECT DATA_ENTRADA_ESTADIA INTO v_data_entrada_new
     FROM PEDIDO
     WHERE DATA_PEDIDO = NEW.DATA_PEDIDO;
 
-    -- Update the invoice by removing the old value and adding the new value
-    UPDATE FATURA 
-    SET VALOR_TOTAL = VALOR_TOTAL - (OLD.QUANTIDADE * v_preco_old) + (NEW.QUANTIDADE * v_preco_new)
-    WHERE DATA_ENTRADA_ESTADIA = v_data_entrada;
-END //
+    -- Update both invoices if they differ
+    IF v_data_entrada_old = v_data_entrada_new THEN
+        UPDATE FATURA 
+        SET VALOR_TOTAL = calculate_fatura_total(v_data_entrada_new)
+        WHERE DATA_ENTRADA_ESTADIA = v_data_entrada_new;
+    ELSE
+        UPDATE FATURA 
+        SET VALOR_TOTAL = calculate_fatura_total(v_data_entrada_old)
+        WHERE DATA_ENTRADA_ESTADIA = v_data_entrada_old;
+        
+        UPDATE FATURA 
+        SET VALOR_TOTAL = calculate_fatura_total(v_data_entrada_new)
+        WHERE DATA_ENTRADA_ESTADIA = v_data_entrada_new;
+    END IF;
+END//
 
 -- Trigger for DELETE operations
 CREATE TRIGGER update_fatura_total_after_produto_pedido_delete
 AFTER DELETE ON PRODUTO_PEDIDO
 FOR EACH ROW
 BEGIN
-    DECLARE v_preco DECIMAL(10,2);
     DECLARE v_data_entrada DATETIME(6);
-
-    -- Get the product price
-    SELECT PRECO INTO v_preco
-    FROM PRODUTO
-    WHERE ID_PRODUTO = OLD.ID_PRODUTO;
 
     -- Get the estadia entry date associated with the order
     SELECT DATA_ENTRADA_ESTADIA INTO v_data_entrada
     FROM PEDIDO
     WHERE DATA_PEDIDO = OLD.DATA_PEDIDO;
 
-    -- Update the invoice by removing the deleted product value
+    -- Update the invoice total
     UPDATE FATURA 
-    SET VALOR_TOTAL = VALOR_TOTAL - (OLD.QUANTIDADE * v_preco)
+    SET VALOR_TOTAL = calculate_fatura_total(v_data_entrada)
     WHERE DATA_ENTRADA_ESTADIA = v_data_entrada;
-END //
+END//
 
 DELIMITER ;
 
 SET GLOBAL log_bin_trust_function_creators = 1;
+
+

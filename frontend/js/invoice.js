@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         });
         
         // Step 2: Get patient's latest estadia (stay)
-        const estadia = await fetch(`${API_URL}/api/pacientes/estadia-recente/${pacienteId}`, {
+        const estadia = await fetch(`${API_URL}/api/pacientes/estadia-ativa/${pacienteId}`, {
             headers: { 'Accept': 'application/json' },
             mode: 'cors'
         })

@@ -1,0 +1,6 @@
+{"properties": [{
+  "name": "database.recreate-tables",
+  "type": "java.lang.String",
+  "description": "Recria as tabelas existentes no banco de dados.",
+  "default": "false"
+}]}

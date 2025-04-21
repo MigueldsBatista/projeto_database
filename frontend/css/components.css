@@ -251,10 +251,22 @@
 
 .toast.success {
     background-color: var(--success);
+    border-left: 4px solid #047857;
 }
 
 .toast.error {
     background-color: var(--error);
+    border-left: 4px solid #b91c1c;
+}
+
+.toast.info {
+    background-color: var(--secondary-blue);
+    border-left: 4px solid #1d4ed8;
+}
+
+.toast.warning {
+    background-color: var(--warning);
+    border-left: 4px solid #b45309;
 }
 
 /* Modal */
@@ -264,14 +276,56 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.7);
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 300;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
+    z-index: 1000;
+}
+
+.modal {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    width: 85%;
+    max-width: 450px;
+    padding: 24px;
+    text-align: center;
+}
+
+.modal h2 {
+    color: var(--primary-blue);
+    margin-bottom: 16px;
+    font-size: 20px;
+}
+
+.modal p {
+    margin-bottom: 16px;
+    line-height: 1.5;
+    color: var(--text-secondary);
+}
+
+.modal-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+@media (min-width: 480px) {
+    .modal-actions {
+        flex-direction: row;
+        justify-content: center;
+    }
+    
+    .modal-actions button {
+        flex-basis: 45%;
+    }
+}
+
+.modal-actions button {
+    padding: 12px 24px;
+    font-weight: 500;
 }
 
 .modal-overlay.show {
@@ -322,4 +376,16 @@
     display: flex;
     justify-content: flex-end;
     gap: var(--spacing-md);
+}
+
+/* Error message styling */
+.error-message {
+    color: var(--error);
+    background-color: rgba(239, 68, 68, 0.1);
+    border: 1px solid var(--error);
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    margin: 16px 0;
+    font-size: 14px;
+    text-align: center;
 }

@@ -16,7 +16,6 @@ public class QuartoController extends BaseController<Quarto, Long> {
         super(quartoMediator);
     }
 
-    
     @GetMapping("/livres")
     public ResponseEntity<?> getQuartoLivre() {
         return ((QuartoMediator) mediator).findFreeQuarto()

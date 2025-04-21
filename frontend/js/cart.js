@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     async function fetchPacienteEstadia(pacienteId) {
         try {
-            const response = await fetch(`${API_URL}/api/pacientes/estadia-recente/${pacienteId}`, {
+            const response = await fetch(`${API_URL}/api/pacientes/estadia-ativa/${pacienteId}`, {
                 headers: { 'Accept': 'application/json' },
                 mode: 'cors'
             });

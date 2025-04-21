@@ -50,16 +50,39 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 const result = await response.json();
                 
-                if (response.ok) {
-                    showToast('Conta criada com sucesso!', 'success');
+                if (!response.ok || response.status !== 201) {
+                    // Get error message from API response if available
+                    const errorMessage = result.message || 'Erro ao criar conta. Por favor, tente novamente.';
+                    showToast(errorMessage, 'error');
+                    return;
+                }
+
+                const pacienteId = result.id;
+                showToast('Conta criada com sucesso!', 'success');
+                
+                // Check if user already has an active estadia
+                try {
+                    const estadiaResponse = await fetch(`${API_URL}/api/pacientes/estadia-ativa/${pacienteId}`, {
+                        headers: { 'Accept': 'application/json' },
+                    });
                     
-                    // Redirect to login after a short delay
+                    if (estadiaResponse.ok) {
+                        // User already has an estadia, redirect to login
+                        setTimeout(() => {
+                            window.location.href = 'login.html';
+                        }, 2000);
+                    } else {
+                        // Ask if user wants to create an estadia
+                        showEstadiaPrompt(pacienteId);
+                    }
+                } catch (estadiaError) {
+                    console.error('Error checking estadia:', estadiaError);
+                    // Default to login redirect if there's an error
                     setTimeout(() => {
                         window.location.href = 'login.html';
                     }, 2000);
-                } else {
-                    showToast(result.message, 'error');
                 }
+                
             } catch (error) {
                 console.error('Error during registration:', error);
                 showToast('Erro ao criar conta. Por favor, tente novamente mais tarde.', 'error');
@@ -98,6 +121,180 @@ document.addEventListener('DOMContentLoaded', function() {
                 e.target.value = value;
             });
         }
+    }
+    
+    /**
+     * Show prompt asking if user wants to create an estadia
+     * @param {number} pacienteId - ID of the created patient
+     */
+    function showEstadiaPrompt(pacienteId) {
+        // Create modal overlay
+        const overlay = document.createElement('div');
+        overlay.className = 'modal-overlay';
+        
+        // Create modal content
+        const modal = document.createElement('div');
+        modal.className = 'modal';
+        
+        modal.innerHTML = `
+            <h2>Bem-vindo ao Hospital Santa Joana!</h2>
+            <p>Sua conta foi criada com sucesso.</p>
+            <p>Deseja iniciar uma internação hospitalar?</p>
+            <div class="modal-actions">
+                <button id="btn-skip-estadia" class="btn-secondary">Não, apenas entrar</button>
+                <button id="btn-create-estadia" class="btn-primary">Sim, iniciar internação</button>
+            </div>
+        `;
+        
+        // Add modal to overlay
+        overlay.appendChild(modal);
+        
+        // Add overlay to body
+        document.body.appendChild(overlay);
+        
+        // Handle skip estadia
+        document.getElementById('btn-skip-estadia').addEventListener('click', function() {
+            overlay.remove();
+            redirectToLogin();
+        });
+        
+        // Handle create estadia
+        document.getElementById('btn-create-estadia').addEventListener('click', async function() {
+            try {
+                this.disabled = true;
+                this.textContent = 'Processando...';
+                
+                const estadiaResponse = await fetch(`${API_URL}/api/pacientes/create-estadia/${pacienteId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                if (estadiaResponse.ok) {
+                    showToast('Internação iniciada com sucesso!', 'success');
+                } else {
+                    // Handle estadia creation error specifically
+                    const errorData = await estadiaResponse.json().catch(() => ({}));
+                    let errorMessage = errorData.message || 'Não foi possível iniciar a internação';
+                    
+                    // Map specific error messages
+                    if (errorMessage.includes('não existem quartos disponiveis')) {
+                        errorMessage = 'Não há quartos disponíveis no momento. Por favor, entre em contato com a recepção.';
+                    }
+                    
+                    showToast(errorMessage, 'error');
+                }
+                
+                overlay.remove();
+                redirectToLogin();
+                
+            } catch (error) {
+                console.error('Error creating estadia:', error);
+                showToast('Erro ao iniciar internação. Por favor, tente novamente mais tarde ou entre em contato com a recepção.', 'error');
+                overlay.remove();
+                redirectToLogin();
+            }
+        });
+    }
+    
+    /**
+     * Check if user already has an active estadia
+     * @param {number} pacienteId - The patient ID
+     * @returns {Promise<boolean>} True if user has an active estadia
+     */
+    async function checkExistingEstadia(pacienteId) {
+        try {
+            const response = await fetch(`${API_URL}/api/pacientes/estadia-ativa/${pacienteId}`, {
+                headers: { 'Accept': 'application/json' },
+            });
+            
+            if (response.ok) {
+                const estadia = await response.json();
+                return !!estadia; // Return true if estadia exists
+            }
+            
+            return false;
+        } catch (error) {
+            console.error('Error checking for existing estadia:', error);
+            return false;
+        }
+    }
+    
+    /**
+     * Show confirmation dialog for creating an estadia
+     * @param {number} pacienteId - The patient ID
+     */
+    function showEstadiaConfirmation(pacienteId) {
+        // Create modal overlay
+        const overlay = document.createElement('div');
+        overlay.className = 'modal-overlay';
+        
+        // Create modal content
+        const modal = document.createElement('div');
+        modal.className = 'modal';
+        
+        modal.innerHTML = `
+            <h2>Bem-vindo ao Hospital Santa Joana!</h2>
+            <p>Sua conta foi criada com sucesso.</p>
+            <p>Deseja iniciar uma internação no hospital agora?</p>
+            <div class="modal-actions">
+                <button id="btn-skip-estadia" class="btn-secondary">Não, apenas entrar</button>
+                <button id="btn-create-estadia" class="btn-primary">Sim, iniciar internação</button>
+            </div>
+        `;
+        
+        // Add modal to overlay
+        overlay.appendChild(modal);
+        
+        // Add overlay to body
+        document.body.appendChild(overlay);
+        
+        // Handle skip estadia
+        document.getElementById('btn-skip-estadia').addEventListener('click', function() {
+            overlay.remove();
+            redirectToLogin();
+        });
+        
+        // Handle create estadia
+        document.getElementById('btn-create-estadia').addEventListener('click', async function() {
+            try {
+                this.disabled = true;
+                this.textContent = 'Processando...';
+                
+                const estadiaResponse = await fetch(`${API_URL}/api/pacientes/create-estadia/${pacienteId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                overlay.remove();
+                
+                if (estadiaResponse.ok) {
+                    showToast('Internação iniciada com sucesso!', 'success');
+                } else {
+                    showToast('Não foi possível iniciar a internação.', 'error');
+                }
+                
+                redirectToLogin();
+                
+            } catch (error) {
+                console.error('Error creating estadia:', error);
+                showToast('Erro ao iniciar internação. Por favor, tente novamente mais tarde.', 'error');
+                overlay.remove();
+                redirectToLogin();
+            }
+        });
+    }
+    
+    /**
+     * Redirect to login page
+     */
+    function redirectToLogin() {
+        setTimeout(() => {
+            window.location.href = 'login.html';
+        }, 1500);
     }
     
     function showToast(message, type = 'default', duration = 3000) {

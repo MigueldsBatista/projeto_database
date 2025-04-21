@@ -1,5 +1,6 @@
 package com.hospital.santajoana.rest.controller;
 
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -12,6 +13,7 @@ import com.hospital.santajoana.domain.services.FaturaMediator;
 import com.hospital.santajoana.domain.services.PacienteMediator;
 import com.hospital.santajoana.domain.services.PedidoMediator;
 import com.hospital.santajoana.domain.services.QuartoMediator;
+import com.hospital.santajoana.rest.dto.PacienteEstadiaDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -47,8 +49,18 @@ public class PacienteController extends BaseController<Paciente, Long> {
     @Override
     public ResponseEntity<Paciente> create(@RequestBody Paciente paciente) {
 
-
         Paciente savedPaciente = pacienteMediator.save(paciente);
+
+        return ResponseEntity.status(201).body(savedPaciente);
+    }
+    @PostMapping("/create-estadia/{pacienteId}")
+    public ResponseEntity<PacienteEstadiaDTO> createEstadia(@PathVariable Long pacienteId) {
+
+        var existingPaciente = pacienteMediator.findById(pacienteId);
+        if (existingPaciente.isEmpty()) {
+            throw new IllegalArgumentException("Paciente não encontrado.");
+        }
+        Paciente savedPaciente = existingPaciente.get();
 
         var quartosOptional = quartoMediator.findFreeQuarto();
 
@@ -70,10 +82,20 @@ public class PacienteController extends BaseController<Paciente, Long> {
         var fatura = faturaMediator.save(new Fatura(estadia.getId()));
         
         if (fatura == null) {
+            
+            estadiaMediator.deleteById(estadia.getId());
+
             throw new IllegalArgumentException("Não foi possível criar a fatura.");
         }
 
-        return ResponseEntity.ok(savedPaciente);
+        PacienteEstadiaDTO pacienteEstadiaDTO = new PacienteEstadiaDTO(
+            savedPaciente.getId(),
+            estadia.getDataEntrada(),
+            fatura.getDataEmissao(),
+            estadia.getQuartoId()
+        );
+        
+        return ResponseEntity.ok(pacienteEstadiaDTO);
     }
 
 
@@ -107,12 +129,12 @@ public class PacienteController extends BaseController<Paciente, Long> {
         return ResponseEntity.ok(savedPaciente);
     }
 
-    @GetMapping("/estadia-recente/{id}")
+    @GetMapping("/estadia-ativa/{id}")
     public ResponseEntity<Estadia> findEstadiaByPacienteId(@PathVariable Long id) {
         var estadia = estadiaMediator.findMostRecentEstadiaByPacienteId(id);
 
-        if (estadia.isEmpty()) {
-            return ResponseEntity.notFound().build();
+        if (estadia.isEmpty() || estadia.get().getDataSaida() != null) {
+            throw new IllegalArgumentException("Paciente não possui estadia ativa");
         }
 
         return ResponseEntity.ok(estadia.get());
@@ -128,6 +150,7 @@ public class PacienteController extends BaseController<Paciente, Long> {
 
         return ResponseEntity.ok(fatura.get());
     }
+
     
 
 }
