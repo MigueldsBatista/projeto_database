@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', async function() {
-    // Import API data and functions from api-data.js
     const API_URL = 'http://localhost:8080';
     
     try {

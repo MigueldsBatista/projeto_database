@@ -136,7 +136,7 @@ html, body {
     font-size: var(--font-h1);
     font-weight: 700;
     margin-bottom: var(--spacing-sm);
-    color: var(--primary-blue);
+    color: var (--primary-blue);
 }
 
 .login-container .subtitle {
@@ -814,4 +814,56 @@ html, body {
     justify-content: flex-end;
     gap: var(--spacing-sm);
     margin-top: var(--spacing-lg);
+}
+
+/* Profile Page Icon Enhancements */
+.profile-section .section-header i {
+    margin-right: 6px;
+    color: var(--primary-blue);
+}
+
+.info-row label i {
+    width: 20px;
+    margin-right: 6px;
+    color: var(--primary-blue);
+    text-align: center;
+}
+
+.form-group label i {
+    width: 20px;
+    margin-right: 6px;
+    color: var(--primary-blue);
+    text-align: center;
+}
+
+.profile-menu-item i {
+    width: 24px;
+    margin-right: 12px;
+    text-align: center;
+}
+
+.form-actions button i {
+    margin-right: 6px;
+}
+
+/* Profile Edit Button Improvements */
+.btn-edit {
+    display: flex;
+    align-items: center;
+    background-color: var(--background);
+    border-radius: var(--radius-full);
+    padding: 6px 12px;
+    transition: all 0.2s ease;
+    color: var(--primary-blue);
+    border: 1px solid var(--primary-blue);
+}
+
+.btn-edit i {
+    margin-right: 6px;
+    font-size: 14px;
+}
+
+.btn-edit:hover, .btn-edit:focus {
+    background-color: var(--primary-blue);
+    color: white;
 }

@@ -86,3 +86,6 @@ criar uma view dos quartos disponiveis e dos quartos ocupados
 
 no sistema real alguem precisaria iniciar uma estadia para esse paciente, por enquanto 
 vamos criar um quarto temporario
+
+A primeiro momento é melhor ter uma função de atualizar o preço do produto ao inves de um trigger
+pra tabela da fatura

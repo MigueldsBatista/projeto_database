@@ -15,93 +15,28 @@ document.addEventListener('DOMContentLoaded', async function() {
         // Update UI with basic patient info that we already have
         document.getElementById('patient-name').textContent = user.name || 'Nome Indisponível';
         
-        // Fetch related data - handle possible errors without redirecting
-        let estadia = null;
-        let quarto = null;
-        let fatura = null;
-
-        try {
-            estadia = await fetchPacienteEstadia(user.id);
-            if (estadia) {
-                quarto = await fetchQuarto(estadia.quartoId);
-            }
-        } catch (estadiaError) {
-            console.error('Error fetching estadia data:', estadiaError);
-            showToast('Não foi possível obter dados da internação', 'warning');
-        }
-
-        try {
-            fatura = await fetchPacienteFatura(user.id);
-        } catch (faturaError) {
-            console.error('Error fetching invoice data:', faturaError);
-            showToast('Não foi possível obter dados da fatura', 'warning');
+        // Try to load data from app state first
+        if (appState.dataLoaded) {
+            updateDashboardFromAppState();
+        } else {
+            // Listen for user data loaded event
+            document.addEventListener('userDataLoaded', updateDashboardFromAppState);
+            
+            // Show loading indicators
+            showLoadingState();
+            
+            // Trigger data loading if not already in progress
+            loadUserData();
         }
         
-        // Update UI with room info if available
-        document.getElementById('room-number').textContent = quarto ? quarto.numero : 'N/A';
-        
-        // Update dashboard widgets with whatever data is available
-        updateDashboardSummary(user, estadia, fatura);
-        
-        // Fetch and display recent orders if possible
-        let pedidos = [];
-        try {
-            pedidos = await fetchRecentOrders(user.id);
-            
-            // Process orders and fetch product details for each
-            const enhancedPedidos = [];
-            
-            for (const pedido of pedidos) {
-                try {
-                    // Fetch products for this order
-                    const produtos = await fetchProdutosFromPedido(pedido.dataPedido);
-                    
-                    // Create enhanced order with details
-                    const enhancedPedido = {
-                        ...pedido,
-                        // Format details as product names separated by commas
-                        detalhes: produtos && produtos.length > 0 
-                            ? produtos.map(p => p.nome).join(', ')
-                            : 'Sem produtos',
-                        // Calculate or use the total value from products if available
-                        valor: produtos && produtos.length > 0
-                            ? produtos.reduce((total, p) => total + (p.preco * p.quantidade), 0)
-                            : pedido.valor || 0
-                    };
-                    
-                    enhancedPedidos.push(enhancedPedido);
-                } catch (produtoError) {
-                    console.error('Error fetching products for order:', produtoError);
-                    // Still add the order without product details
-                    enhancedPedidos.push({
-                        ...pedido,
-                        detalhes: 'Detalhes indisponíveis',
-                        valor: pedido.valor || 0
-                    });
-                }
-            }
-            
-            // Display the enhanced orders
-            displayRecentOrders(enhancedPedidos);
-        } catch (ordersError) {
-            console.error('Error fetching orders:', ordersError);
-            showToast('Não foi possível obter pedidos recentes', 'warning');
-            // Display empty state for orders
-            displayRecentOrders([]);
-        }
+        // Setup user avatar and event handlers
+        setupUserAvatar(user.name);
+        setupLogoutButton();
+        setupQuickActions();
         
         // Update cart badge
         const cart = JSON.parse(localStorage.getItem('cart')) || [];
         updateCartBadge(cart.reduce((total, item) => total + item.quantity, 0));
-        
-        // Setup user profile avatar
-        setupUserAvatar(user.name);
-        
-        // Add event listeners for logout
-        setupLogoutButton();
-        
-        // Add event listeners for quick actions
-        setupQuickActions();
         
     } catch (error) {
         console.error('Error initializing dashboard:', error);
@@ -109,126 +44,38 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
 });
 
-// Fetch Functions
-const fetchPaciente = async (pacienteId) => {
-    try {
-        const response = await fetch(`${API_URL}/api/pacientes/${pacienteId}`, {
-            headers: { 'Accept': 'application/json' },
-            mode: 'cors'
-        });
-        if (!response.ok) throw new Error(`Network response was not ok: ${response.status}`);
-        return await response.json();
-    } catch (error) {
-        console.error('Error fetching patient data:', error);
-        showToast('Não foi possível obter dados do paciente', 'error');
-        return null;
-    }
-};
-
-const fetchPacienteEstadia = async (pacienteId) => {
-    try {
-        const response = await fetch(`${API_URL}/api/pacientes/estadia-recente/${pacienteId}`, {
-            headers: { 'Accept': 'application/json' },
-            mode: 'cors'
-        });
-        
-        if (!response.ok) {
-            if (response.status === 404) {
-                console.warn('No active estadia found for patient');
-                return null;
-            }
-            throw new Error(`Network response was not ok: ${response.status}`);
-        }
-        
-        return await response.json();
-    } catch (error) {
-        console.error('Error fetching estadia data:', error);
-        return null;
-    }
-};
-
-const fetchPacienteFatura = async (pacienteId) => {
-    try {
-        const response = await fetch(`${API_URL}/api/pacientes/fatura-recente/${pacienteId}`, {
-            headers: { 'Accept': 'application/json' },
-            mode: 'cors'
-        });
-        
-        if (!response.ok) {
-            if (response.status === 404) {
-                console.warn('No invoice found for patient');
-                return null;
-            }
-            
-            throw new Error(`Network response was not ok: ${response.status}`);
-        }
-        
-        return await response.json();
-    } catch (error) {
-        console.error('Error fetching invoice data:', error);
-        return null;
-    }
-};
-
-const fetchProdutosFromPedido = async (dataPedido) => {
-    try {
-        const response = await fetch(`${API_URL}/api/pedidos/${dataPedido}/produtos`, {
-            headers: { 'Accept': 'application/json' },
-            mode: 'cors'
-        });
-        if (!response.ok) {
-            if (response.status != 200) {
-                return null;
-            }
-            
-            throw new Error(`Network response was not ok: ${response.status}`);
-        }
-        return await response.json();
-
-    } catch (error) {
-        console.error('Error fetching invoice data:', error);
-        showToast('Não foi possível obter dados dos produtos', 'error');
-        return null;
-    }
-};
-
-const fetchQuarto = async (quartoId) => {
-    if (!quartoId) return null;
+// Update dashboard UI using data from app state
+function updateDashboardFromAppState() {
+    const { user, estadia, quarto, fatura, pedidos } = appState.userProfile;
     
-    try {
-        const response = await fetch(`${API_URL}/api/quartos/${quartoId}`, {
-            headers: { 'Accept': 'application/json' },
-            mode: 'cors'
-        });
-        if (!response.ok) throw new Error(`Network response was not ok: ${response.status}`);
-        return await response.json();
-    } catch (error) {
-        console.error('Error fetching room data:', error);
-        showToast('Não foi possível obter dados do quarto', 'error');
-        return null;
+    // Update room display
+    if (quarto) {
+        document.getElementById('room-number').textContent = quarto.numero;
+    } else {
+        document.getElementById('room-number').textContent = 'N/A';
     }
-};
+    
+    // Update dashboard widgets
+    updateDashboardSummary(appState.user, estadia, fatura);
+    
+    // Display recent orders
+    displayRecentOrders(getRecentOrders(3));
+    
+    // Hide any loading indicators
+    hideLoadingState();
+}
 
-const fetchRecentOrders = async (pacienteId) => {
-    try {
-        const response = await fetch(`${API_URL}/api/pacientes/${pacienteId}/pedidos`, {
-            headers: { 'Accept': 'application/json' },
-            mode: 'cors'
-        });
+// Show loading indicators while data is being fetched
+function showLoadingState() {
+    const loadingElements = document.querySelectorAll('.loading-placeholder');
+    loadingElements.forEach(el => el.style.display = 'block');
+}
 
-        if (!response.ok) {
-            throw new Error(`Network response was not ok: ${response.status}`);
-        }
-        return await response.json();
-
-    }
-    catch (error) {
-        console.error('Error fetching recent orders:', error);
-        showToast('Não foi possível obter pedidos recentes', 'error');
-        return [];
-    }
-
-};
+// Hide loading indicators
+function hideLoadingState() {
+    const loadingElements = document.querySelectorAll('.loading-placeholder');
+    loadingElements.forEach(el => el.style.display = 'none');
+}
 
 // UI Update Functions
 function updateDashboardSummary(paciente, estadia, fatura) {
@@ -295,7 +142,7 @@ function updateDashboardSummary(paciente, estadia, fatura) {
     }
 }
 
-function displayRecentOrders(orders, products) {
+function displayRecentOrders(orders) {
     const recentOrdersContainer = document.getElementById('recent-orders');
     
     if (!recentOrdersContainer) return;

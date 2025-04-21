@@ -11,3 +11,8 @@ já que ele pode pagar direto no caixa
 
 Na pagina do perfil do paciente precisa ter um botao pra deletar a conta
 e um botao para mudar o status entre internado vs alta
+
+
+
+
+I need a filter on dashboard page, on menu and on orders

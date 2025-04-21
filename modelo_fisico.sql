@@ -1,4 +1,4 @@
--- Active: 1743551470150@@127.0.0.1@3307@hospital_db
+-- Active: 1743591236116@@127.0.0.1@3307@hospital_db
 DROP DATABASE hospital_db;
 CREATE DATABASE IF NOT EXISTS hospital_db;
 USE hospital_db;
@@ -98,6 +98,7 @@ CREATE TABLE IF NOT EXISTS ESTADIA (
         OR DATA_SAIDA IS NULL
     )
 );
+
 CREATE TABLE IF NOT EXISTS FATURA (
     STATUS_PAGAMENTO ENUM('Pendente', 'Pago') DEFAULT 'Pendente' NOT NULL,
     VALOR_TOTAL DECIMAL(10, 2) DEFAULT 0,
@@ -134,7 +135,91 @@ CREATE TABLE IF NOT EXISTS PRODUTO_PEDIDO (
     FOREIGN KEY (DATA_PEDIDO) REFERENCES PEDIDO (DATA_PEDIDO) ON DELETE CASCADE,
     CONSTRAINT CHECK_QUANTIDADE CHECK (QUANTIDADE > 0)
 );
-{ "status" :409,
-"errorCode" :"RESOURCE_CONFLICT",
-"message" :"PreparedStatementCallback; SQL [INSERT INTO PEDIDO (DATA_ENTRADA_ESTADIA, ID_CAMAREIRA) VALUES (?, ?)]; Unique index or primary key violation: \"PUBLIC.PRIMARY_KEY_8C ON PUBLIC.PEDIDO(DATA_PEDIDO) VALUES ( /* 1 */ TIMESTAMP '2025-04-17 22:19:51.104662' )\"; SQL statement:\nINSERT INTO PEDIDO (DATA_ENTRADA_ESTADIA, ID_CAMAREIRA) VALUES (?, ?) [23505-232]",
-"timestamp" :"2025-04-17T22:19:51.158033006" }
+DELIMITER //
+
+-- Drop existing triggers if they exist
+DROP TRIGGER IF EXISTS update_fatura_total_after_produto_pedido_insert;
+DROP TRIGGER IF EXISTS update_fatura_total_after_produto_pedido_update;
+DROP TRIGGER IF EXISTS update_fatura_total_after_produto_pedido_delete;
+
+-- Trigger for INSERT operations
+CREATE TRIGGER update_fatura_total_after_produto_pedido_insert
+AFTER INSERT ON PRODUTO_PEDIDO
+FOR EACH ROW
+BEGIN
+    DECLARE v_preco DECIMAL(10,2);
+    DECLARE v_data_entrada DATETIME(6);
+
+    -- Get the product price
+    SELECT PRECO INTO v_preco
+    FROM PRODUTO
+    WHERE ID_PRODUTO = NEW.ID_PRODUTO;
+
+    -- Get the estadia entry date associated with the order
+    SELECT DATA_ENTRADA_ESTADIA INTO v_data_entrada
+    FROM PEDIDO
+    WHERE DATA_PEDIDO = NEW.DATA_PEDIDO;
+
+    -- Update the invoice total by adding the new product price * quantity
+    UPDATE FATURA 
+    SET VALOR_TOTAL = VALOR_TOTAL + (NEW.QUANTIDADE * v_preco)
+    WHERE DATA_ENTRADA_ESTADIA = v_data_entrada;
+END //
+
+-- Trigger for UPDATE operations
+CREATE TRIGGER update_fatura_total_after_produto_pedido_update
+AFTER UPDATE ON PRODUTO_PEDIDO
+FOR EACH ROW
+BEGIN
+    DECLARE v_preco_old DECIMAL(10,2);
+    DECLARE v_preco_new DECIMAL(10,2);
+    DECLARE v_data_entrada DATETIME(6);
+
+    -- Get the old product price
+    SELECT PRECO INTO v_preco_old
+    FROM PRODUTO
+    WHERE ID_PRODUTO = OLD.ID_PRODUTO;
+    
+    -- Get the new product price (may be the same or different if product changed)
+    SELECT PRECO INTO v_preco_new
+    FROM PRODUTO
+    WHERE ID_PRODUTO = NEW.ID_PRODUTO;
+
+    -- Get the estadia entry date associated with the order
+    SELECT DATA_ENTRADA_ESTADIA INTO v_data_entrada
+    FROM PEDIDO
+    WHERE DATA_PEDIDO = NEW.DATA_PEDIDO;
+
+    -- Update the invoice by removing the old value and adding the new value
+    UPDATE FATURA 
+    SET VALOR_TOTAL = VALOR_TOTAL - (OLD.QUANTIDADE * v_preco_old) + (NEW.QUANTIDADE * v_preco_new)
+    WHERE DATA_ENTRADA_ESTADIA = v_data_entrada;
+END //
+
+-- Trigger for DELETE operations
+CREATE TRIGGER update_fatura_total_after_produto_pedido_delete
+AFTER DELETE ON PRODUTO_PEDIDO
+FOR EACH ROW
+BEGIN
+    DECLARE v_preco DECIMAL(10,2);
+    DECLARE v_data_entrada DATETIME(6);
+
+    -- Get the product price
+    SELECT PRECO INTO v_preco
+    FROM PRODUTO
+    WHERE ID_PRODUTO = OLD.ID_PRODUTO;
+
+    -- Get the estadia entry date associated with the order
+    SELECT DATA_ENTRADA_ESTADIA INTO v_data_entrada
+    FROM PEDIDO
+    WHERE DATA_PEDIDO = OLD.DATA_PEDIDO;
+
+    -- Update the invoice by removing the deleted product value
+    UPDATE FATURA 
+    SET VALOR_TOTAL = VALOR_TOTAL - (OLD.QUANTIDADE * v_preco)
+    WHERE DATA_ENTRADA_ESTADIA = v_data_entrada;
+END //
+
+DELIMITER ;
+
+SET GLOBAL log_bin_trust_function_creators = 1;

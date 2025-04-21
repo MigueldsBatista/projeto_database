@@ -1,220 +1,249 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Get order ID from URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const orderId = parseInt(urlParams.get('id'));
-    
-    if (!orderId) {
-        // No order ID provided, redirect to orders page
-        window.location.href = 'orders.html';
-        return;
-    }
-    
-    // Get cart count from localStorage
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    updateCartBadge(cart.reduce((total, item) => total + item.quantity, 0));
-    
-    // Get order from localStorage
-    const orders = JSON.parse(localStorage.getItem('orders')) || [];
-    const order = orders.find(o => o.id === orderId);
-    
-    if (!order) {
-        // Order not found, redirect to orders page
-        window.location.href = 'orders.html';
-        return;
-    }
-    
-    // Update order details in the UI
-    document.getElementById('order-id').textContent = order.id;
-    document.getElementById('order-date').textContent = formatDate(new Date(order.date));
-    
-    // Update status
-    const statusElement = document.getElementById('order-status');
-    if (statusElement) {
-        const statusClass = getStatusClass(order.status);
-        statusElement.className = `order-status-large ${statusClass}`;
-        statusElement.textContent = getStatusText(order.status);
-    }
-    
-    // Render timeline
-    renderTimeline(order);
-    
-    // Render order items
-    renderOrderItems(order.items);
-    
-    // Update order notes
-    const orderNotes = document.getElementById('order-notes');
-    if (order.notes && order.notes.trim().length > 0) {
-        orderNotes.textContent = order.notes;
-    } else {
-        orderNotes.textContent = 'Sem observações';
-    }
-    
-    // Update totals
-    document.getElementById('order-subtotal').textContent = `R$ ${formatCurrency(order.subtotal)}`;
-    document.getElementById('order-service-fee').textContent = `R$ ${formatCurrency(order.serviceFee)}`;
-    document.getElementById('order-total').textContent = `R$ ${formatCurrency(order.total)}`;
-    
-    // Add event listeners
-    document.getElementById('contact-support-btn').addEventListener('click', function() {
-        showToast('Entrando em contato com o suporte...', 'info');
-        // In a real app, this would open a chat or call support
-    });
-    
-    document.getElementById('reorder-btn').addEventListener('click', function() {
-        // Add the items from this order to the cart
-        const newCart = [...order.items];
-        localStorage.setItem('cart', JSON.stringify(newCart));
+document.addEventListener('DOMContentLoaded', async function() {
+    try {
+        // Get order ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const orderId = urlParams.get('id');
         
-        // Redirect to cart
-        window.location.href = 'cart.html';
-    });
-    
-    function renderTimeline(order) {
-        const timelineContainer = document.getElementById('order-timeline');
-        timelineContainer.innerHTML = '';
-        
-        // Define timeline steps based on order status
-        const timeline = [];
-        
-        // Always add the "Order Placed" step as completed
-        timeline.push({
-            time: formatDate(new Date(order.date)),
-            status: 'Pedido Recebido',
-            description: 'Seu pedido foi recebido pelo hospital',
-            state: 'completed'
-        });
-        
-        // Add "Order In Preparation" step
-        if (order.status === 'in-progress' || order.status === 'delivered') {
-            // This step is completed
-            timeline.push({
-                time: formatRelativeTime(new Date(order.date), 10), // Assume 10 minutes after order placed
-                status: 'Em Preparo',
-                description: 'Seu pedido está sendo preparado',
-                state: 'completed'
-            });
-        } else if (order.status === 'pending') {
-            // This step is next
-            timeline.push({
-                time: 'Em breve',
-                status: 'Em Preparo',
-                description: 'Seu pedido será preparado em breve',
-                state: 'next'
-            });
+        if (!orderId) {
+            showToast('ID do pedido não encontrado', 'error');
+            window.history.back();
+            return;
         }
         
-        // Add "Order Delivered" step
-        if (order.status === 'delivered') {
-            // This step is completed
-            timeline.push({
-                time: formatRelativeTime(new Date(order.date), 30), // Assume 30 minutes after order placed
-                status: 'Entregue',
-                description: 'Seu pedido foi entregue com sucesso',
-                state: 'completed'
-            });
-        } else {
-            // This step is future
-            timeline.push({
-                time: 'Em breve',
-                status: 'Entregue',
-                description: 'Seu pedido será entregue em breve',
-                state: 'future'
-            });
+        // Check if user is logged in
+        const user = JSON.parse(localStorage.getItem('user')) || null;
+        if (!user) {
+            window.location.href = 'login.html';
+            return;
         }
         
-        // Render the timeline
-        timeline.forEach((step, index) => {
-            const timelineItem = document.createElement('div');
-            timelineItem.className = `timeline-item ${step.state}`;
-            
-            if (step.state === 'next') {
-                timelineItem.classList.add('active');
+        // Try to find the order in app state first
+        if (typeof appState !== 'undefined' && appState.dataLoaded) {
+            const order = appState.userProfile.pedidos.find(p => p.dataPedido === orderId);
+            if (order) {
+                displayOrderDetails(order);
+            } else {
+                // Order not found in app state, fetch it directly
+                await fetchAndDisplayOrderDetails(orderId);
             }
-            
-            timelineItem.innerHTML = `
-                <p class="timeline-time">${step.time}</p>
-                <p class="timeline-status">${step.status}</p>
-                <p class="timeline-description">${step.description}</p>
-            `;
-            
-            timelineContainer.appendChild(timelineItem);
-        });
-    }
-    
-    function renderOrderItems(items) {
-        const container = document.getElementById('order-items-container');
-        container.innerHTML = '';
-        
-        items.forEach(item => {
-            const orderItem = document.createElement('div');
-            orderItem.className = 'order-item';
-            orderItem.innerHTML = `
-                <div class="order-item-image">
-                    <img src="${item.image || 'img/products/placeholder.jpg'}" alt="${item.name}">
-                </div>
-                <div class="order-item-details">
-                    <p class="order-item-name">${item.name}</p>
-                    <p class="order-item-quantity">Quantidade: ${item.quantity}</p>
-                </div>
-                <p class="order-item-price">R$ ${formatCurrency(item.price * item.quantity)}</p>
-            `;
-            
-            container.appendChild(orderItem);
-        });
-    }
-    
-    // Remove the duplicated statusText function since we're using the one from app.js
-    // function getStatusText(status) {
-    //     switch (status) {
-    //         case 'pending':
-    //             return 'Pendente';
-    //         case 'in-progress':
-    //             return 'Em Preparo';
-    //         case 'delivered':
-    //             return 'Entregue';
-    //         default:
-    //             return status;
-    //     }
-    // }
-    
-    function formatDate(date) {
-        const now = new Date();
-        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        const yesterday = new Date(today);
-        yesterday.setDate(yesterday.getDate() - 1);
-        
-        if (date.getDate() === today.getDate() && 
-            date.getMonth() === today.getMonth() && 
-            date.getFullYear() === today.getFullYear()) {
-            return `Hoje, ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
-        } else if (date.getDate() === yesterday.getDate() && 
-                    date.getMonth() === yesterday.getMonth() && 
-                    date.getFullYear() === yesterday.getFullYear()) {
-            return `Ontem, ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
         } else {
-            return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}, ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+            // Show loading indicator (already in HTML)
+            
+            // Listen for user data loaded event
+            document.addEventListener('userDataLoaded', function() {
+                if (typeof appState !== 'undefined' && appState.userProfile && appState.userProfile.pedidos) {
+                    const order = appState.userProfile.pedidos.find(p => p.dataPedido === orderId);
+                    if (order) {
+                        displayOrderDetails(order);
+                    } else {
+                        // Order not found in app state, fetch it directly
+                        fetchAndDisplayOrderDetails(orderId);
+                    }
+                }
+            });
+            
+            // Trigger data loading if not already in progress
+            if (typeof loadUserData === 'function') {
+                loadUserData();
+            } else {
+                // Fallback: fetch order directly if app.js not loaded correctly
+                fetchAndDisplayOrderDetails(orderId);
+            }
+        }
+        
+        // Update cart badge
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        if (typeof updateCartBadge === 'function') {
+            updateCartBadge(cart.reduce((total, item) => total + item.quantity, 0));
+        }
+    } catch (error) {
+        console.error('Error loading order details:', error);
+        if (typeof showToast === 'function') {
+            showToast('Erro ao carregar detalhes do pedido', 'error');
+        }
+        
+        // Ensure the container exists before trying to update it
+        const container = document.getElementById('order-details-container');
+        if (container) {
+            container.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-circle"></i><h3>Erro ao carregar pedido</h3><p>Não foi possível encontrar os detalhes deste pedido</p></div>';
         }
     }
-    
-    function formatRelativeTime(baseDate, minutesLater) {
-        const newDate = new Date(baseDate);
-        newDate.setMinutes(newDate.getMinutes() + minutesLater);
-        return `${newDate.getHours().toString().padStart(2, '0')}:${newDate.getMinutes().toString().padStart(2, '0')}`;
+});
+
+async function fetchAndDisplayOrderDetails(orderId) {
+    try {
+        // Fetch order details directly
+        const response = await fetch(`${API_URL}/api/pedidos/${orderId}`, {
+            headers: { 'Accept': 'application/json' },
+            mode: 'cors'
+        });
+        
+        if (!response.ok) {
+            throw new Error(`Failed to fetch order: ${response.status}`);
+        }
+        
+        const order = await response.json();
+        
+        // Fetch products for this order
+        const produtosResponse = await fetch(`${API_URL}/api/pedidos/${orderId}/produtos`, {
+            headers: { 'Accept': 'application/json' },
+            mode: 'cors'
+        });
+        
+        if (!produtosResponse.ok) {
+            throw new Error(`Failed to fetch products: ${produtosResponse.status}`);
+        }
+        
+        const produtos = await produtosResponse.json();
+        
+        // Calculate total using the same method as in dashboard.js
+        const total = produtos.reduce((sum, item) => sum + (item.preco * item.quantidade), 0);
+        
+        // Combine data
+        const orderWithProducts = {
+            ...order,
+            produtos: produtos,
+            valor: total,
+            detalhes: produtos.map(p => p.nome).join(', ')
+        };
+        
+        // Display order details
+        displayOrderDetails(orderWithProducts);
+    } catch (error) {
+        console.error('Error fetching order details:', error);
+        if (typeof showToast === 'function') {
+            showToast('Erro ao carregar detalhes do pedido', 'error');
+        }
+        
+        // Ensure the container exists before trying to update it
+        const container = document.getElementById('order-details-container');
+        if (container) {
+            container.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-circle"></i><h3>Erro ao carregar pedido</h3><p>Não foi possível encontrar os detalhes deste pedido</p></div>';
+        }
+    }
+}
+
+function displayOrderDetails(order) {
+    const container = document.getElementById('order-details-container');
+    const orderDateElement = document.getElementById('order-date');
+    const statusElement = document.getElementById('order-status');
+    const orderId = document.getElementById('order-id');
+    // Check if required elements exist
+    if (!container) {
+        console.error('Error: order-details-container not found in the page');
+        return;
     }
     
+    // Clear container
+    container.innerHTML = '';
+    
+    // Update order header if element exists
+    if (orderDateElement) {
+        orderDateElement.textContent = typeof formatDateTime === 'function' 
+            ? formatDateTime(new Date(order.dataPedido)) 
+            : new Date(order.dataPedido).toLocaleString();
+    }
+    
+    // Update order status if element exists
+    if (statusElement) {
+        // Use the utility functions from utils.js
+        const statusClass = typeof getStatusClass === 'function' 
+            ? getStatusClass(order.status) 
+            : 'status-default';
+            
+        console.log(statusClass);
+        
+        const statusText = typeof getStatusText === 'function'
+            ? getStatusText(order.status)
+            : order.status || 'Desconhecido';
+            
+        statusElement.className = `status-pill ${statusClass}`;
+        statusElement.textContent = statusText;
+    }
+    
+    // Update order ID if element exists
+    if (orderId) {
+        // Extract a shorter, more readable order number from the timestamp
+        // Format: last 4 digits of timestamp + first 2 chars of the hour
+        const timestamp = order.dataPedido;
+        const date = new Date(timestamp);
+        const lastDigits = timestamp.toString().slice(-4);
+        const hourPart = date.getHours().toString().padStart(2, '0');
+        const formattedOrderId = `#${lastDigits}${hourPart}`;
+        
+        orderId.textContent = formattedOrderId;
+    }
+
+    // Create products list
+    if (order.produtos && order.produtos.length > 0) {
+        const itemsList = document.createElement('div');
+        itemsList.className = 'order-items-list';
+        
+        order.produtos.forEach(product => {
+            const itemRow = document.createElement('div');
+            itemRow.className = 'order-item-row';
+            itemRow.innerHTML = `
+                <div class="item-info">
+                    <h4>${product.nome}</h4>
+                    <p>${product.descricao || ''}</p>
+                </div>
+                <div class="item-quantity">${product.quantidade}x</div>
+                <div class="item-price">R$ ${typeof formatCurrency === 'function' 
+                    ? formatCurrency(product.preco * product.quantidade)
+                    : (product.preco * product.quantidade).toFixed(2).replace('.', ',')}</div>
+            `;
+            itemsList.appendChild(itemRow);
+        });
+        
+        container.appendChild(itemsList);
+        
+        // Add order total - using same calculation as dashboard.js
+        const total = order.valor || order.produtos.reduce((sum, item) => sum + (item.preco * item.quantidade), 0);
+
+        const totalRow = document.createElement('div');
+        totalRow.className = 'order-total';
+        totalRow.innerHTML = `
+            <span>Total</span>
+            <span>R$ ${typeof formatCurrency === 'function' 
+                ? formatCurrency(total)
+                : total.toFixed(2).replace('.', ',')}</span>
+        `;
+        container.appendChild(totalRow);
+    } else {
+        container.innerHTML = '<div class="empty-state">Este pedido não possui itens</div>';
+    }
+}
+
+// Use utils.js functions if available, otherwise define fallbacks
+if (typeof formatDateTime !== 'function') {
+    function formatDateTime(date) {
+        return date.toLocaleString('pt-BR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
+}
+
+if (typeof formatCurrency !== 'function') {
     function formatCurrency(value) {
         return value.toFixed(2).replace('.', ',');
     }
-    
+}
+
+if (typeof updateCartBadge !== 'function') {
     function updateCartBadge(count) {
         const badges = document.querySelectorAll('.cart-badge');
-        
         badges.forEach(badge => {
             badge.textContent = count;
             badge.style.display = count > 0 ? 'flex' : 'none';
         });
     }
-    
+}
+
+if (typeof showToast !== 'function') {
     function showToast(message, type = 'default', duration = 3000) {
         // Remove any existing toasts
         const existingToast = document.querySelector('.toast');
@@ -242,4 +271,4 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 300);
         }, duration);
     }
-});
+}

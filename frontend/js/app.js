@@ -1,70 +1,17 @@
-// App State
+// App State - Enhanced to store comprehensive user data
 const appState = {
     currentScreen: 'splash',
     user: null,
     cart: [],
-    products: [
-        {
-            id: 1,
-            name: 'Água Mineral',
-            description: 'Garrafa 500ml',
-            price: 3.50,
-            image: 'img/products/water.jpg',
-            category: 'food'
-        },
-        {
-            id: 2,
-            name: 'Suco Natural',
-            description: 'Laranja ou maçã, 300ml',
-            price: 7.90,
-            image: 'img/products/juice.jpg',
-            category: 'food'
-        },
-        {
-            id: 3,
-            name: 'Kit Higiene',
-            description: 'Sabonete, shampoo e condicionador',
-            price: 18.50,
-            image: 'img/products/soap.jpg',
-            category: 'hygiene'
-        },
-        {
-            id: 4,
-            name: 'Refeição Completa',
-            description: 'Almoço ou jantar com sobremesa',
-            price: 32.90,
-            image: 'img/products/meal.jpg',
-            category: 'food'
-        }
-    ],
-    orders: [
-        {
-            id: 1,
-            date: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
-            items: [
-                { id: 1, name: 'Café da manhã', price: 18.90, quantity: 1 },
-                { id: 2, name: 'Água', price: 3.50, quantity: 2 }
-            ],
-            total: 25.90,
-            status: 'delivered'
-        },
-        {
-            id: 2,
-            date: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
-            items: [
-                { id: 4, name: 'Jantar', price: 32.90, quantity: 1 },
-                { id: 2, name: 'Suco', price: 7.90, quantity: 1 },
-                { id: 5, name: 'Sobremesa', price: 8.50, quantity: 1 }
-            ],
-            total: 49.30,
-            status: 'delivered'
-        }
-    ],
-    invoice: {
-        total: 320.50,
-        status: 'pending',
-        items: []
-    }
+    userProfile: {
+        estadia: null,
+        quarto: null,
+        fatura: null,
+        pedidos: [],
+        loaded: false
+    },
+    // Flag to track if core data has been loaded
+    dataLoaded: false
 };
 
 // Helper Functions specific to app functionality
@@ -95,15 +42,280 @@ function showScreen(screenId) {
     }
 }
 
+// Data Loading Functions
+/**
+ * Load core user data (profile, estadia, room, invoice, orders)
+ * @returns {Promise<boolean>} True if data was loaded successfully
+ */
+async function loadUserData() {
+    // If already loaded, don't reload
+    if (appState.dataLoaded) return true;
+    
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user) return false;
+    
+    // Set basic user info
+    appState.user = user;
+    
+    try {
+        // Step 1: Load estadia data
+        const estadia = await fetchEstadiaData(user.id);
+        appState.userProfile.estadia = estadia;
+        
+        if (estadia) {
+            // Step 2: Load room data if estadia exists
+            const quarto = await fetchQuartoData(estadia.quartoId);
+            appState.userProfile.quarto = quarto;
+        }
+        
+        // Step 3: Load invoice data
+        const fatura = await fetchFaturaData(user.id);
+        appState.userProfile.fatura = fatura;
+        
+        // Step 4: Load recent orders
+        const pedidos = await fetchPedidosData(user.id);
+        appState.userProfile.pedidos = pedidos;
+        
+        // Mark data as loaded
+        appState.dataLoaded = true;
+        appState.userProfile.loaded = true;
+        console.log('User data loaded successfully:', appState.userProfile);
+        
+        return true;
+    } catch (error) {
+        console.error('Error loading user data:', error);
+        return false;
+    }
+}
+
+/**
+ * Fetch patient's most recent estadia
+ * @param {number} pacienteId Patient ID
+ * @returns {Promise<Object|null>} Estadia data or null
+ */
+async function fetchEstadiaData(pacienteId) {
+    try {
+        const response = await fetch(`${API_URL}/api/pacientes/estadia-recente/${pacienteId}`, {
+            headers: { 'Accept': 'application/json' },
+            mode: 'cors'
+        });
+        
+        if (!response.ok) {
+            if (response.status === 404) {
+                console.warn('No active estadia found for patient');
+                return null;
+            }
+            throw new Error(`Network response was not ok: ${response.status}`);
+        }
+        
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching estadia data:', error);
+        return null;
+    }
+}
+
+/**
+ * Fetch room data by ID
+ * @param {number} quartoId Room ID
+ * @returns {Promise<Object|null>} Room data or null
+ */
+async function fetchQuartoData(quartoId) {
+    if (!quartoId) return null;
+    
+    try {
+        const response = await fetch(`${API_URL}/api/quartos/${quartoId}`, {
+            headers: { 'Accept': 'application/json' },
+            mode: 'cors'
+        });
+        
+        if (!response.ok) {
+            throw new Error(`Network response was not ok: ${response.status}`);
+        }
+        
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching room data:', error);
+        return null;
+    }
+}
+
+/**
+ * Fetch patient's most recent invoice
+ * @param {number} pacienteId Patient ID
+ * @returns {Promise<Object|null>} Invoice data or null
+ */
+async function fetchFaturaData(pacienteId) {
+    try {
+        const response = await fetch(`${API_URL}/api/pacientes/fatura-recente/${pacienteId}`, {
+            headers: { 'Accept': 'application/json' },
+            mode: 'cors'
+        });
+        
+        if (!response.ok) {
+            if (response.status === 404) {
+                console.warn('No invoice found for patient');
+                return null;
+            }
+            
+            throw new Error(`Network response was not ok: ${response.status}`);
+        }
+        
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching invoice data:', error);
+        return null;
+    }
+}
+
+/**
+ * Fetch patient's orders
+ * @param {number} pacienteId Patient ID
+ * @returns {Promise<Array>} Array of orders
+ */
+async function fetchPedidosData(pacienteId) {
+    try {
+        const response = await fetch(`${API_URL}/api/pacientes/${pacienteId}/pedidos`, {
+            headers: { 'Accept': 'application/json' },
+            mode: 'cors'
+        });
+        
+        if (!response.ok) {
+            throw new Error(`Network response was not ok: ${response.status}`);
+        }
+        
+        const pedidos = await response.json();
+        
+        // For each order, fetch its products
+        const enhancedPedidos = [];
+        for (const pedido of pedidos) {
+            try {
+                // Fetch products for this order
+                const produtos = await fetchProdutosFromPedido(pedido.dataPedido);
+                
+                // Create enhanced order with details
+                const enhancedPedido = {
+                    ...pedido,
+                    // Format details as product names separated by commas
+                    detalhes: produtos && produtos.length > 0 
+                        ? produtos.map(p => p.nome).join(', ')
+                        : 'Sem produtos',
+                    // Calculate or use the total value from products if available
+                    valor: produtos && produtos.length > 0
+                        ? produtos.reduce((total, p) => total + (p.preco * p.quantidade), 0)
+                        : pedido.valor || 0,
+                    produtos: produtos || []
+                };
+                
+                enhancedPedidos.push(enhancedPedido);
+            } catch (error) {
+                console.error(`Error fetching products for order ${pedido.dataPedido}:`, error);
+                enhancedPedidos.push({
+                    ...pedido,
+                    detalhes: 'Detalhes indisponíveis',
+                    valor: pedido.valor || 0,
+                    produtos: []
+                });
+            }
+        }
+        
+        return enhancedPedidos;
+    } catch (error) {
+        console.error('Error fetching orders:', error);
+        return [];
+    }
+}
+
+/**
+ * Fetch products for a specific order
+ * @param {string} dataPedido Order date/ID
+ * @returns {Promise<Array>} Array of products
+ */
+async function fetchProdutosFromPedido(dataPedido) {
+    try {
+        const response = await fetch(`${API_URL}/api/pedidos/${dataPedido}/produtos`, {
+            headers: { 'Accept': 'application/json' },
+            mode: 'cors'
+        });
+        
+        if (!response.ok) {
+            if (response.status !== 200) {
+                return null;
+            }
+            
+            throw new Error(`Network response was not ok: ${response.status}`);
+        }
+        
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching products data:', error);
+        return null;
+    }
+}
+
+/**
+ * Reload user data from the server
+ * @returns {Promise<boolean>} True if data was reloaded successfully
+ */
+async function reloadUserData() {
+    appState.dataLoaded = false;
+    appState.userProfile.loaded = false;
+    return await loadUserData();
+}
+
+/**
+ * Get user data, loading it first if necessary
+ * @returns {Promise<Object>} User profile data
+ */
+async function getUserData() {
+    if (!appState.dataLoaded) {
+        await loadUserData();
+    }
+    return {
+        user: appState.user,
+        estadia: appState.userProfile.estadia,
+        quarto: appState.userProfile.quarto,
+        fatura: appState.userProfile.fatura,
+        pedidos: appState.userProfile.pedidos
+    };
+}
+
+/**
+ * Get recent orders from the app state
+ * @param {number} limit Maximum number of orders to return
+ * @returns {Array} Array of recent orders
+ */
+function getRecentOrders(limit = 3) {
+    if (!appState.dataLoaded || !appState.userProfile.pedidos) {
+        return [];
+    }
+    
+    // Sort orders by date (newest first)
+    const sortedOrders = [...appState.userProfile.pedidos]
+        .sort((a, b) => new Date(b.dataPedido) - new Date(a.dataPedido));
+    
+    // Return limited amount or all if limit is null
+    return limit ? sortedOrders.slice(0, limit) : sortedOrders;
+}
+
 // Initialize App
 function initApp() {
     // Check auth and load user data (if not on login page)
     const user = checkAuth();
     
-    // For authorized pages, update cart badge
+    // For authorized pages, update cart badge and load user data
     if (user) {
         const cart = JSON.parse(localStorage.getItem('cart')) || [];
         updateCartBadge(cart.reduce((total, item) => total + item.quantity, 0));
+        
+        // Load user data in the background
+        loadUserData().then(success => {
+            if (success) {
+                console.log('User data loaded successfully');
+                // Dispatch an event that other pages can listen for
+                document.dispatchEvent(new CustomEvent('userDataLoaded'));
+            }
+        });
         
         // Setup event listeners for navigation, search, etc.
         setupEventListeners();

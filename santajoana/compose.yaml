@@ -6,5 +6,7 @@ services:
       - 'MYSQL_PASSWORD=06102005'
       - 'MYSQL_ROOT_PASSWORD=06102005'
       - 'MYSQL_USER=admin'
+    volumes:
+      - ./my.cnf:/etc/mysql/conf.d/my.cnf
     ports:
       - '3307:3306'

@@ -41,87 +41,99 @@
             <!-- Profile information section -->
             <div class="profile-section">
                 <div class="section-header">
-                    <h3>Informações Pessoais</h3>
-                    <button class="btn-text" id="edit-profile-btn">
-                        <i class="fas fa-edit"></i> Editar
+                    <h3><i class="fas fa-user-circle"></i> Informações Pessoais</h3>
+                    <button class="btn-text btn-edit" id="edit-profile-btn">
+                        <i class="fas fa-pencil-alt"></i> Editar
                     </button>
                 </div>
                 
                 <div id="profile-view-mode">
                     <div class="info-row">
-                        <label>CPF:</label>
+                        <label><i class="fas fa-id-card"></i> CPF:</label>
                         <span id="view-cpf">123.456.789-00</span>
                     </div>
                     <div class="info-row">
-                        <label>Data de Nascimento:</label>
+                        <label><i class="fas fa-birthday-cake"></i> Aniversário:</label>
                         <span id="view-birth-date">01/01/1990</span>
                     </div>
                     <div class="info-row">
-                        <label>Telefone:</label>
+                        <label><i class="fas fa-phone-alt"></i> Telefone:</label>
                         <span id="view-phone">(81) 99999-9999</span>
                     </div>
                     <div class="info-row">
-                        <label>Endereço:</label>
+                        <label><i class="fas fa-map-marker-alt"></i> Endereço:</label>
                         <span id="view-address">Rua Exemplo, 123 - Recife/PE</span>
                     </div>
                 </div>
                 
                 <form id="profile-edit-mode" style="display:none">
                     <div class="form-group">
-                        <label for="edit-phone">Telefone:</label>
+                        <label for="edit-phone"><i class="fas fa-phone-alt"></i> Telefone:</label>
                         <input type="tel" id="edit-phone" class="form-input" placeholder="(00) 00000-0000">
                     </div>
                     <div class="form-group">
-                        <label for="edit-address">Endereço:</label>
+                        <label for="edit-address"><i class="fas fa-map-marker-alt"></i> Endereço:</label>
                         <input type="text" id="edit-address" class="form-input" placeholder="Seu endereço completo">
                     </div>
                     <div class="form-actions">
-                        <button type="button" class="btn-secondary" id="cancel-edit-btn">Cancelar</button>
-                        <button type="submit" class="btn-primary" id="save-profile-btn">Salvar</button>
+                        <button type="button" class="btn-secondary" id="cancel-edit-btn">
+                            <i></i> Cancelar
+                        </button>
+                        <button type="submit" class="btn-primary" id="save-profile-btn">
+                            <i></i> Salvar
+                        </button>
                     </div>
                 </form>
             </div>
             
             <div class="profile-section">
                 <div class="section-header">
-                    <h3>Alterar Senha</h3>
-                    <button class="btn-text" id="change-password-btn">
+                    <h3><i class="fas fa-shield-alt"></i> Alterar Senha</h3>
+                    <button class="btn-text btn-edit" id="change-password-btn">
                         <i class="fas fa-lock"></i> Alterar
                     </button>
                 </div>
                 
                 <form id="password-change-form" style="display:none">
                     <div class="form-group">
-                        <label for="current-password">Senha Atual:</label>
+                        <label for="current-password"><i class="fas fa-unlock-alt"></i> Senha Atual:</label>
                         <input type="password" id="current-password" class="form-input" required>
                     </div>
                     <div class="form-group">
-                        <label for="new-password">Nova Senha:</label>
+                        <label for="new-password"><i class="fas fa-lock"></i> Nova Senha:</label>
                         <input type="password" id="new-password" class="form-input" required>
                     </div>
                     <div class="form-group">
-                        <label for="confirm-password">Confirme a Nova Senha:</label>
+                        <label for="confirm-password"><i class="fas fa-check-circle"></i> Confirme a Nova Senha:</label>
                         <input type="password" id="confirm-password" class="form-input" required>
                     </div>
                     <div class="form-actions">
-                        <button type="button" class="btn-secondary" id="cancel-password-btn">Cancelar</button>
-                        <button type="submit" class="btn-primary" id="save-password-btn">Salvar</button>
+                        <button type="button" class="btn-secondary" id="cancel-password-btn">
+                            <i></i> Cancelar
+                        </button>
+                        <button type="submit" class="btn-primary" id="save-password-btn">
+                            <i></i> Salvar
+                        </button>
                     </div>
                 </form>
             </div>
             
             <div class="profile-menu">
-                <a href="#" class="profile-menu-item">
-                    <i class="fas fa-file-invoice-dollar"></i>
+                <a href="invoice-history.html" class="profile-menu-item">
+                    <i class="fas fa-receipt"></i>
                     <span>Histórico de Faturas</span>
                 </a>
-                <a href="#" class="profile-menu-item">
+                <a href="notifications.html" class="profile-menu-item">
                     <i class="fas fa-bell"></i>
                     <span>Notificações</span>
                 </a>
-                <a href="#" class="profile-menu-item logout" id="logout-button">
+                <a href="support.html" class="profile-menu-item">
+                    <i class="fas fa-headset"></i>
+                    <span>Suporte</span>
+                </a>
+                <a href="#" class="profile-menu-item logout" id="logout-btn">
                     <i class="fas fa-sign-out-alt"></i>
-                    <span id="logout-btn">Sair</span>
+                    <span>Sair</span>
                 </a>
             </div>
             

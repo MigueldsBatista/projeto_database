@@ -156,7 +156,7 @@ public class PacienteMediator extends BaseMediator<Paciente, Long> {
             throw new IllegalArgumentException("Senha atual ou antiga não pode ser vazia");
         }
 
-        if (candidatePassword==newPassword) {
+        if (candidatePassword.equals(newPassword)) {
             throw new IllegalArgumentException("A nova senha não pode ser igual à senha atual");
         }
 
