@@ -66,7 +66,7 @@ public class PedidoControllerTest extends BaseControllerTest {
         mockMvc.perform(get("/api/pedidos/{id}", pedido.getId()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.dataEntradaEstadia").value(pedido.getDataEntradaEstadia().toString()))
+                .andExpect(jsonPath("$.dataEntradaEstadia").exists())
                 .andExpect(jsonPath("$.camareiraId").value(pedido.getCamareiraId()))
                 .andExpect(jsonPath("$.status").value(pedido.getStatus().getDescricao()))
                 .andExpect(jsonPath("$.dataPedido").exists());

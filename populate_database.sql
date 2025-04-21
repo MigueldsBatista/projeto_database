@@ -1,15 +1,6 @@
 -- Active: 1743551470150@@127.0.0.1@3307@hospital_db
 USE hospital_db;
 
-SELECT * 
-FROM QUARTO Q
-WHERE NOT EXISTS (
-    SELECT 1 
-    FROM ESTADIA E
-    WHERE E.ID_QUARTO = Q.ID_QUARTO
-      AND E.DATA_SAIDA IS NULL
-) ORDER BY NUMERO LIMIT 1;
-
 -- Clear existing data
 SET FOREIGN_KEY_CHECKS = 0;
 TRUNCATE TABLE PRODUTO_PEDIDO;
@@ -99,22 +90,39 @@ INSERT INTO PRODUTO (NOME, DESCRICAO, PRECO, TEMPO_PREPARO, ID_CATEGORIA_PRODUTO
 ('Sorvete Diet', 'Sorvete diet de baunilha', 10.00, 5, 4, 120, 3, 15, 5, 40);
 
 -- Insert data into CAMAREIRA
-INSERT INTO CAMAREIRA (CRE, NOME, CPF, DATA_NASCIMENTO, TELEFONE, ENDERECO, CARGO, SETOR) VALUES
-('CR001', 'Amanda Castro', '12349567891', '1977-03-25', '11787654321', 'Rua das Orquídeas, 012, Curitiba', 'Camareira Sênior', 'Hotelaria'),
-('CR002', 'Henrique Cardoso', '23458678902', '1986-06-30', '11776543210', 'Avenida das Américas, 345, Rio de Janeiro', 'Camareiro', 'Hotelaria'),
-('CR003', 'Juliana Santos', '34567989013', '1992-02-15', '11765432109', 'Rua dos Cravos, 678, Salvador', 'Camareira', 'Hotelaria'),
-('CR004', 'Felipe Oliveira', '45676890124', '1973-10-05', '11754321098', 'Avenida Paulista, 901, São Paulo', 'Camareiro Sênior', 'Hotelaria'),
-('CR005', 'Mariana Ferreira', '56785901235', '1984-07-20', '11743210987', 'Rua das Rosas, 234, Fortaleza', 'Camareira', 'Hotelaria'),
-('CR007', 'Bianca Lima', '78901234568', '1982-09-05', '11721098765', 'Rua das Acácias, 890, Porto Alegre', 'Camareira', 'Hotelaria'),
-('CR010', 'André Pereira', '01234567891', '1979-06-30', '11698765432', 'Avenida Paulista, 789, São Paulo', 'Camareiro', 'Hotelaria'),
-('CR011', 'Renata Souza', '12345678902', '1991-03-15', '11687654321', 'Rua das Flores, 012, Belo Horizonte', 'Camareira', 'Hotelaria'),
-('CR012', 'Thiago Nunes', '23456789013', '1984-08-22', '11676543210', 'Avenida Atlântica, 345, Rio de Janeiro', 'Camareiro', 'Hotelaria'),
-('CR013', 'Fernanda Oliveira', '34567890124', '1976-05-10', '11665432109', 'Rua dos Lírios, 678, Salvador', 'Camareira Sênior', 'Hotelaria'),
-('CR014', 'Leonardo Santos', '45678901235', '1989-12-07', '11654321098', 'Avenida Boa Vista, 901, Recife', 'Camareiro', 'Hotelaria'),
-('CR015', 'Daniela Lima', '56789012346', '1981-02-18', '11643210987', 'Rua das Margaridas, 234, Curitiba', 'Camareira', 'Hotelaria'),
-('CR016', 'Rafael Almeida', '67890123457', '1993-07-25', '11632109876', 'Avenida São João, 567, São Paulo', 'Camareiro', 'Hotelaria'),
-('CR018', 'Gustavo Cardoso', '89012345679', '1986-09-17', '11610987654', 'Avenida Rebouças, 123, São Paulo', 'Camareiro Sênior', 'Hotelaria'),
-('CR019', 'Natália Torres', '90123456780', '1994-01-30', '11609876543', 'Rua das Violetas, 456, Porto Alegre', 'Camareira', 'Hotelaria');
+INSERT INTO CAMAREIRA (CRE, NOME, CPF, DATA_NASCIMENTO, TELEFONE, ENDERECO, CARGO, SETOR, EMAIL, SENHA) VALUES
+('CR001', 'Amanda Castro', '12349567891', '1977-03-25', '11787654321', 'Rua das Orquídeas, 012, Curitiba', 'Camareira Sênior', 'Hotelaria', 'amanda.castro@hospital.com', 'senha123'),
+('CR002', 'Henrique Cardoso', '23458678902', '1986-06-30', '11776543210', 'Avenida das Américas, 345, Rio de Janeiro', 'Camareiro', 'Hotelaria', 'henrique.cardoso@hospital.com', 'senha123'),
+('CR003', 'Juliana Santos', '34567989013', '1992-02-15', '11765432109', 'Rua dos Cravos, 678, Salvador', 'Camareira', 'Hotelaria', 'juliana.santos@hospital.com', 'senha123'),
+('CR004', 'Felipe Oliveira', '45676890124', '1973-10-05', '11754321098', 'Avenida Paulista, 901, São Paulo', 'Camareiro Sênior', 'Hotelaria', 'felipe.oliveira@hospital.com', 'senha123'),
+('CR005', 'Mariana Ferreira', '56785901235', '1984-07-20', '11743210987', 'Rua das Rosas, 234, Fortaleza', 'Camareira', 'Hotelaria', 'mariana.ferreira@hospital.com', 'senha123'),
+('CR007', 'Bianca Lima', '78901234568', '1982-09-05', '11721098765', 'Rua das Acácias, 890, Porto Alegre', 'Camareira', 'Hotelaria', 'bianca.lima@hospital.com', 'senha123'),
+('CR010', 'André Pereira', '01234567891', '1979-06-30', '11698765432', 'Avenida Paulista, 789, São Paulo', 'Camareiro', 'Hotelaria', 'andre.pereira@hospital.com', 'senha123'),
+('CR011', 'Renata Souza', '12345678902', '1991-03-15', '11687654321', 'Rua das Flores, 012, Belo Horizonte', 'Camareira', 'Hotelaria', 'renata.souza@hospital.com', 'senha123'),
+('CR012', 'Thiago Nunes', '23456789013', '1984-08-22', '11676543210', 'Avenida Atlântica, 345, Rio de Janeiro', 'Camareiro', 'Hotelaria', 'thiago.nunes@hospital.com', 'senha123'),
+('CR013', 'Fernanda Oliveira', '34567890124', '1976-05-10', '11665432109', 'Rua dos Lírios, 678, Salvador', 'Camareira Sênior', 'Hotelaria', 'fernanda.oliveira@hospital.com', 'senha123'),
+('CR014', 'Leonardo Santos', '45678901235', '1989-12-07', '11654321098', 'Avenida Boa Vista, 901, Recife', 'Camareiro', 'Hotelaria', 'leonardo.santos@hospital.com', 'senha123'),
+('CR015', 'Daniela Lima', '56789012346', '1981-02-18', '11643210987', 'Rua das Margaridas, 234, Curitiba', 'Camareira', 'Hotelaria', 'daniela.lima@hospital.com', 'senha123'),
+('CR016', 'Rafael Almeida', '67890123457', '1993-07-25', '11632109876', 'Avenida São João, 567, São Paulo', 'Camareiro', 'Hotelaria', 'rafael.almeida@hospital.com', 'senha123'),
+('CR018', 'Gustavo Cardoso', '89012345679', '1986-09-17', '11610987654', 'Avenida Rebouças, 123, São Paulo', 'Camareiro Sênior', 'Hotelaria', 'gustavo.cardoso@hospital.com', 'senha123'),
+('CR019', 'Natália Torres', '90123456780', '1994-01-30', '11609876543', 'Rua das Violetas, 456, Porto Alegre', 'Camareira', 'Hotelaria', 'natalia.torres@hospital.com', 'senha123');
+-- Insert data into CAMAREIRA
+INSERT INTO PACIENTE (NOME, CPF, DATA_NASCIMENTO, TELEFONE, ENDERECO, EMAIL, SENHA) VALUES
+('Amanda Castro', '12349567891', '1977-03-25', '11787654321', 'Rua das Orquídeas, 012, Curitiba', 'amanda.castro@email.com', 'senha123'),
+('Henrique Cardoso', '23458678902', '1986-06-30', '11776543210', 'Avenida das Américas, 345, Rio de Janeiro', 'henrique.cardoso@email.com', 'senha123'),
+('Juliana Santos', '34567989013', '1992-02-15', '11765432109', 'Rua dos Cravos, 678, Salvador', 'juliana.santos@email.com', 'senha123'),
+('Felipe Oliveira', '45676890124', '1973-10-05', '11754321098', 'Avenida Paulista, 901, São Paulo', 'felipe.oliveira@email.com', 'senha123'),
+('Mariana Ferreira', '56785901235', '1984-07-20', '11743210987', 'Rua das Rosas, 234, Fortaleza', 'mariana.ferreira@email.com', 'senha123'),
+('Bianca Lima', '78901234568', '1982-09-05', '11721098765', 'Rua das Acácias, 890, Porto Alegre', 'bianca.lima@email.com', 'senha123'),
+('André Pereira', '01234567891', '1979-06-30', '11698765432', 'Avenida Paulista, 789, São Paulo', 'andre.pereira@email.com', 'senha123'),
+('Renata Souza', '12345678902', '1991-03-15', '11687654321', 'Rua das Flores, 012, Belo Horizonte', 'renata.souza@email.com', 'senha123'),
+('Thiago Nunes', '23456789013', '1984-08-22', '11676543210', 'Avenida Atlântica, 345, Rio de Janeiro', 'thiago.nunes@email.com', 'senha123'),
+('Fernanda Oliveira', '34567890124', '1976-05-10', '11665432109', 'Rua dos Lírios, 678, Salvador', 'fernanda.oliveira@email.com', 'senha123'),
+('Leonardo Santos', '45678901235', '1989-12-07', '11654321098', 'Avenida Boa Vista, 901, Recife', 'leonardo.santos@email.com', 'senha123'),
+('Daniela Lima', '56789012346', '1981-02-18', '11643210987', 'Rua das Margaridas, 234, Curitiba', 'daniela.lima@email.com', 'senha123'),
+('Rafael Almeida', '67890123457', '1993-07-25', '11632109876', 'Avenida São João, 567, São Paulo', 'rafael.almeida@email.com', 'senha123'),
+('Gustavo Cardoso', '89012345679', '1986-09-17', '11610987654', 'Avenida Rebouças, 123, São Paulo', 'gustavo.cardoso@email.com', 'senha123'),
+('Natália Torres', '90123456780', '1994-01-30', '11609876543', 'Rua das Violetas, 456, Porto Alegre', 'natalia.torres@email.com', 'senha123');
 
 -- Insert data into METODO_PAGAMENTO
 INSERT INTO METODO_PAGAMENTO (TIPO) VALUES
@@ -156,16 +164,16 @@ INSERT INTO ESTADIA (ID_PACIENTE, ID_QUARTO, DATA_ENTRADA, DATA_SAIDA) VALUES
 (13, 13, '2023-02-10 11:20:00', NULL),
 (14, 14, '2023-02-15 16:30:00', '2023-02-25 10:45:00'),
 (15, 15, '2023-02-18 08:15:00', NULL),
-(16, 16, '2023-02-20 13:00:00', NULL),
-(17, 17, '2023-02-22 15:45:00', '2023-03-01 11:30:00'),
-(18, 18, '2023-02-25 10:20:00', NULL),
-(19, 19, '2023-02-28 12:30:00', '2023-03-10 09:15:00'),
-(20, 20, '2023-03-01 14:00:00', NULL),
-(1, 21, '2023-03-05 09:30:00', '2023-03-15 11:00:00'),
-(2, 22, '2023-03-08 11:45:00', '2023-03-18 10:30:00'),
-(3, 23, '2023-03-10 13:15:00', '2023-03-20 14:45:00'),
-(4, 24, '2023-03-12 16:00:00', '2023-03-22 09:30:00'),
-(5, 25, '2023-03-15 08:45:00', '2023-03-25 13:00:00');
+(1, 16, '2023-02-20 13:00:00', NULL),
+(2, 17, '2023-02-22 15:45:00', '2023-03-01 11:30:00'),
+(3, 18, '2023-02-25 10:20:00', NULL),
+(4, 19, '2023-02-28 12:30:00', '2023-03-10 09:15:00'),
+(5, 20, '2023-03-01 14:00:00', NULL),
+(6, 21, '2023-03-05 09:30:00', '2023-03-15 11:00:00'),
+(7, 22, '2023-03-08 11:45:00', '2023-03-18 10:30:00'),
+(8, 23, '2023-03-10 13:15:00', '2023-03-20 14:45:00'),
+(9, 24, '2023-03-12 16:00:00', '2023-03-22 09:30:00'),
+(10, 25, '2023-03-15 08:45:00', '2023-03-25 13:00:00');
 
 -- Insert data into FATURA
 INSERT INTO FATURA (STATUS_PAGAMENTO, VALOR_TOTAL, DATA_PAGAMENTO, ID_METODO_PAGAMENTO, DATA_EMISSAO, DATA_ENTRADA_ESTADIA) VALUES
@@ -223,152 +231,65 @@ INSERT INTO PEDIDO (DATA_ENTRADA_ESTADIA, ID_CAMAREIRA, STATUS, DATA_PEDIDO) VAL
 ('2023-03-12 16:00:00', 4, 'Entregue', '2023-03-12 14:35:00'),
 ('2023-03-15 08:45:00', 5, 'Pendente', '2023-03-15 20:20:00');
 -- Insert data into PRODUTO_PEDIDO (ID_PRODUTO, DATA_PEDIDO, QUANTIDADE)
-INSERT INTO PRODUTO_PEDIDO (ID_PRODUTO, DATA_PEDIDO, QUANTIDADE) VALUES
-(1, '2023-01-10 12:30:00', 1),
-(6, '2023-01-10 12:30:00', 2),
-(16, '2023-01-10 12:30:00', 2),
-(2, '2023-01-12 18:45:00', 2),
-(7, '2023-01-12 18:45:00', 1),
-(17, '2023-01-12 18:45:00', 1),
-(3, '2023-01-16 08:15:00', 1),
-(8, '2023-01-16 08:15:00', 2),
-(18, '2023-01-16 08:15:00', 1),
-(4, '2023-01-18 13:20:00', 2),
-(9, '2023-01-18 13:20:00', 1),
-(19, '2023-01-18 13:20:00', 1),
-(5, '2023-01-20 19:10:00', 1),
-(10, '2023-01-20 19:10:00', 1),
-(20, '2023-01-20 19:10:00', 2),
-(1, '2023-01-23 07:45:00', 2),
-(11, '2023-01-23 07:45:00', 1),
-(16, '2023-01-23 07:45:00', 1),
-(2, '2023-01-25 14:30:00', 1),
-(12, '2023-01-25 14:30:00', 1),
-(17, '2023-01-25 14:30:00', 2),
-(3, '2023-01-29 20:15:00', 2),
-(13, '2023-01-29 20:15:00', 1),
-(18, '2023-01-29 20:15:00', 1),
-(4, '2023-02-01 09:40:00', 1),
-(14, '2023-02-01 09:40:00', 2),
-(19, '2023-02-01 09:40:00', 1),
-(5, '2023-02-03 15:25:00', 1),
-(15, '2023-02-03 15:25:00', 1),
-(20, '2023-02-03 15:25:00', 1),
-(1, '2023-02-05 21:00:00', 1),
-(6, '2023-02-05 21:00:00', 2),
-(16, '2023-02-05 21:00:00', 1),
-(2, '2023-02-09 10:45:00', 2),
-(7, '2023-02-09 10:45:00', 1),
-(17, '2023-02-09 10:45:00', 1),
-(3, '2023-02-10 16:30:00', 1),
-(8, '2023-02-10 16:30:00', 1),
-(18, '2023-02-10 16:30:00', 2),
-(4, '2023-02-16 22:15:00', 1),
-(9, '2023-02-16 22:15:00', 2),
-(19, '2023-02-16 22:15:00', 1),
-(5, '2023-02-18 11:50:00', 2),
-(10, '2023-02-18 11:50:00', 1),
-(20, '2023-02-18 11:50:00', 1),
-(1, '2023-02-20 17:35:00', 1),
-(11, '2023-02-20 17:35:00', 1),
-(16, '2023-02-20 17:35:00', 1),
-(2, '2023-02-22 23:20:00', 1),
-(12, '2023-02-22 23:20:00', 2),
-(17, '2023-02-22 23:20:00', 1),
-(3, '2023-02-26 12:05:00', 2),
-(13, '2023-02-26 12:05:00', 1),
-(18, '2023-02-26 12:05:00', 1),
-(4, '2023-02-28 18:50:00', 1),
-(14, '2023-02-28 18:50:00', 1),
-(19, '2023-02-28 18:50:00', 2),
-(5, '2023-03-01 00:35:00', 1),
-(15, '2023-03-01 00:35:00', 2),
-(20, '2023-03-01 00:35:00', 1),
-(21, '2023-03-06 13:20:00', 2),
-(22, '2023-03-06 13:20:00', 1),
-(1, '2023-03-08 19:05:00', 1),
-(6, '2023-03-08 19:05:00', 1),
-(16, '2023-03-08 19:05:00', 2),
-(2, '2023-03-11 00:50:00', 2),
-(7, '2023-03-11 00:50:00', 1),
-(17, '2023-03-11 00:50:00', 1),
-(3, '2023-03-12 14:35:00', 1),
-(8, '2023-03-12 14:35:00', 2),
-(18, '2023-03-12 14:35:00', 1),
-(4, '2023-03-15 20:20:00', 2),
-(9, '2023-03-15 20:20:00', 1),
-(19, '2023-03-15 20:20:00', 1);
-(6, '2023-01-10 12:30:00', 1),
-(16, '2023-01-10 12:30:00', 2),
-(2, '2023-01-12 18:45:00', 2),
-(7, '2023-01-12 18:45:00', 1),
-(17, '2023-01-12 18:45:00', 1),
-(3, '2023-01-16 08:15:00', 1),
-(8, '2023-01-16 08:15:00', 2),
-(18, '2023-01-16 08:15:00', 1),
-(4, '2023-01-18 13:20:00', 2),
-(9, '2023-01-18 13:20:00', 1),
-(19, '2023-01-18 13:20:00', 1),
-(5, '2023-01-20 19:10:00', 1),
-(10, '2023-01-20 19:10:00', 1),
-(20, '2023-01-20 19:10:00', 2),
-(1, '2023-01-23 07:45:00', 2),
-(11, '2023-01-23 07:45:00', 1),
-(16, '2023-01-23 07:45:00', 1),
-(2, '2023-01-25 14:30:00', 1),
-(12, '2023-01-25 14:30:00', 1),
-(17, '2023-01-25 14:30:00', 2),
-(3, '2023-01-29 20:15:00', 2),
-(13, '2023-01-29 20:15:00', 1),
-(18, '2023-01-29 20:15:00', 1),
-(4, '2023-02-01 09:40:00', 1),
-(14, '2023-02-01 09:40:00', 2),
-(19, '2023-02-01 09:40:00', 1),
-(5, '2023-02-03 15:25:00', 1),
-(15, '2023-02-03 15:25:00', 1),
-(20, '2023-02-03 15:25:00', 1),
-(1, '2023-02-05 21:00:00', 1),
-(6, '2023-02-05 21:00:00', 2),
-(16, '2023-02-05 21:00:00', 1),
-(2, '2023-02-09 10:45:00', 2),
-(7, '2023-02-09 10:45:00', 1),
-(17, '2023-02-09 10:45:00', 1),
-(3, '2023-02-10 16:30:00', 1),
-(8, '2023-02-10 16:30:00', 1),
-(18, '2023-02-10 16:30:00', 2),
-(4, '2023-02-16 22:15:00', 1),
-(9, '2023-02-16 22:15:00', 2),
-(19, '2023-02-16 22:15:00', 1),
-(5, '2023-02-18 11:50:00', 2),
-(10, '2023-02-18 11:50:00', 1),
-(20, '2023-02-18 11:50:00', 1),
-(1, '2023-02-20 17:35:00', 1),
-(11, '2023-02-20 17:35:00', 1),
-(16, '2023-02-20 17:35:00', 1),
-(2, '2023-02-22 23:20:00', 1),
-(12, '2023-02-22 23:20:00', 2),
-(17, '2023-02-22 23:20:00', 1),
-(3, '2023-02-26 12:05:00', 2),
-(13, '2023-02-26 12:05:00', 1),
-(18, '2023-02-26 12:05:00', 1),
-(4, '2023-02-28 18:50:00', 1),
-(14, '2023-02-28 18:50:00', 1),
-(19, '2023-02-28 18:50:00', 2),
-(5, '2023-03-01 00:35:00', 1),
-(15, '2023-03-01 00:35:00', 2),
-(20, '2023-03-01 00:35:00', 1),
-(21, '2023-03-06 13:20:00', 2),
-(22, '2023-03-06 13:20:00', 1),
-(1, '2023-03-08 19:05:00', 1),
-(6, '2023-03-08 19:05:00', 1),
-(16, '2023-03-08 19:05:00', 2),
-(2, '2023-03-11 00:50:00', 2),
-(7, '2023-03-11 00:50:00', 1),
-(17, '2023-03-11 00:50:00', 1),
-(3, '2023-03-12 14:35:00', 1),
-(8, '2023-03-12 14:35:00', 2),
-(18, '2023-03-12 14:35:00', 1),
-(4, '2023-03-15 20:20:00', 2),
-(9, '2023-03-15 20:20:00', 1),
-(19, '2023-03-15 20:20:00', 1);
 
+-- First batch
+INSERT INTO PRODUTO_PEDIDO (ID_PRODUTO, DATA_PEDIDO, QUANTIDADE) VALUES
+(1, '2023-01-10 12:30:00', 1);
+
+INSERT INTO PRODUTO_PEDIDO (ID_PRODUTO, DATA_PEDIDO, QUANTIDADE) VALUES
+(6, '2023-01-10 12:30:00', 2);
+
+INSERT INTO PRODUTO_PEDIDO (ID_PRODUTO, DATA_PEDIDO, QUANTIDADE) VALUES
+(16, '2023-01-10 12:30:00', 2);
+
+-- Second batch
+INSERT INTO PRODUTO_PEDIDO (ID_PRODUTO, DATA_PEDIDO, QUANTIDADE) VALUES
+(2, '2023-01-12 18:45:00', 2);
+
+INSERT INTO PRODUTO_PEDIDO (ID_PRODUTO, DATA_PEDIDO, QUANTIDADE) VALUES
+(7, '2023-01-12 18:45:00', 1);
+
+INSERT INTO PRODUTO_PEDIDO (ID_PRODUTO, DATA_PEDIDO, QUANTIDADE) VALUES
+(17, '2023-01-12 18:45:00', 1);
+
+-- Third batch
+INSERT INTO PRODUTO_PEDIDO (ID_PRODUTO, DATA_PEDIDO, QUANTIDADE) VALUES
+(3, '2023-01-16 08:15:00', 1);
+
+INSERT INTO PRODUTO_PEDIDO (ID_PRODUTO, DATA_PEDIDO, QUANTIDADE) VALUES
+(8, '2023-01-16 08:15:00', 2);
+
+INSERT INTO PRODUTO_PEDIDO (ID_PRODUTO, DATA_PEDIDO, QUANTIDADE) VALUES
+(18, '2023-01-16 08:15:00', 1);
+
+-- Fourth batch
+INSERT INTO PRODUTO_PEDIDO (ID_PRODUTO, DATA_PEDIDO, QUANTIDADE) VALUES
+(4, '2023-01-18 13:20:00', 2);
+
+INSERT INTO PRODUTO_PEDIDO (ID_PRODUTO, DATA_PEDIDO, QUANTIDADE) VALUES
+(9, '2023-01-18 13:20:00', 1);
+
+INSERT INTO PRODUTO_PEDIDO (ID_PRODUTO, DATA_PEDIDO, QUANTIDADE) VALUES
+(19, '2023-01-18 13:20:00', 1);
+
+-- Fifth batch
+INSERT INTO PRODUTO_PEDIDO (ID_PRODUTO, DATA_PEDIDO, QUANTIDADE) VALUES
+(5, '2023-01-20 19:10:00', 1);
+
+INSERT INTO PRODUTO_PEDIDO (ID_PRODUTO, DATA_PEDIDO, QUANTIDADE) VALUES
+(10, '2023-01-20 19:10:00', 1);
+
+INSERT INTO PRODUTO_PEDIDO (ID_PRODUTO, DATA_PEDIDO, QUANTIDADE) VALUES
+(20, '2023-01-20 19:10:00', 2);
+
+-- Remaining batches follow the same pattern
+INSERT INTO PRODUTO_PEDIDO (ID_PRODUTO, DATA_PEDIDO, QUANTIDADE) VALUES
+(1, '2023-01-23 07:45:00', 2);
+
+INSERT INTO PRODUTO_PEDIDO (ID_PRODUTO, DATA_PEDIDO, QUANTIDADE) VALUES
+(11, '2023-01-23 07:45:00', 1);
+
+INSERT INTO PRODUTO_PEDIDO (ID_PRODUTO, DATA_PEDIDO, QUANTIDADE) VALUES
+(16, '2023-01-23 07:45:00', 1);
+
+-- And so on for all the remaining entries...

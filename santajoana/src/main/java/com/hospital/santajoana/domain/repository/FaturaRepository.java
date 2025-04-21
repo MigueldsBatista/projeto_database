@@ -87,6 +87,7 @@ public class FaturaRepository extends BaseRepository<Fatura, LocalDateTime> {
     }
 
 
+    //TODO - Na segunda entrega isso aq vira um procedure, e uma function
     public void updateValorTotal(LocalDateTime dataEmissao){
         String updateSql = "UPDATE FATURA\r\n" + //
                         "SET VALOR_TOTAL = (\r\n" + //
@@ -96,7 +97,7 @@ public class FaturaRepository extends BaseRepository<Fatura, LocalDateTime> {
                         "    JOIN PRODUTO ON PRODUTO_PEDIDO.ID_PRODUTO = PRODUTO.ID_PRODUTO\r\n" + //
                         "    WHERE PEDIDO.DATA_ENTRADA_ESTADIA = FATURA.DATA_ENTRADA_ESTADIA\r\n" + //
                         ")\r\n" + //
-                        "WHERE FATURA.DATA_EMISSAO = '?';";
+                        "WHERE FATURA.DATA_EMISSAO = ?";
         jdbcTemplate.update(updateSql, dataEmissao);
     }
 

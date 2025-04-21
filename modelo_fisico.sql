@@ -15,7 +15,7 @@ DROP TABLE IF EXISTS METODO_PAGAMENTO;
 DROP TABLE IF EXISTS CATEGORIA_QUARTO;
 DROP TABLE IF EXISTS CATEGORIA_PRODUTO;
 CREATE TABLE CATEGORIA_QUARTO (
-    ID_CATEGORIA_QUARTO INT PRIMARY KEY AUTO_INCREMENT,
+    ID_CATEGORIA INT PRIMARY KEY AUTO_INCREMENT,
     NOME VARCHAR(50) NOT NULL UNIQUE,
     DESCRICAO VARCHAR(255)
 );
@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS QUARTO (
     NUMERO INT NOT NULL,
     ID_CATEGORIA_QUARTO INT,
     CONSTRAINT UNIQUE_NUMERO UNIQUE (NUMERO),
-    FOREIGN KEY (ID_CATEGORIA_QUARTO) REFERENCES CATEGORIA_QUARTO (ID_CATEGORIA_QUARTO) ON DELETE
+    FOREIGN KEY (ID_CATEGORIA_QUARTO) REFERENCES CATEGORIA_QUARTO (ID_CATEGORIA) ON DELETE
     SET NULL
 );
 CREATE TABLE IF NOT EXISTS PACIENTE (
@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS PACIENTE (
     CONSTRAINT CHECK_STATUS CHECK (STATUS IN ('Internado', 'Alta'))
 );
 CREATE TABLE IF NOT EXISTS CATEGORIA_PRODUTO (
-    ID_CATEGORIA_PRODUTO INT PRIMARY KEY AUTO_INCREMENT,
+    ID_CATEGORIA INT PRIMARY KEY AUTO_INCREMENT,
     NOME VARCHAR(50) NOT NULL UNIQUE,
     DESCRICAO VARCHAR(255)
 );
@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS PRODUTO (
     GORDURAS_G INT CHECK (GORDURAS_G >= 0),
     SODIO_MG INT CHECK (SODIO_MG >= 0),
     CONSTRAINT UNIQUE_NOME UNIQUE (NOME),
-    FOREIGN KEY (ID_CATEGORIA_PRODUTO) REFERENCES CATEGORIA_PRODUTO (ID_CATEGORIA_PRODUTO) ON DELETE
+    FOREIGN KEY (ID_CATEGORIA_PRODUTO) REFERENCES CATEGORIA_PRODUTO (ID_CATEGORIA) ON DELETE
     SET NULL
 );
 
@@ -136,120 +136,15 @@ CREATE TABLE IF NOT EXISTS PRODUTO_PEDIDO (
     CONSTRAINT CHECK_QUANTIDADE CHECK (QUANTIDADE > 0)
 );
 
--- Replace the problematic direct update with a stored function approach
-DELIMITER //
-
--- Drop existing triggers if they exist
-DROP FUNCTION IF EXISTS calculate_fatura_total//
-DROP PROCEDURE IF EXISTS update_fatura_total//
-
--- Function to calculate the total value of a fatura based on related orders and products
-CREATE FUNCTION calculate_fatura_total(estadia_entrada DATETIME(6)) RETURNS DECIMAL(10,2)
-DETERMINISTIC
-BEGIN
-    DECLARE total DECIMAL(10,2);
-    
-    SELECT COALESCE(SUM(pp.QUANTIDADE * p.PRECO), 0) INTO total
-    FROM PEDIDO pd
-    JOIN PRODUTO_PEDIDO pp ON pd.DATA_PEDIDO = pp.DATA_PEDIDO
-    JOIN PRODUTO p ON pp.ID_PRODUTO = p.ID_PRODUTO
-    WHERE pd.DATA_ENTRADA_ESTADIA = estadia_entrada;
-    
-    RETURN total;
-END//
-
--- Procedure to update a specific fatura
-CREATE PROCEDURE update_fatura_total(IN fatura_data DATETIME(6))
-BEGIN
-    DECLARE estadia_entrada DATETIME(6);
-    
-    -- Get the estadia entrada date for this fatura
-    SELECT DATA_ENTRADA_ESTADIA INTO estadia_entrada 
-    FROM FATURA 
-    WHERE DATA_EMISSAO = fatura_data;
-    
-    -- Update the fatura total
-    UPDATE FATURA
-    SET VALOR_TOTAL = calculate_fatura_total(estadia_entrada)
-    WHERE DATA_EMISSAO = fatura_data;
-END//
-
--- Create triggers to automatically update fatura when products change
-DROP TRIGGER IF EXISTS update_fatura_total_after_produto_pedido_insert//
-DROP TRIGGER IF EXISTS update_fatura_total_after_produto_pedido_update//
-DROP TRIGGER IF EXISTS update_fatura_total_after_produto_pedido_delete//
-
--- Trigger for INSERT operations
-CREATE TRIGGER update_fatura_total_after_produto_pedido_insert
-AFTER INSERT ON PRODUTO_PEDIDO
-FOR EACH ROW
-BEGIN
-    DECLARE v_data_entrada DATETIME(6);
-
-    -- Get the estadia entry date associated with the order
-    SELECT DATA_ENTRADA_ESTADIA INTO v_data_entrada
+-- Query to show total from all produto pedidos and quantity for a specific fatura
+UPDATE FATURA
+SET VALOR_TOTAL = (
+    SELECT SUM(PRODUTO_PEDIDO.QUANTIDADE * PRODUTO.PRECO)
     FROM PEDIDO
-    WHERE DATA_PEDIDO = NEW.DATA_PEDIDO;
-
-    -- Update the invoice total
-    UPDATE FATURA 
-    SET VALOR_TOTAL = calculate_fatura_total(v_data_entrada)
-    WHERE DATA_ENTRADA_ESTADIA = v_data_entrada;
-END//
-
--- Trigger for UPDATE operations
-CREATE TRIGGER update_fatura_total_after_produto_pedido_update
-AFTER UPDATE ON PRODUTO_PEDIDO
-FOR EACH ROW
-BEGIN
-    DECLARE v_data_entrada_old DATETIME(6);
-    DECLARE v_data_entrada_new DATETIME(6);
-
-    -- Get the estadia entry date for old and new order (they might differ if order changed)
-    SELECT DATA_ENTRADA_ESTADIA INTO v_data_entrada_old
-    FROM PEDIDO
-    WHERE DATA_PEDIDO = OLD.DATA_PEDIDO;
-    
-    SELECT DATA_ENTRADA_ESTADIA INTO v_data_entrada_new
-    FROM PEDIDO
-    WHERE DATA_PEDIDO = NEW.DATA_PEDIDO;
-
-    -- Update both invoices if they differ
-    IF v_data_entrada_old = v_data_entrada_new THEN
-        UPDATE FATURA 
-        SET VALOR_TOTAL = calculate_fatura_total(v_data_entrada_new)
-        WHERE DATA_ENTRADA_ESTADIA = v_data_entrada_new;
-    ELSE
-        UPDATE FATURA 
-        SET VALOR_TOTAL = calculate_fatura_total(v_data_entrada_old)
-        WHERE DATA_ENTRADA_ESTADIA = v_data_entrada_old;
-        
-        UPDATE FATURA 
-        SET VALOR_TOTAL = calculate_fatura_total(v_data_entrada_new)
-        WHERE DATA_ENTRADA_ESTADIA = v_data_entrada_new;
-    END IF;
-END//
-
--- Trigger for DELETE operations
-CREATE TRIGGER update_fatura_total_after_produto_pedido_delete
-AFTER DELETE ON PRODUTO_PEDIDO
-FOR EACH ROW
-BEGIN
-    DECLARE v_data_entrada DATETIME(6);
-
-    -- Get the estadia entry date associated with the order
-    SELECT DATA_ENTRADA_ESTADIA INTO v_data_entrada
-    FROM PEDIDO
-    WHERE DATA_PEDIDO = OLD.DATA_PEDIDO;
-
-    -- Update the invoice total
-    UPDATE FATURA 
-    SET VALOR_TOTAL = calculate_fatura_total(v_data_entrada)
-    WHERE DATA_ENTRADA_ESTADIA = v_data_entrada;
-END//
-
-DELIMITER ;
-
-SET GLOBAL log_bin_trust_function_creators = 1;
+    JOIN PRODUTO_PEDIDO ON PEDIDO.DATA_PEDIDO = PRODUTO_PEDIDO.DATA_PEDIDO
+    JOIN PRODUTO ON PRODUTO_PEDIDO.ID_PRODUTO = PRODUTO.ID_PRODUTO
+    WHERE PEDIDO.DATA_ENTRADA_ESTADIA = FATURA.DATA_ENTRADA_ESTADIA
+)
+WHERE FATURA.DATA_EMISSAO = '2025-04-21 20:59:19.208995'; -- Substitua pela data desejada
 
 

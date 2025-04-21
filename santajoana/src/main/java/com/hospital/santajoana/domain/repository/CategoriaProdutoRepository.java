@@ -10,12 +10,12 @@ public class CategoriaProdutoRepository extends BaseRepository<CategoriaProduto,
 
     @SuppressWarnings("unused")
     public CategoriaProdutoRepository(JdbcTemplate jdbcTemplate) {
-        super("CATEGORIA_PRODUTO", "ID_CATEGORIA_PRODUTO", jdbcTemplate, (rs, rowNum) -> {
+        super("CATEGORIA_PRODUTO", "ID_CATEGORIA", jdbcTemplate, (rs, rowNum) -> {
             CategoriaProduto categoriaProduto = new CategoriaProduto(
                 rs.getString("NOME"),
                 rs.getString("DESCRICAO")
             );
-            categoriaProduto.setId(rs.getLong("ID_CATEGORIA_PRODUTO"));
+            categoriaProduto.setId(rs.getLong("ID_CATEGORIA"));
             return categoriaProduto;
         });
     }
@@ -31,7 +31,7 @@ public class CategoriaProdutoRepository extends BaseRepository<CategoriaProduto,
     }
 
     public CategoriaProduto update(CategoriaProduto categoriaProduto) {
-        String updateSql = "UPDATE CATEGORIA_PRODUTO SET NOME = ?, DESCRICAO = ? WHERE ID_CATEGORIA_PRODUTO = ?";
+        String updateSql = "UPDATE CATEGORIA_PRODUTO SET NOME = ?, DESCRICAO = ? WHERE ID_CATEGORIA = ?";
         jdbcTemplate.update(updateSql,
             categoriaProduto.getNome(),
             categoriaProduto.getDescricao(),
