@@ -99,6 +99,8 @@ function showLoginError(errorMessageElement, message) {
 
 async function handleSuccessfulLogin(userData) {
     // Store user data in localStorage
+    console.log('userData', userData);
+    
     localStorage.setItem('user', JSON.stringify(userData));
     
     // Store profile picture if available

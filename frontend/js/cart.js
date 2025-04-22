@@ -8,8 +8,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const cartItemsContainer = document.getElementById('cart-items-container');
     const cartSummary = document.getElementById('cart-summary');
     const emptyCartMessage = document.getElementById('empty-cart-message');
-    const subtotalElement = document.getElementById('cart-subtotal');
-    const serviceFeeElement = document.getElementById('cart-service-fee');
     const totalElement = document.getElementById('cart-total');
     
     // Update the cart display
@@ -86,8 +84,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 date: new Date(savedOrder.dataPedido),
                 items: cart,
                 notes: notes,
-                subtotal: calculateSubtotal(),
-                serviceFee: calculateServiceFee(),
                 total: calculateTotal()
             }));
             
@@ -191,8 +187,6 @@ document.addEventListener('DOMContentLoaded', function() {
             emptyCartMessage.style.display = 'none';
             
             // Update totals
-            subtotalElement.textContent = `R$ ${formatCurrency(calculateSubtotal())}`;
-            serviceFeeElement.textContent = `R$ ${formatCurrency(calculateServiceFee())}`;
             totalElement.textContent = `R$ ${formatCurrency(calculateTotal())}`;
         }
         

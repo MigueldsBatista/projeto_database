@@ -7,9 +7,6 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
     }
     
-    console.log('User data:', user);
-    
-
     // Update profile information in UI
     document.getElementById('profile-name').textContent = user.name || 'Nome Indisponível';
     document.getElementById('profile-email').textContent = user.email || 'Email Indisponível';

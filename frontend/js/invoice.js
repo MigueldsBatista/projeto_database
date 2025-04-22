@@ -111,13 +111,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         // Generate invoice items
         renderInvoiceItems(invoiceItems);
         
-        // Store user in localStorage for reference in other pages
-        localStorage.setItem('user', JSON.stringify({
-            id: paciente.id,
-            name: paciente.nome, 
-            room: quarto.numero
-        }));
-        
         // Get cart count from localStorage
         const cart = JSON.parse(localStorage.getItem('cart')) || [];
         updateCartBadge(cart.reduce((total, item) => total + item.quantity, 0));
@@ -151,8 +144,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         }, 1000);
     });
 });
-
-
 
 function renderInvoiceItems(days) {
     const container = document.getElementById('invoice-items-container');
