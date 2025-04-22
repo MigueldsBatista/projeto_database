@@ -149,6 +149,7 @@ async function saveProfilePicture(user, base64String) {
     
     // Update user object
     user.profilePicture = base64String;
+    user.email = result.email;
     localStorage.setItem('user', JSON.stringify(user));
     
     showToast('Foto de perfil atualizada com sucesso!', 'success');
