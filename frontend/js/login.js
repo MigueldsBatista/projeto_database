@@ -8,10 +8,6 @@ document.addEventListener('DOMContentLoaded', function() {
     setupPageTitle();
 });
 
-/**
- * Handle login form submission
- * @param {Event} e - Form submission event
- */
 async function handleLogin(e) {
     e.preventDefault();
     
@@ -60,12 +56,6 @@ async function handleLogin(e) {
     }
 }
 
-/**
- * Try to authenticate as staff member
- * @param {string} email - Staff email
- * @param {string} password - Staff password
- * @returns {Object} Authentication response
- */
 async function tryStaffLogin(email, password) {
     const staffResponse = await fetch(`${API_URL}/api/auth/camareiras/login`, {
         method: 'POST',
@@ -78,11 +68,6 @@ async function tryStaffLogin(email, password) {
     return await staffResponse.json();
 }
 
-/**
- * Display login error in the UI
- * @param {HTMLElement} errorMessageElement - The error container
- * @param {string} message - The error message to show
- */
 function showLoginError(errorMessageElement, message) {
     // If there's an error element in the form, use it
     if (errorMessageElement) {
@@ -112,10 +97,6 @@ function showLoginError(errorMessageElement, message) {
     }
 }
 
-/**
- * Handle successful login
- * @param {Object} userData - The authenticated user data
- */
 async function handleSuccessfulLogin(userData) {
     // Store user data in localStorage
     localStorage.setItem('user', JSON.stringify(userData));
@@ -153,10 +134,6 @@ async function handleSuccessfulLogin(userData) {
     setTimeout(() => { window.location.href = redirectUrl; }, 1000);
 }
 
-/**
- * Show prompt asking if user wants to create an estadia
- * @param {number} pacienteId - ID of the patient
- */
 function showEstadiaPrompt(pacienteId) {
     // Create modal overlay
     const overlay = document.createElement('div');
@@ -233,16 +210,10 @@ function showEstadiaPrompt(pacienteId) {
     });
 }
 
-/**
- * Redirect to dashboard
- */
 function redirectToDashboard() {
     window.location.href = 'dashboard.html';
 }
 
-/**
- * Setup page title based on URL parameters
- */
 function setupPageTitle() {
     const urlParams = new URLSearchParams(window.location.search);
     const userType = urlParams.get('type');

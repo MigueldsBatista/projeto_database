@@ -14,7 +14,6 @@ const appState = {
     dataLoaded: false
 };
 
-// Helper Functions specific to app functionality
 function getCartTotal() {
     return appState.cart.reduce((total, item) => total + (item.price * item.quantity), 0);
 }
@@ -27,7 +26,6 @@ function getCartItemCount() {
     return appState.cart.reduce((total, item) => total + item.quantity, 0);
 }
 
-// UI Functions specific to app navigation
 function showScreen(screenId) {
     // Hide all screens
     document.querySelectorAll('.screen').forEach(screen => {
@@ -42,11 +40,6 @@ function showScreen(screenId) {
     }
 }
 
-// Data Loading Functions
-/**
- * Load core user data (profile, estadia, room, invoice, orders)
- * @returns {Promise<boolean>} True if data was loaded successfully
- */
 async function loadUserData() {
     // If already loaded, don't reload
     if (appState.dataLoaded) return true;
@@ -88,11 +81,6 @@ async function loadUserData() {
     }
 }
 
-/**
- * Fetch patient's most recent estadia
- * @param {number} pacienteId Patient ID
- * @returns {Promise<Object|null>} Estadia data or null
- */
 async function fetchEstadiaData(pacienteId) {
     try {
         const response = await fetch(`${API_URL}/api/pacientes/estadia-ativa/${pacienteId}`, {
@@ -115,11 +103,6 @@ async function fetchEstadiaData(pacienteId) {
     }
 }
 
-/**
- * Fetch room data by ID
- * @param {number} quartoId Room ID
- * @returns {Promise<Object|null>} Room data or null
- */
 async function fetchQuartoData(quartoId) {
     if (!quartoId) return null;
     
@@ -140,11 +123,6 @@ async function fetchQuartoData(quartoId) {
     }
 }
 
-/**
- * Fetch patient's most recent invoice
- * @param {number} pacienteId Patient ID
- * @returns {Promise<Object|null>} Invoice data or null
- */
 async function fetchFaturaData(pacienteId) {
     try {
         const response = await fetch(`${API_URL}/api/pacientes/fatura-recente/${pacienteId}`, {
@@ -168,11 +146,6 @@ async function fetchFaturaData(pacienteId) {
     }
 }
 
-/**
- * Fetch patient's orders
- * @param {number} pacienteId Patient ID
- * @returns {Promise<Array>} Array of orders
- */
 async function fetchPedidosData(pacienteId) {
     try {
         const response = await fetch(`${API_URL}/api/pacientes/${pacienteId}/pedidos`, {
@@ -226,11 +199,6 @@ async function fetchPedidosData(pacienteId) {
     }
 }
 
-/**
- * Fetch products for a specific order
- * @param {string} dataPedido Order date/ID
- * @returns {Promise<Array>} Array of products
- */
 async function fetchProdutosFromPedido(dataPedido) {
     try {
         const response = await fetch(`${API_URL}/api/pedidos/${dataPedido}/produtos`, {
@@ -253,20 +221,12 @@ async function fetchProdutosFromPedido(dataPedido) {
     }
 }
 
-/**
- * Reload user data from the server
- * @returns {Promise<boolean>} True if data was reloaded successfully
- */
 async function reloadUserData() {
     appState.dataLoaded = false;
     appState.userProfile.loaded = false;
     return await loadUserData();
 }
 
-/**
- * Get user data, loading it first if necessary
- * @returns {Promise<Object>} User profile data
- */
 async function getUserData() {
     if (!appState.dataLoaded) {
         await loadUserData();
@@ -280,11 +240,6 @@ async function getUserData() {
     };
 }
 
-/**
- * Get recent orders from the app state
- * @param {number} limit Maximum number of orders to return
- * @returns {Array} Array of recent orders
- */
 function getRecentOrders(limit = 3) {
     if (!appState.dataLoaded || !appState.userProfile.pedidos) {
         return [];
@@ -296,30 +251,6 @@ function getRecentOrders(limit = 3) {
     
     // Return limited amount or all if limit is null
     return limit ? sortedOrders.slice(0, limit) : sortedOrders;
-}
-
-// Initialize App
-function initApp() {
-    // Check auth and load user data (if not on login page)
-    const user = checkAuth();
-    
-    // For authorized pages, update cart badge and load user data
-    if (user) {
-        const cart = JSON.parse(localStorage.getItem('cart')) || [];
-        updateCartBadge(cart.reduce((total, item) => total + item.quantity, 0));
-        
-        // Load user data in the background
-        loadUserData().then(success => {
-            if (success) {
-                console.log('User data loaded successfully');
-                // Dispatch an event that other pages can listen for
-                document.dispatchEvent(new CustomEvent('userDataLoaded'));
-            }
-        });
-        
-        // Setup event listeners for navigation, search, etc.
-        setupEventListeners();
-    }
 }
 
 function setupEventListeners() {
@@ -399,6 +330,26 @@ function setupCategoryTabs() {
         });
     });
 }
-
-// Initialize the app when DOM is ready
+function initApp() {
+    // Check auth and load user data (if not on login page)
+    const user = checkAuth();
+    
+    // For authorized pages, update cart badge and load user data
+    if (user) {
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        updateCartBadge(cart.reduce((total, item) => total + item.quantity, 0));
+        
+        // Load user data in the background
+        loadUserData().then(success => {
+            if (success) {
+                console.log('User data loaded successfully');
+                // Dispatch an event that other pages can listen for
+                document.dispatchEvent(new CustomEvent('userDataLoaded'));
+            }
+        });
+        
+        // Setup event listeners for navigation, search, etc.
+        setupEventListeners();
+    }
+}
 document.addEventListener('DOMContentLoaded', initApp);

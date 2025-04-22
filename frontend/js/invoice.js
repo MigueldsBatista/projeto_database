@@ -97,7 +97,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             return groups;
         }, {});
         
-        // Convert the grouped object to an array
         const invoiceItems = Object.values(groupedOrders);
         
         // Update user info in the UI
@@ -126,8 +125,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         console.error('Error loading invoice data:', error);
         showToast('Erro ao carregar os dados da fatura', 'error');
         
-        // Fallback to sample data if API calls fail
-        loadSampleData();
     }
     
     // Add event listeners
@@ -155,56 +152,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     });
 });
 
-// Fallback function to load sample data if API fails
-function loadSampleData() {
-    const invoiceData = {
-        total: 320.50,
-        status: 'PENDENTE',
-        date: new Date(),
-        items: [
-            {
-                date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-                items: [
-                    { name: 'Café da manhã', quantity: 1, price: 18.90 },
-                    { name: 'Almoço', quantity: 1, price: 32.90 },
-                    { name: 'Jantar', quantity: 1, price: 28.50 },
-                    { name: 'Água Mineral', quantity: 3, price: 3.50 }
-                ]
-            },
-            {
-                date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000),
-                items: [
-                    { name: 'Café da manhã', quantity: 1, price: 18.90 },
-                    { name: 'Almoço', quantity: 1, price: 32.90 },
-                    { name: 'Jantar', quantity: 1, price: 28.50 },
-                    { name: 'Suco Natural', quantity: 2, price: 7.90 },
-                    { name: 'Kit Higiene', quantity: 1, price: 18.50 }
-                ]
-            },
-            {
-                date: new Date(),
-                items: [
-                    { name: 'Café da manhã', quantity: 1, price: 18.90 },
-                    { name: 'Almoço', quantity: 1, price: 32.90 },
-                    { name: 'Água Mineral', quantity: 2, price: 3.50 }
-                ]
-            }
-        ]
-    };
-    
-    // Update user info from localStorage or defaults
-    const user = JSON.parse(localStorage.getItem('user')) || { name: 'Maria Silva', room: '302' };
-    document.getElementById('patient-name').textContent = user.name;
-    document.getElementById('patient-room').textContent = user.room;
-    
-    // Update invoice details
-    document.getElementById('invoice-date').textContent = formatDate(invoiceData.date);
-    document.getElementById('invoice-total-value').textContent = formatCurrency(invoiceData.total);
-    document.getElementById('patient-admission-date').textContent = formatDate(new Date(Date.now() - 3 * 24 * 60 * 60 * 1000));
-    
-    // Generate invoice items
-    renderInvoiceItems(invoiceData.items);
-}
+
 
 function renderInvoiceItems(days) {
     const container = document.getElementById('invoice-items-container');

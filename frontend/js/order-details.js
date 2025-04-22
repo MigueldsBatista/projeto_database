@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', async function() {
     try {
-        // Get order ID from URL
         const urlParams = new URLSearchParams(window.location.search);
         const orderId = urlParams.get('id');
         
@@ -10,7 +9,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             return;
         }
         
-        // Check if user is logged in
         const user = JSON.parse(localStorage.getItem('user')) || null;
         if (!user) {
             window.location.href = 'login.html';
@@ -62,7 +60,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             showToast('Erro ao carregar detalhes do pedido', 'error');
         }
         
-        // Ensure the container exists before trying to update it
         const container = document.getElementById('order-details-container');
         if (container) {
             container.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-circle"></i><h3>Erro ao carregar pedido</h3><p>Não foi possível encontrar os detalhes deste pedido</p></div>';

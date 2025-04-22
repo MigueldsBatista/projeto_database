@@ -19,11 +19,9 @@ document.addEventListener('DOMContentLoaded', async function() {
                 displayOrders(appState.userProfile.pedidos);
             });
             
-            // Trigger data loading if not already in progress
             loadUserData();
         }
         
-        // Setup filter tabs
         setupFilterTabs();
         
         // Update cart badge

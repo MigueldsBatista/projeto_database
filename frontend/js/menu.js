@@ -28,10 +28,8 @@ document.addEventListener('DOMContentLoaded', async function() {
         const activeTab = document.querySelector(`.tab-item[data-category="${activeCategory}"]`);
         if (activeTab) activeTab.classList.add('active');
         
-        // Display products based on selected category
         displayProducts(activeCategory);
         
-        // Tab click event listeners
         document.querySelectorAll('.tab-item').forEach(tab => {
             tab.addEventListener('click', function() {
                 const category = this.getAttribute('data-category');
@@ -56,7 +54,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             }
         });
         
-        // Search functionality
         document.getElementById('search-input').addEventListener('input', function() {
             const searchTerm = this.value.toLowerCase();
             
@@ -79,7 +76,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             }
         });
         
-        // Clear search
         document.getElementById('clear-search').addEventListener('click', function() {
             document.getElementById('search-input').value = '';
             this.style.display = 'none';
@@ -89,7 +85,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             displayProducts(activeCategory);
         });
         
-        // Update cart badge
         const cart = JSON.parse(localStorage.getItem('cart')) || [];
         updateCartBadge(cart.reduce((total, item) => total + item.quantity, 0));
     } catch (error) {
@@ -275,8 +270,4 @@ document.addEventListener('DOMContentLoaded', async function() {
         showToast(`${product.nome} adicionado ao carrinho`, 'success');
     }
     
-    // Fallback to offline data if API fails
-   
-
-
 });

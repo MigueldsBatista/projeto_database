@@ -428,7 +428,6 @@ function setupLogoutButton() {
     });
 }
 
-// Add the new function for delete account functionality
 function setupDeleteAccountButton(user) {
     const deleteAccountBtn = document.getElementById('delete-account-btn');
     if (!deleteAccountBtn) return;

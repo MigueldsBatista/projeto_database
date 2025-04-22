@@ -123,10 +123,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    /**
-     * Show prompt asking if user wants to create an estadia
-     * @param {number} pacienteId - ID of the created patient
-     */
     function showEstadiaPrompt(pacienteId) {
         // Create modal overlay
         const overlay = document.createElement('div');
@@ -198,11 +194,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    /**
-     * Check if user already has an active estadia
-     * @param {number} pacienteId - The patient ID
-     * @returns {Promise<boolean>} True if user has an active estadia
-     */
     async function checkExistingEstadia(pacienteId) {
         try {
             const response = await fetch(`${API_URL}/api/pacientes/estadia-ativa/${pacienteId}`, {
@@ -220,11 +211,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return false;
         }
     }
-    
-    /**
-     * Show confirmation dialog for creating an estadia
-     * @param {number} pacienteId - The patient ID
-     */
+
     function showEstadiaConfirmation(pacienteId) {
         // Create modal overlay
         const overlay = document.createElement('div');
@@ -244,19 +231,15 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         `;
         
-        // Add modal to overlay
         overlay.appendChild(modal);
         
-        // Add overlay to body
         document.body.appendChild(overlay);
         
-        // Handle skip estadia
         document.getElementById('btn-skip-estadia').addEventListener('click', function() {
             overlay.remove();
             redirectToLogin();
         });
         
-        // Handle create estadia
         document.getElementById('btn-create-estadia').addEventListener('click', async function() {
             try {
                 this.disabled = true;
@@ -287,10 +270,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    
-    /**
-     * Redirect to login page
-     */
+
     function redirectToLogin() {
         setTimeout(() => {
             window.location.href = 'login.html';

@@ -2,7 +2,6 @@
 const APP_NAME = 'Hospital Santa Joana';
 const API_URL = 'http://localhost:8080';
 
-
 function showToast(message, type = 'default', duration = 3000) {
     // Remove any existing toasts
     const existingToast = document.querySelector('.toast');
@@ -31,10 +30,6 @@ function showToast(message, type = 'default', duration = 3000) {
     }, duration);
 }
 
-/**
- * Updates the cart badge count across the application
- * @param {number} count - The count to display
- */
 function updateCartBadge(count) {
     const badges = document.querySelectorAll('.cart-badge');
     
@@ -44,20 +39,10 @@ function updateCartBadge(count) {
     });
 }
 
-/**
- * Format currency values to Brazilian format
- * @param {number} value - The value to format
- * @returns {string} Formatted currency string
- */
 function formatCurrency(value) {
     return Number(value).toFixed(2).replace('.', ',');
 }
 
-/**
- * Format date to PT-BR format
- * @param {Date|string} date - The date to format
- * @returns {string} Formatted date string
- */
 function formatDate(date) {
     if (!(date instanceof Date)) {
         date = new Date(date);
@@ -70,11 +55,6 @@ function formatDate(date) {
     });
 }
 
-/**
- * Format date and time to PT-BR format
- * @param {Date|string} date - The date to format
- * @returns {string} Formatted date and time string
- */
 function formatDateTime(date) {
     if (!(date instanceof Date)) {
         date = new Date(date);
@@ -89,11 +69,6 @@ function formatDateTime(date) {
     });
 }
 
-/**
- * Format relative date (today/yesterday or date)
- * @param {Date|string} date - The date to format
- * @returns {string} Formatted relative date string
- */
 function formatRelativeDate(date) {
     if (!(date instanceof Date)) {
         date = new Date(date);
@@ -117,11 +92,6 @@ function formatRelativeDate(date) {
     }
 }
 
-/**
- * Get display text for a status
- * @param {string} status - The status code
- * @returns {string} Human-readable status
- */
 function getStatusText(status) {
     if (!status) return 'Desconhecido';
     
@@ -149,11 +119,6 @@ function getStatusText(status) {
     }
 }
 
-/**
- * Get CSS class for a status
- * @param {string} status - The status code
- * @returns {string} CSS class
- */
 function getStatusClass(status) {
     if (!status) return 'status-default';
     
@@ -180,7 +145,6 @@ function getStatusClass(status) {
             return 'status-default';
     }
 }
-
 
 function checkAuth() {
     const user = JSON.parse(localStorage.getItem('user'));

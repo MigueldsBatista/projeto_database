@@ -176,8 +176,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Rest of the functions remain the same
-
     function updateCartDisplay() {
         const cart = JSON.parse(localStorage.getItem('cart')) || [];
         
@@ -290,18 +288,11 @@ document.addEventListener('DOMContentLoaded', function() {
         showToast('Item removido do carrinho', 'success');
     }
     
-    function calculateSubtotal() {
+    function calculateTotal() {
         const cart = JSON.parse(localStorage.getItem('cart')) || [];
         return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
     }
     
-    function calculateServiceFee() {
-        // 10% service fee
-        return calculateSubtotal() * 0.1;
-    }
-    
-    function calculateTotal() {
-        return calculateSubtotal() + calculateServiceFee();
-    }
+
 
 });
