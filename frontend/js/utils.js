@@ -1,16 +1,8 @@
-/**
- * Common utility functions for Santa Joana Hospital frontend
- */
 
 const APP_NAME = 'Hospital Santa Joana';
 const API_URL = 'http://localhost:8080';
 
-/**
- * Shows a toast notification with custom message and type
- * @param {string} message - The message to display
- * @param {string} type - The type of toast (default, success, error, warning, info)
- * @param {number} duration - How long to show the toast in milliseconds
- */
+
 function showToast(message, type = 'default', duration = 3000) {
     // Remove any existing toasts
     const existingToast = document.querySelector('.toast');
@@ -99,10 +91,14 @@ function formatDateTime(date) {
 
 /**
  * Format relative date (today/yesterday or date)
- * @param {Date} date - The date to format
+ * @param {Date|string} date - The date to format
  * @returns {string} Formatted relative date string
  */
 function formatRelativeDate(date) {
+    if (!(date instanceof Date)) {
+        date = new Date(date);
+    }
+    
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const yesterday = new Date(today);
@@ -185,10 +181,7 @@ function getStatusClass(status) {
     }
 }
 
-/**
- * Check if user is authenticated and redirect if needed
- * @returns {Object|null} User data if authenticated, null otherwise
- */
+
 function checkAuth() {
     const user = JSON.parse(localStorage.getItem('user'));
     
@@ -202,4 +195,15 @@ function checkAuth() {
     }
     
     return user;
+}
+
+function getFormattedOrderId(timestamp) {
+    // Extract a shorter, more readable order number from the timestamp
+    // Format: last 4 digits of timestamp + first 2 chars of the hour
+    const date = new Date(timestamp);
+    const lastDigits = timestamp.toString().slice(-4);
+    const hourPart = date.getHours().toString().padStart(2, '0');
+    const formattedOrderId = `#${lastDigits}${hourPart}`;
+    
+    return formattedOrderId;
 }

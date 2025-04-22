@@ -7,6 +7,9 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
     }
     
+    console.log('User data:', user);
+    
+
     // Update profile information in UI
     document.getElementById('profile-name').textContent = user.name || 'Nome Indisponível';
     document.getElementById('profile-email').textContent = user.email || 'Email Indisponível';
@@ -123,8 +126,8 @@ async function saveProfilePicture(user, base64String) {
     
     // Send to backend based on user role
     const endpoint = user.role === 'camareira' 
-        ? `/api/auth/camareira/profile-picture/${user.id}`
-        : `/api/auth/paciente/profile-picture/${user.id}`;
+        ? `/api/auth/camareiras/profile-picture/${user.id}`
+        : `/api/auth/pacientes/profile-picture/${user.id}`;
     
     const response = await fetch(`${API_URL}${endpoint}`, {
         method: 'POST',
@@ -258,6 +261,7 @@ function setupEditProfileFunctionality(user) {
                     headers: {
                         'Content-Type': 'application/json',
                     },
+
                     body: JSON.stringify({
                         id: user.id,
                         nome: user.name,
@@ -470,47 +474,3 @@ function setupDeleteAccountButton(user) {
     });
 }
 
-function updateCartBadge(count) {
-    const badges = document.querySelectorAll('.cart-badge');
-    
-    badges.forEach(badge => {
-        badge.textContent = count;
-        badge.style.display = count > 0 ? 'flex' : 'none';
-    });
-}
-
-function showToast(message, type = 'default', duration = 3000) {
-    // Remove any existing toasts
-    const existingToast = document.querySelector('.toast');
-    if (existingToast) {
-        existingToast.remove();
-    }
-    
-    // Create new toast
-    const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    toast.textContent = message;
-    
-    document.body.appendChild(toast);
-    
-    // Show the toast
-    setTimeout(() => {
-        toast.classList.add('show');
-    }, 10);
-    
-    // Hide and remove the toast after duration
-    setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => {
-            toast.remove();
-        }, 300);
-    }, duration);
-}
-
-function formatDate(date) {
-    return date.toLocaleDateString('pt-BR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-    });
-}

@@ -3,9 +3,16 @@ document.addEventListener('DOMContentLoaded', async function() {
     let allProducts = [];
     
     try {
+        console.log('Loading menu data...');
+        
         // Fetch product categories and products from API
         const categories = await fetchCategories();
+        console.log('Categories loaded:', categories);
+        
         allProducts = await fetchProducts();
+        localStorage.setItem('menuItems', JSON.stringify(allProducts));
+
+        console.log('Products loaded:', allProducts);
         
         // Update category tabs dynamically if we have categories
         if (categories && categories.length > 0) {
@@ -89,19 +96,23 @@ document.addEventListener('DOMContentLoaded', async function() {
         console.error('Error loading menu data:', error);
         showToast('Erro ao carregar os produtos. Usando dados offline.', 'error');
         
-        // Fallback to offline data if API fails
-        loadOfflineData();
     }
     
     async function fetchCategories() {
         try {
+            console.log('Fetching categories from:', `${API_URL}/api/categoria-produto`);
             const response = await fetch(`${API_URL}/api/categoria-produto`, {
                 headers: { 'Accept': 'application/json' },
                 mode: 'cors'
             });
             
-            if (!response.ok) throw new Error('Failed to fetch categories');
-            return await response.json();
+            if (!response.ok) {
+                console.error('Failed to fetch categories. Status:', response.status);
+                throw new Error(`Failed to fetch categories: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            return data;
         } catch (error) {
             console.error('Error fetching categories:', error);
             return null;
@@ -110,13 +121,31 @@ document.addEventListener('DOMContentLoaded', async function() {
     
     async function fetchProducts() {
         try {
+            console.log('Fetching products from:', `${API_URL}/api/produtos`);
             const response = await fetch(`${API_URL}/api/produtos`, {
                 headers: { 'Accept': 'application/json' },
                 mode: 'cors'
             });
             
-            if (!response.ok) throw new Error('Failed to fetch products');
-            return await response.json();
+            if (!response.ok) {
+                console.error('Failed to fetch products. Status:', response.status);
+                throw new Error(`Failed to fetch products: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            
+            // Ensure categoriaId is properly handled
+            const processedData = data.map(product => {
+                return {
+                    ...product,
+                    // Ensure categoriaId is a number or null
+                    categoriaId: product.categoriaId || 
+                               (product.categoria ? product.categoria.id : null)
+                };
+            });
+            
+            console.log('Processed product data:', processedData);
+            return processedData;
         } catch (error) {
             console.error('Error fetching products:', error);
             return [];
@@ -146,17 +175,27 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
     
     function displayProducts(categoryId) {
+        console.log('Displaying products for category:', categoryId);
+        console.log('All products available:', allProducts);
+        
         let filteredItems;
         
         if (categoryId === 'all') {
             filteredItems = allProducts;
         } else {
-            // Filter by category ID
-            filteredItems = allProducts.filter(item => 
-                item.categoriaId === parseInt(categoryId) || item.categoriaId === null
-            );
+            // Filter by category ID and handle both string and number comparisons
+            const categoryIdNum = parseInt(categoryId);
+            filteredItems = allProducts.filter(item => {
+                console.log('Checking item:', item.nome, 'with category:', item.categoriaId);
+                return (
+                    item.categoriaId === categoryIdNum || 
+                    (item.categoria && item.categoria.id === categoryIdNum) ||
+                    item.categoriaId === null
+                );
+            });
         }
         
+        console.log('Filtered items:', filteredItems);
         renderProducts(filteredItems);
     }
     
@@ -175,7 +214,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             productCard.setAttribute('data-id', item.id);
             
             // Use placeholder image if no image available
-            const imageSrc = item.image || 'img/products/placeholder.jpg';
+            const imageSrc = item.image || 'img/placeholder.png';
             
             productCard.innerHTML = `
                 <div class="product-image">
@@ -222,7 +261,6 @@ document.addEventListener('DOMContentLoaded', async function() {
                 id: product.id,
                 name: product.nome,
                 price: product.preco,
-                image: product.image || 'img/products/placeholder.jpg',
                 quantity: 1
             });
         }
@@ -238,160 +276,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
     
     // Fallback to offline data if API fails
-    function loadOfflineData() {
-        const offlineProducts = [
-            {
-                id: 1,
-                nome: 'Café da Manhã Completo',
-                descricao: 'Pão, manteiga, queijo, presunto, café e suco',
-                preco: 19.90,
-                image: 'img/products/breakfast.jpg',
-                categoriaId: 1
-            },
-            {
-                id: 2,
-                nome: 'Café com Leite',
-                descricao: '300ml',
-                preco: 5.50,
-                image: 'img/products/coffee.jpg',
-                categoriaId: 1
-            },
-            {
-                id: 3,
-                nome: 'Pão com Manteiga',
-                descricao: '2 unidades',
-                preco: 4.50,
-                image: 'img/products/bread.jpg',
-                categoriaId: 1
-            },
-            {
-                id: 4,
-                nome: 'Almoço Executivo',
-                descricao: 'Arroz, feijão, proteína do dia e salada',
-                preco: 27.90,
-                image: 'img/products/lunch.jpg',
-                categoriaId: 2
-            },
-            {
-                id: 5,
-                nome: 'Filé de Frango Grelhado',
-                descricao: 'Com arroz, legumes e purê',
-                preco: 32.90,
-                image: 'img/products/chicken.jpg',
-                categoriaId: 2
-            },
-            {
-                id: 6,
-                nome: 'Jantar Leve',
-                descricao: 'Sopa do dia com pão integral',
-                preco: 18.90,
-                image: 'img/products/dinner.jpg',
-                categoriaId: 3
-            },
-            {
-                id: 7,
-                nome: 'Omelete com Salada',
-                descricao: 'Omelete com legumes e salada verde',
-                preco: 22.50,
-                image: 'img/products/omelet.jpg',
-                categoriaId: 3
-            },
-            {
-                id: 8,
-                nome: 'Pudim de Leite',
-                descricao: 'Porção individual',
-                preco: 8.50,
-                image: 'img/products/pudding.jpg',
-                categoriaId: 4
-            },
-            {
-                id: 9,
-                nome: 'Salada de Frutas',
-                descricao: 'Frutas da estação',
-                preco: 7.90,
-                image: 'img/products/fruits.jpg',
-                categoriaId: 4
-            },
-            {
-                id: 10,
-                nome: 'Água Mineral',
-                descricao: 'Garrafa 500ml',
-                preco: 3.50,
-                image: 'img/products/water.jpg',
-                categoriaId: 5
-            },
-            {
-                id: 11,
-                nome: 'Suco Natural',
-                descricao: 'Laranja ou maçã, 300ml',
-                preco: 7.90,
-                image: 'img/products/juice.jpg',
-                categoriaId: 5
-            }
-        ];
-        
-        const offlineCategories = [
-            { id: 1, nome: 'Café da Manhã', descricao: 'Itens de café da manhã' },
-            { id: 2, nome: 'Almoço', descricao: 'Itens de almoço' },
-            { id: 3, nome: 'Jantar', descricao: 'Itens de jantar' },
-            { id: 4, nome: 'Sobremesas', descricao: 'Sobremesas e doces' },
-            { id: 5, nome: 'Bebidas', descricao: 'Bebidas diversas' }
-        ];
-        
-        // Update UI with offline data
-        allProducts = offlineProducts;
-        updateCategoryTabs(offlineCategories);
-        
-        // Set active tab based on URL parameter or default to 'all'
-        const urlParams = new URLSearchParams(window.location.search);
-        const categoryParam = urlParams.get('category');
-        
-        const activeCategory = categoryParam || 'all';
-        const activeTab = document.querySelector(`.tab-item[data-category="${activeCategory}"]`);
-        if (activeTab) activeTab.classList.add('active');
-        
-        // Display products based on selected category
-        displayProducts(activeCategory);
-    }
-    
-    function updateCartBadge(count) {
-        const badges = document.querySelectorAll('.cart-badge');
-        
-        badges.forEach(badge => {
-            badge.textContent = count;
-            badge.style.display = count > 0 ? 'flex' : 'none';
-        });
-    }
-    
-    function formatCurrency(value) {
-        return Number(value).toFixed(2).replace('.', ',');
-    }
-    
-    function showToast(message, type = 'default', duration = 3000) {
-        // Remove any existing toasts
-        const existingToast = document.querySelector('.toast');
-        if (existingToast) {
-            existingToast.remove();
-        }
-        
-        // Create new toast
-        const toast = document.createElement('div');
-        toast.className = `toast ${type}`;
-        toast.textContent = message;
-        
-        document.body.appendChild(toast);
-        
-        // Show the toast
-        setTimeout(() => {
-            toast.classList.add('show');
-        }, 10);
-        
-        // Hide and remove the toast after duration
-        setTimeout(() => {
-            toast.classList.remove('show');
-            setTimeout(() => {
-                toast.remove();
-            }, 300);
-        }, duration);
-    }
+   
+
+
 });

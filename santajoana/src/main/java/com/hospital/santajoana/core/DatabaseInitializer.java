@@ -144,7 +144,7 @@ public class DatabaseInitializer {
             + "ENDERECO VARCHAR(255),"
             + "EMAIL VARCHAR(100),"
             + "SENHA VARCHAR(255),"
-            + "FOTO_PERFIL_BASE64 TEXT NULL," // Explicitly mark as NULL
+            + "FOTO_PERFIL_BASE64 LONGTEXT NULL," // Explicitly mark as NULL
             + "CONSTRAINT CHECK_E_CPF CHECK (LENGTH(CPF) = 11)"
             + (isH2 ? "" : ",CONSTRAINT CHECK_STATUS CHECK (STATUS IN ('Internado', 'Alta'))")
             + ");",

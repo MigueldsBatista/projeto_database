@@ -118,15 +118,3 @@ function createOrderCard(order) {
     return orderCard;
 }
 
-function formatCurrency(value) {
-    return value.toFixed(2).replace('.', ',');
-}
-
-function updateCartBadge(count) {
-    const badges = document.querySelectorAll('.cart-badge');
-    
-    badges.forEach(badge => {
-        badge.textContent = count;
-        badge.style.display = count > 0 ? 'flex' : 'none';
-    });
-}

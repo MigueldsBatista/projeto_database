@@ -116,22 +116,19 @@ public class AuthenticationController {
     public ResponseEntity<AuthResponse> updatePacienteProfilePicture(
             @PathVariable Long id, 
             @RequestBody ProfilePictureRequest request) {
-        try {
-            Paciente paciente = pacienteMediator.updateProfilePicture(id, request.getProfilePicture());
+                
+        Paciente paciente = pacienteMediator.updateProfilePicture(id, request.getProfilePicture());
             
-            AuthResponse response = new AuthResponse(
-                true,
-                paciente.getId(),
-                paciente.getNome(),
-                "paciente",
-                paciente.getEmail(),
-                paciente.getFotoPerfilBase64()
-            );
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new AuthResponse(false, null, null, null, null, null));
-        }
+        AuthResponse response = new AuthResponse(
+            true,
+            paciente.getId(),
+            paciente.getNome(),
+            "paciente",
+            paciente.getEmail(),
+            paciente.getFotoPerfilBase64()
+        );
+        return ResponseEntity.ok(response);
+       
     }
     
     @PostMapping("/camareiras/profile-picture/{id}")

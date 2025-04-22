@@ -161,18 +161,10 @@ function displayOrderDetails(order) {
         statusElement.textContent = statusText;
     }
     
-    // Update order ID if element exists
     if (orderId) {
-        // Extract a shorter, more readable order number from the timestamp
-        // Format: last 4 digits of timestamp + first 2 chars of the hour
-        const timestamp = order.dataPedido;
-        const date = new Date(timestamp);
-        const lastDigits = timestamp.toString().slice(-4);
-        const hourPart = date.getHours().toString().padStart(2, '0');
-        const formattedOrderId = `#${lastDigits}${hourPart}`;
-        
-        orderId.textContent = formattedOrderId;
+        orderId.textContent = getFormattedOrderId(order.dataPedido);
     }
+    
 
     // Create products list
     if (order.produtos && order.produtos.length > 0) {
@@ -214,61 +206,5 @@ function displayOrderDetails(order) {
     }
 }
 
-// Use utils.js functions if available, otherwise define fallbacks
-if (typeof formatDateTime !== 'function') {
-    function formatDateTime(date) {
-        return date.toLocaleString('pt-BR', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-    }
-}
 
-if (typeof formatCurrency !== 'function') {
-    function formatCurrency(value) {
-        return value.toFixed(2).replace('.', ',');
-    }
-}
 
-if (typeof updateCartBadge !== 'function') {
-    function updateCartBadge(count) {
-        const badges = document.querySelectorAll('.cart-badge');
-        badges.forEach(badge => {
-            badge.textContent = count;
-            badge.style.display = count > 0 ? 'flex' : 'none';
-        });
-    }
-}
-
-if (typeof showToast !== 'function') {
-    function showToast(message, type = 'default', duration = 3000) {
-        // Remove any existing toasts
-        const existingToast = document.querySelector('.toast');
-        if (existingToast) {
-            existingToast.remove();
-        }
-        
-        // Create new toast
-        const toast = document.createElement('div');
-        toast.className = `toast ${type}`;
-        toast.textContent = message;
-        
-        document.body.appendChild(toast);
-        
-        // Show the toast
-        setTimeout(() => {
-            toast.classList.add('show');
-        }, 10);
-        
-        // Hide and remove the toast after duration
-        setTimeout(() => {
-            toast.classList.remove('show');
-            setTimeout(() => {
-                toast.remove();
-            }, 300);
-        }, duration);
-    }
-}

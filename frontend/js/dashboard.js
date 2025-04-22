@@ -177,7 +177,7 @@ function displayRecentOrders(orders) {
         // Create the card with the same structure as orders.js
         orderCard.innerHTML = `
             <div class="order-info">
-                <p class="order-date">${formatDate(new Date(order.dataPedido))}</p>
+                <p class="order-date">${formatRelativeDate(new Date(order.dataPedido))}</p>
                 <p class="order-items">
                     ${order.detalhes || 'Detalhes não disponíveis'}
                 </p>
@@ -203,26 +203,6 @@ function displayRecentOrders(orders) {
         viewAllBtn.className = 'btn-text view-all-btn';
         viewAllBtn.textContent = 'Ver todos os pedidos';
         recentOrdersContainer.appendChild(viewAllBtn);
-    }
-}
-
-
-function formatDate(date) {
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
-    
-    if (date.getDate() === today.getDate() && 
-        date.getMonth() === today.getMonth() && 
-        date.getFullYear() === today.getFullYear()) {
-        return `Hoje, ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
-    } else if (date.getDate() === yesterday.getDate() && 
-               date.getMonth() === yesterday.getMonth() && 
-               date.getFullYear() === yesterday.getFullYear()) {
-        return `Ontem, ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
-    } else {
-        return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}, ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
     }
 }
 
@@ -305,66 +285,9 @@ function setupLogoutButton() {
     }
 }
 
-// Helper Functions
-function updateCartBadge(count) {
-    const badges = document.querySelectorAll('.cart-badge');
-    
-    badges.forEach(badge => {
-        badge.textContent = count;
-        badge.style.display = count > 0 ? 'flex' : 'none';
-    });
-}
-
-function formatDate(date) {
-    return date.toLocaleDateString('pt-BR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-    });
-}
-
-function formatDateTime(date) {
-    return date.toLocaleDateString('pt-BR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-    });
-}
-
-function formatCurrency(value) {
-    return Number(value).toFixed(2).replace('.', ',');
-}
 
 
-function showToast(message, type = 'default', duration = 3000) {
-    // Remove any existing toasts
-    const existingToast = document.querySelector('.toast');
-    if (existingToast) {
-        existingToast.remove();
-    }
-    
-    // Create new toast
-    const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    toast.textContent = message;
-    
-    document.body.appendChild(toast);
-    
-    // Show the toast
-    setTimeout(() => {
-        toast.classList.add('show');
-    }, 10);
-    
-    // Hide and remove the toast after duration
-    setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => {
-            toast.remove();
-        }, 300);
-    }, duration);
-}
+
 
 
 
