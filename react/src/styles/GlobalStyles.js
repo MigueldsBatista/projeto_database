@@ -1,5 +1,5 @@
 import styled, { createGlobalStyle } from 'styled-components'
-import { backgroundColor, textPrimaryColor } from '../config/colors';
+import { backgroundColor, borderColor, errorColor, primaryBlue, secondaryBlue, sucessColor, textPrimaryColor, warningColor } from '../config/colors';
 import { fontSize } from '../config/font';
 import { spacing } from '../config/spacing';
 import { borderRadius } from '../config/border';
@@ -118,8 +118,8 @@ export default createGlobalStyle`
          align-items: center;
          gap: ${spacing.md};
      }
- 
- 
+     
+     
  `;
  
  
@@ -181,3 +181,276 @@ export const Container = styled.div`
     align-items: center;
     background-color: ${backgroundColor};
 `;
+
+/* forma de uso do container:
+     import { Container } from '../../styles/GlobalStyles';
+ 
+     <Container>
+         //conteudo do container
+     </Container>
+ */
+
+export const Card = styled.div`
+    background-color: white;
+    border-radius: ${borderRadius.lg};
+    padding: ${spacing.md};
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+`;
+
+/* forma de uso do card:
+     import { Card } from '../../styles/GlobalStyles';
+ 
+     <Card>
+         //conteudo do card
+     </Card>
+ */
+
+export const PrimaryButton = styled.button`
+    width: 100%;
+    height: 56px;
+    background-color: ${primaryBlue};
+    color: white;
+    border: none;
+    border-radius: ${borderRadius.md};
+    font-size: ${fontSize.button};
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+    :hover{
+        opacity: 0.9;
+    }
+    :active{
+        opacity: 0.8;
+    }
+    :disabled{
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+`;
+
+/* forma de uso do primary button:
+     import { PrimaryButton } from '../../styles/GlobalStyles';
+ 
+     <PrimaryButton>
+         //conteudo do button
+     </PrimaryButton>
+ */
+
+export const SecondaryButton = styled.button`
+    width: 100%;
+    height: 56px;
+    background-color: transparent;
+    color: ${primaryBlue};
+    border: 1px solid ${primaryBlue};
+    border-radius: ${borderRadius.md};
+    font-size: ${fontSize.button};
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    :hover{
+        opacity: 0.9;
+    }
+    :active{
+        opacity: 0.8;
+    }
+    :disabled{
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+`;
+
+/* forma de uso do secondary button:
+     import { SecondaryButton } from '../../styles/GlobalStyles';
+ 
+     <SecondaryButton>
+         //conteudo do button
+     </SecondaryButton>
+ */ 
+
+export const BiometricButton = styled.button`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: ${spacing.sm};
+    background-color: transparent;
+    border: 1px solid ${borderColor};
+    border-radius: ${borderRadius.md};
+    padding: ${spacing.md};
+    width: 100%;
+    color: ${textPrimaryColor};
+    font-size: ${fontSize.body};
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    i{
+        font-size: 24px;
+        color: ${primaryBlue};
+    }
+    :hover{
+        background-color: ${backgroundColor};
+    }
+`;
+
+/* forma de uso do biometric button:
+     import { BiometricButton } from '../../styles/GlobalStyles';
+ 
+     <BiometricButton>
+         <i className="biometric-icon"></i>
+         //conteudo do button
+     </BiometricButton>
+ */
+
+export const IconButton = styled.button`
+    width: 44px;
+    height: 44px;
+    background-color: transparent;
+    border: none;
+    border-radius: ${borderRadius.sm};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: ${textPrimaryColor};
+    font-size: 20px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    position: relative;
+    :hover{
+        background-color: ${backgroundColor};
+    }
+    :active{
+        background-color: ${borderColor};
+    }
+`;
+
+/* forma de uso do icon button:
+     import { IconButton } from '../../styles/GlobalStyles';
+ 
+     <IconButton>
+         <i className="icon-name"></i>
+         //conteudo do button
+     </IconButton>
+ */
+
+export const BackButton = styled.button`
+    width: 44px;
+    height: 44px;
+    background-color: transparent;
+    border: none;
+    border-radius: ${borderRadius.sm};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: ${textPrimaryColor};
+    font-size: 20px;
+    cursor: pointer;
+`;
+
+/* forma de uso do back button:
+     import { BackButton } from '../../styles/GlobalStyles';
+ 
+     <BackButton>
+         <i className="bi bi-arrow-left"></i>
+         //conteudo do button
+     </BackButton>
+ */
+
+export const Badge = styled.div`
+    background-color: ${errorColor};
+    color: white;
+    font-size: 10px;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 ${spacing.xs};
+`;
+
+/* forma de uso do badge:
+     import { Badge } from '../../styles/GlobalStyles';
+ 
+     <Badge>
+         //conteudo do badge
+     </Badge>
+ */
+
+export const StatusPill = styled.div`
+    padding: 4px 12px;
+    border-radius: ${borderRadius.full};
+    font-size: 12px;
+    font-weight: 500;
+    .pending{
+        background-color: ${warningColor};
+        color: white;
+    }
+    .in-progress{
+        background-color: ${secondaryBlue};
+        color: white;
+    }
+    .delivered{
+        background-color: ${sucessColor};
+        color: white;
+    }
+    .canceled{
+        background-color: ${errorColor};
+        color: white;
+    }
+`;
+
+/* forma de uso do status pill:
+     import { StatusPill } from '../../styles/GlobalStyles';
+ 
+     <StatusPill className="pending">
+         //conteudo do status pill
+     </StatusPill>
+ */
+
+export const Divider = styled.div`
+    height: 1px;
+    background-color: ${borderColor};
+    margin: ${spacing.md} 0;
+`;
+
+/* forma de uso do divider:
+     import { Divider } from '../../styles/GlobalStyles';
+ 
+     <Divider>
+         //conteudo do divider
+     </Divider>
+ */
+
+export const QuantitySelector = styled.div`
+    display: flex;
+    align-items: center;
+    gap: ${spacing.md};
+`;
+
+/* forma de uso do quantity selector:
+     import { QuantitySelector } from '../../styles/GlobalStyles';
+ 
+     <QuantitySelector>
+         //conteudo do quantity selector
+     </QuantitySelector>
+ */
+
+export const QuantityButton = styled.button`
+    width: 36px;
+    height: 36px;
+    background-color: ${backgroundColor};
+    border: 1px solid ${borderColor};
+    border-radius: ${borderRadius.sm};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    cursor: pointer;
+`;
+
+/* forma de uso do quantity button:
+     import { QuantityButton } from '../../styles/GlobalStyles';
+ 
+     <QuantityButton>
+         //conteudo do quantity button
+     </QuantityButton>
+ */
+
