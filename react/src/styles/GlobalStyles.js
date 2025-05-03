@@ -1,18 +1,18 @@
 import styled, { createGlobalStyle } from 'styled-components'
- import { backgroundColor, textPrimaryColor } from '../config/colors';
- import { fontSize } from '../config/font';
- import { spacing } from '../config/spacing';
- import { borderRadius } from '../config/border';
- import 'react-toastify/dist/ReactToastify.css';
+import { backgroundColor, textPrimaryColor } from '../config/colors';
+import { fontSize } from '../config/font';
+import { spacing } from '../config/spacing';
+import { borderRadius } from '../config/border';
+import 'react-toastify/dist/ReactToastify.css';
  
- export default createGlobalStyle`
-     * {
-         margin: 0;
-         padding: 0;
-         outline: none;
-         box-sizing: border-box;
-         transition: all 0.2s ease-in-out;
-     }
+export default createGlobalStyle`
+    *{
+        margin: 0;
+        padding: 0;
+        outline: none;
+        box-sizing: border-box;
+        transition: all 0.2s ease-in-out;
+    }
  
      html,body {
          font-family: 'Roboto', sans-serif;
@@ -23,16 +23,6 @@ import styled, { createGlobalStyle } from 'styled-components'
          -webkit-font-smoothing: antialiased;
          -moz-osx-font-smoothing: grayscale;
      }
- 
-     #app{
-         max-width: 500px;
-         margin: 0 auto;
-         height: 100vh;
-         position: relative;
-         overflow: hidden;
-         background-color: ${backgroundColor};
-     }
- 
      /* screen */
  
      .screen {
@@ -149,11 +139,11 @@ import styled, { createGlobalStyle } from 'styled-components'
      </Header>
  */  
  
- export const ContentArea = styled.div`
-     flex:1;
-     padding: ${spacing.md};
-     overflow-y: auto;
- `;
+export const ContentArea = styled.div`
+    flex:1;
+    padding: ${spacing.md};
+    overflow-y: auto;
+`;
  
  /* forma de uso do content area:
      mesmo esquema do header, so importar e usar
@@ -163,3 +153,31 @@ import styled, { createGlobalStyle } from 'styled-components'
          //conteudo do content area
      </ContentArea>
  */
+
+export const App = styled.div`
+    max-width: 500px;
+    margin: 0 auto;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+    background-color: ${backgroundColor};
+`;
+
+/* forma de uso do app:
+     mesmo esquema do header, so importar e usar
+     import { App } from '../../styles/GlobalStyles';
+ 
+     <App>
+         //conteudo do app
+     </App>
+ */
+
+export const Container = styled.div`
+    display: flex;
+    flex-direction: column;
+    padding: ${spacing.xl};
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    background-color: ${backgroundColor};
+`;
