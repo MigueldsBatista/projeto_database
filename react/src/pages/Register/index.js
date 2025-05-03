@@ -3,14 +3,15 @@ import React, { useState } from "react";
 // import  history  from '../../services/history'
 // import { toast } from "react-toastify";
 // import { Container } from "../../styles/GlobalStyles";
-// import axios from '../../services/axios';
+import axios from '../../services/axios';
 
 // import { isEmail } from "validator";
 
+import logo from "../../static/img/hsj_logo.png";
 import { useHistory } from "react-router-dom";
 import { App } from "../../styles/GlobalStyles";
 import { InputGroup, LoginContainer, RegisterForm } from "./styled";
-import { showToast, API_URL } from "../../utils";
+import { showToast } from "../../utils";
 
 export default function Register() {
     const history = useHistory();
@@ -75,15 +76,8 @@ export default function Register() {
 
         try {
             showToast("Criando sua conta...", "info");
-            const response = await fetch(`${API_URL}/api/pacientes/create`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(userData),
-            });
-
-            const result = await response.json();
+            const response = await axios.post('/api/pacientes/create', userData);
+            const result = response.data;
 
             if (!response.ok || response.status !== 201) {
                 const errorMessage = result.message || "Erro ao criar conta. Por favor, tente novamente.";
@@ -102,7 +96,7 @@ export default function Register() {
     return (
         <App className="screen active">
             <LoginContainer>
-                <img src="/img/logo.svg" alt="Hospital Santa Joana" className="logo" />
+                <img src={logo} alt="Hospital Santa Joana" className="logo" />
                 <h1>Criar Conta</h1>
                 <p className="subtitle">Preencha os dados para se cadastrar</p>
                 <RegisterForm onSubmit={handleSubmit}>

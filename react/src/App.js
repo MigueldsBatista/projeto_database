@@ -7,15 +7,15 @@ import { PersistGate } from 'redux-persist/integration/react'
 import store, { persistor } from './store';
 import GlobalStyles from './styles/GlobalStyles';
 import History from "./services/history";
-import NavBar from './components/NavBar';
-import Rotas from './routes'
+import Rotas from './routes';
+import ConditionalNavBar from './components/ConditionalNavBar';
 
 function App() {
   return (
     <Provider store={store}>
       <PersistGate persistor={persistor}>
         <Router history={History}>
-          <NavBar />
+          <ConditionalNavBar />
           <Rotas />
           <GlobalStyles />
           <ToastContainer autoClose={3000} className="toast-container" />
