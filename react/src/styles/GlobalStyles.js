@@ -9,9 +9,7 @@ export default createGlobalStyle`
     *{
         margin: 0;
         padding: 0;
-        outline: none;
         box-sizing: border-box;
-        transition: all 0.2s ease-in-out;
     }
  
      html,body {

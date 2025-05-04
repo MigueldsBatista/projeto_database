@@ -9,7 +9,7 @@ import axios from '../../services/axios';
 
 import logo from "../../static/img/hsj_logo.png";
 import { useHistory } from "react-router-dom";
-import { App } from "../../styles/GlobalStyles";
+import { App, PrimaryButton } from "../../styles/GlobalStyles";
 import { InputGroup, LoginContainer, RegisterForm } from "./styled";
 import { showToast } from "../../utils";
 
@@ -132,7 +132,7 @@ export default function Register() {
                         <label htmlFor="confirm-password">Confirmar Senha</label>
                         <input type="password" id="confirm-password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} required />
                     </InputGroup>
-                    <button type="submit" className="btn-primary">Criar Conta</button>
+                    <PrimaryButton type="submit" className="btn-primary">Criar Conta</PrimaryButton>
                 </RegisterForm>
             </LoginContainer>
         </App>
