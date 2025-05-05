@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import axios from "../../services/axios";
 import logo from "../../static/img/hsj_logo.png";
 import { App, PrimaryButton } from "../../styles/GlobalStyles";
@@ -101,11 +101,11 @@ export default function Login() {
                         Entrar
                     </PrimaryButton>
                 </LoginForm>
-                <a href="/forgot-password" className="forgot-password">
+                <Link to="/forgot-password" className="forgot-password">
                     Esqueci minha senha
-                </a>
+                </Link>
                 <p className="register-link">
-                    Não tem uma conta? <a href="/register">Crie agora</a>
+                    Não tem uma conta? <Link to="/register">Crie agora</Link>
                 </p>
             </LoginContainer>
         </App>

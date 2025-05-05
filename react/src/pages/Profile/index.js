@@ -13,7 +13,6 @@ import {
     EditForm,
     FormGroup,
     ProfileMenu,
-    BottomNav,
 } from "./styled";
 import { showToast } from "../../utils";
 
@@ -159,13 +158,6 @@ export default function Profile() {
                         Excluir Conta
                     </button>
                 </ProfileMenu>
-                <BottomNav>
-                    <a href="/dashboard">Início</a>
-                    <a href="/menu">Cardápio</a>
-                    <a href="/cart">Carrinho</a>
-                    <a href="/orders">Pedidos</a>
-                    <a href="/invoice">Fatura</a>
-                </BottomNav>
             </ProfileContainer>
         </App>
     );
