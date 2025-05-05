@@ -1,8 +1,4 @@
-
-const APP_NAME = 'Hospital Santa Joana';
-const API_URL = 'http://localhost:8080';
-
-function showToast(message, type = 'default', duration = 3000) {
+export function showToast(message, type = 'default', duration = 3000) {
     // Remove any existing toasts
     const existingToast = document.querySelector('.toast');
     if (existingToast) {

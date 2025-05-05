@@ -136,7 +136,7 @@ html, body {
     font-size: var(--font-h1);
     font-weight: 700;
     margin-bottom: var(--spacing-sm);
-    color: var (--primary-blue);
+    color: var(--primary-blue);
 }
 
 .login-container .subtitle {

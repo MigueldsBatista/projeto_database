@@ -1,6 +1,5 @@
 import styled from 'styled-components'
 
-import { Link } from "react-router-dom";
 import { spacing } from '../../config/spacing';
 import { borderColor, primaryBlue, secondaryBlue, textDisabledColor, textPrimaryColor, textSecondaryColor } from '../../config/colors';
 import { fontSize } from '../../config/font';
@@ -71,11 +70,5 @@ export const LoginLink = styled.div`
         text-decoration: none;
         font-weight: 500;
     }
-`;
-
-export const CostumeLink = styled(Link)`
-        color: ${primaryBlue};
-        text-decoration: none;
-        font-weight: 500;
 `;
 

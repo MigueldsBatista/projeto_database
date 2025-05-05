@@ -5,8 +5,9 @@ import logo from "../../static/img/hsj_logo.png";
 import { isEmail } from "validator";
 import { useHistory } from "react-router-dom";
 import { App, PrimaryButton } from "../../styles/GlobalStyles";
-import { InputGroup, LoginContainer, LoginLink, RegisterForm, CostumeLink } from "./styled";
+import { InputGroup, LoginContainer, LoginLink, RegisterForm } from "./styled";
 import { showToast } from "../../utils";
+import { CustomLink } from "../../styles/GlobalStyles";
 
 export default function Register() {
     const history = useHistory();
@@ -73,8 +74,9 @@ export default function Register() {
             telefone: phone ? phone.replace(/\D/g, "") : null,
             endereco: address || null,
         };
-
+        console.log("Dados do usuário:", userData);
         try {
+            console.log(1);
             showToast("Criando sua conta...", "info");
             const response = await axios.post('/api/pacientes/create', userData);
             const result = response.data;
@@ -134,7 +136,7 @@ export default function Register() {
                     </InputGroup>
                     <PrimaryButton type="submit" className="btn-primary">Criar Conta</PrimaryButton>
                 </RegisterForm>
-                <LoginLink>Já tem uma conta? <CostumeLink to="/login">Faça login</CostumeLink></LoginLink>
+                <LoginLink>Já tem uma conta? <CustomLink to="/">Faça login</CustomLink></LoginLink>
             </LoginContainer>
         </App>
     );

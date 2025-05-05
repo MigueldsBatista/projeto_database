@@ -4,6 +4,7 @@ import { fontSize } from '../config/font';
 import { spacing } from '../config/spacing';
 import { borderRadius } from '../config/border';
 import 'react-toastify/dist/ReactToastify.css';
+import { Link } from 'react-router-dom';
  
 export default createGlobalStyle`
     *{
@@ -452,3 +453,28 @@ export const QuantityButton = styled.button`
      </QuantityButton>
  */
 
+export const CustomLink = styled(Link)`
+        color: ${primaryBlue};
+        text-decoration: none;
+        font-weight: 500;
+    ${(props) => props.variant === "forgot" &&
+        `
+            color: ${primaryBlue};
+            font-size: ${fontSize.caption};
+            text-align: center;
+            margin-top: ${spacing.md};
+        `}
+    ${(props) => props.variant === "register" &&
+        `
+            color: ${primaryBlue};
+            font-weight: 500;
+        `}
+`;
+
+/* forma de uso do costume link:
+        import { CostumeLink } from '../../styles/GlobalStyles';
+    
+        <CostumeLink variant="tipoDoLink" to="/login">
+            //conteudo do costume link
+        </CostumeLink>
+*/
