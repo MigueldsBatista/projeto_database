@@ -1,0 +1,113 @@
+import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
+import axios from "../../services/axios";
+import logo from "../../static/img/hsj_logo.png";
+import { App, PrimaryButton } from "../../styles/GlobalStyles";
+import { InputGroup, LoginContainer, LoginForm } from "./styled";
+import { showToast } from "../../utils";
+
+export default function Login() {
+    const history = useHistory();
+
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        if (!email || !password) {
+            showToast("Por favor, preencha todos os campos", "error");
+            return;
+        }
+
+        try {
+            showToast("Autenticando...", "info");
+
+            // Tenta autenticar como paciente
+            const patientResponse = await axios.post("/api/auth/pacientes/login", {
+                email,
+                senha: password,
+            });
+
+            if (patientResponse.data.authenticated) {
+                handleSuccessfulLogin(patientResponse.data);
+                return;
+            }
+
+            // Se falhar, tenta autenticar como funcionário
+            const staffResponse = await axios.post("/api/auth/camareiras/login", {
+                email,
+                senha: password,
+            });
+
+            if (staffResponse.data.authenticated) {
+                handleSuccessfulLogin(staffResponse.data);
+                return;
+            }
+
+            // Se nenhuma autenticação funcionar
+            showToast("Email ou senha incorretos", "error");
+        } catch (error) {
+            console.error("Erro ao fazer login:", error);
+            showToast("Erro ao conectar com o servidor. Tente novamente mais tarde.", "error");
+        }
+    };
+
+    const handleSuccessfulLogin = (userData) => {
+        // Armazena os dados do usuário no localStorage
+        localStorage.setItem("user", JSON.stringify(userData));
+
+        if (userData.profilePicture) {
+            localStorage.setItem("profileImage", userData.profilePicture);
+        }
+
+        showToast("Login realizado com sucesso!", "success");
+
+        // Redireciona com base no tipo de usuário
+        const redirectUrl = userData.role === "camareira" ? "/staff-dashboard" : "/dashboard";
+        history.push(redirectUrl);
+    };
+
+    return (
+        <App className="screen active">
+            <LoginContainer>
+                <img src={logo} alt="Hospital Santa Joana" className="logo" />
+                <h1>Bem-vindo</h1>
+                <p className="subtitle">Faça login para acessar seus serviços</p>
+                <LoginForm onSubmit={handleSubmit}>
+                    <InputGroup>
+                        <label htmlFor="email">E-mail</label>
+                        <input
+                            type="email"
+                            id="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="Digite seu email"
+                            required
+                        />
+                    </InputGroup>
+                    <InputGroup>
+                        <label htmlFor="password">Senha</label>
+                        <input
+                            type="password"
+                            id="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            placeholder="Digite sua senha"
+                            required
+                        />
+                    </InputGroup>
+                    <PrimaryButton type="submit" className="btn-primary">
+                        Entrar
+                    </PrimaryButton>
+                </LoginForm>
+                <a href="/forgot-password" className="forgot-password">
+                    Esqueci minha senha
+                </a>
+                <p className="register-link">
+                    Não tem uma conta? <a href="/register">Crie agora</a>
+                </p>
+            </LoginContainer>
+        </App>
+    );
+}
