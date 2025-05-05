@@ -3,12 +3,16 @@ import { Switch } from "react-router-dom";
 
 import MyRoute from "./myRoutes";
 import Register from "../pages/Register";
+import Login from "../pages/Login"; 
+import Profile from "../pages/Profile";
 import Page404 from "../pages/Page404";
 
 export default function Rotas() {
     return (
         <Switch>
             <MyRoute exact path="/register/" component={Register} isClosed={false}/>
+            <MyRoute exact path="/login/" component={Login} isClosed={false}/>
+            <MyRoute exact path="/profile/" component={Profile} isClosed={true}/>
             <MyRoute  path="*" component={Page404}/>
         </Switch>
     );
