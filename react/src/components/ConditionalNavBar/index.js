@@ -6,7 +6,7 @@ const ConditionalNavBar = () => {
   const location = useLocation();
   
   // List of paths where the NavBar should be hidden
-  const hideNavBarPaths = ['/login', '/register'];
+  const hideNavBarPaths = ['/', '/register'];
   
   // Check if the current path is in the hideNavBarPaths list
   const shouldShowNavBar = !hideNavBarPaths.includes(location.pathname);

@@ -13,7 +13,7 @@ export default function Rotas() {
         <Switch>
             <MyRoute exact path="/register/" component={Register} isClosed={false}/>
             <MyRoute exact path="/dashboard/" component={Dashboard} isClosed={false}/>
-            <MyRoute exact path="/login/" component={Login} isClosed={false}/>
+            <MyRoute exact path="/" component={Login} isClosed={false}/>
             <MyRoute exact path="/profile/" component={Profile} isClosed={false}/>
             <MyRoute  path="*" component={Page404}/>
         </Switch>

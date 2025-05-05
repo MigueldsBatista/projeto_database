@@ -1,17 +1,31 @@
 import styled from "styled-components";
+import { borderColor, primaryBlue, textDisabledColor, textPrimaryColor, textSecondaryColor } from "../../config/colors";
+import { fontSize } from "../../config/font";
+import { spacing } from "../../config/spacing";
+import { borderRadius } from "../../config/border";
 
 export const LoginContainer = styled.div`
     display: flex;
     flex-direction: column;
-    align-items: center;
+    padding: ${spacing.xl};
+    height: 100%;
     justify-content: center;
-    width: 100%;
-    max-width: 400px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    .logo{
+        align-self: center;
+        width: 120px;
+        margin-bottom: ${spacing.xl};
+    }
+    h1{
+        font-size: ${fontSize.h1};
+        font-weight: 700;
+        margin-bottom: ${spacing.sm};
+        color: ${primaryBlue};
+    }
+    .subtitle{
+        font-size: ${fontSize.body};
+        color: ${textSecondaryColor};
+        margin-bottom: ${spacing.xl};
+    }
 `;
 
 export const LoginForm = styled.form`
@@ -22,25 +36,48 @@ export const LoginForm = styled.form`
 `;
 
 export const InputGroup = styled.div`
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
+    margin-bottom: var(--spacing-lg);
 
     label {
-        font-size: 14px;
+        display: block;
+        margin-bottom: ${spacing.sm};
+        font-size: ${fontSize.caption};
         font-weight: 500;
-        color: #333;
+        color: ${textSecondaryColor};
     }
 
     input {
-        padding: 10px;
-        font-size: 14px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        outline: none;
-
-        &:focus {
-            border-color: #007bff;
-        }
+        width: 100%;
+        height: 56px;
+        padding: 0 ${spacing.md};
+        font-size: ${fontSize.body};
+        border: 1px solid ${borderColor};
+        border-radius: ${borderRadius.sm};
+        background-color: white;
+        color: ${textPrimaryColor};
     }
+
+    inpuT::placeholder {
+        color: ${textDisabledColor};
+    }
+
+    input:focus {
+        border-color: ${primaryBlue};
+        box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        outline: none;
+    }
+`;
+
+export const RegisterLink = styled.p`
+    text-align: center;
+    margin-top: ${spacing.xl};
+    color: ${textSecondaryColor};
+    font-size: ${fontSize.caption};
+
+`;
+
+export const LoginBiometa = styled.div`
+    margin-top: ${spacing.xl};
+    display: flex;
+    justify-content: center;
 `;
