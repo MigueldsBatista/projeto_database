@@ -1,16 +1,11 @@
 import React, { useState } from "react";
-
-// import  history  from '../../services/history'
-// import { toast } from "react-toastify";
-// import { Container } from "../../styles/GlobalStyles";
 import axios from '../../services/axios';
-
-// import { isEmail } from "validator";
-
 import logo from "../../static/img/hsj_logo.png";
+
+import { isEmail } from "validator";
 import { useHistory } from "react-router-dom";
 import { App, PrimaryButton } from "../../styles/GlobalStyles";
-import { InputGroup, LoginContainer, RegisterForm } from "./styled";
+import { InputGroup, LoginContainer, LoginLink, RegisterForm, CostumeLink } from "./styled";
 import { showToast } from "../../utils";
 
 export default function Register() {
@@ -56,6 +51,11 @@ export default function Register() {
 
         if (!name || !cpf || !email || !password || !confirmPassword || !birthDate) {
             showToast("Por favor, preencha todos os campos obrigatórios", "error");
+            return;
+        }
+
+        if (!isEmail(email)) {
+            showToast("E-mail inválido", "error");
             return;
         }
 
@@ -134,6 +134,7 @@ export default function Register() {
                     </InputGroup>
                     <PrimaryButton type="submit" className="btn-primary">Criar Conta</PrimaryButton>
                 </RegisterForm>
+                <LoginLink>Já tem uma conta? <CostumeLink to="/login">Faça login</CostumeLink></LoginLink>
             </LoginContainer>
         </App>
     );
