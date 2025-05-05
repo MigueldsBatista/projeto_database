@@ -101,11 +101,6 @@ export default createGlobalStyle`
          font-weight: 700;
          color: ${textPrimaryColor};
      }
- 
-     .header-actions{
-         display: flex;
-         gap: ${spacing.sm};
-     }
      
      .app-header.with-search {
          padding: ${spacing.md};
@@ -119,6 +114,11 @@ export default createGlobalStyle`
      
      
  `;
+
+export const HeaderActions = styled.div`
+    display: flex;
+    gap: ${spacing.sm};
+`;
  
  
  /* forma de uso do header:

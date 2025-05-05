@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 
+import { Link } from "react-router-dom";
 import { spacing } from '../../config/spacing';
 import { borderColor, primaryBlue, secondaryBlue, textDisabledColor, textPrimaryColor, textSecondaryColor } from '../../config/colors';
 import { fontSize } from '../../config/font';
@@ -60,8 +61,21 @@ export const InputGroup = styled.div`
     }
 `;
 
-export const RegisterLink = styled.div`
+export const LoginLink = styled.div`
+    text-align: center;
+    margin-top: ${spacing.xl};
+    color: ${textSecondaryColor};
+    font-size: ${fontSize.caption};
+    a {
+        color: ${primaryBlue};
+        text-decoration: none;
+        font-weight: 500;
+    }
 `;
 
-export const LoginLink = styled.div`
+export const CostumeLink = styled(Link)`
+        color: ${primaryBlue};
+        text-decoration: none;
+        font-weight: 500;
 `;
+
