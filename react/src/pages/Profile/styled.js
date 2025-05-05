@@ -132,15 +132,3 @@ export const ProfileMenu = styled.div`
         color: #fff;
     }
 `;
-
-export const BottomNav = styled.nav`
-    display: flex;
-    justify-content: space-around;
-    width: 100%;
-    margin-top: 20px;
-
-    a {
-        text-decoration: none;
-        color: #007bff;
-    }
-`;
