@@ -70,14 +70,14 @@ export const InputGroup = styled.div`
 
 export const RegisterLink = styled.p`
     text-align: center;
-    margin-top: ${spacing.xl};
+    margin-top: ${spacing.sm};
     color: ${textSecondaryColor};
     font-size: ${fontSize.caption};
 
 `;
 
 export const LoginBiometa = styled.div`
-    margin-top: ${spacing.xl};
+    margin-top: ${spacing.lg};
     display: flex;
     justify-content: center;
 `;

@@ -26,7 +26,7 @@ export function showToast(message, type = 'default', duration = 3000) {
     }, duration);
 }
 
-function updateCartBadge(count) {
+export function updateCartBadge(count) {
     const badges = document.querySelectorAll('.cart-badge');
     
     badges.forEach(badge => {
@@ -35,11 +35,11 @@ function updateCartBadge(count) {
     });
 }
 
-function formatCurrency(value) {
+export function formatCurrency(value) {
     return Number(value).toFixed(2).replace('.', ',');
 }
 
-function formatDate(date) {
+export function formatDate(date) {
     if (!(date instanceof Date)) {
         date = new Date(date);
     }
@@ -51,7 +51,7 @@ function formatDate(date) {
     });
 }
 
-function formatDateTime(date) {
+export function formatDateTime(date) {
     if (!(date instanceof Date)) {
         date = new Date(date);
     }
@@ -65,7 +65,7 @@ function formatDateTime(date) {
     });
 }
 
-function formatRelativeDate(date) {
+export function formatRelativeDate(date) {
     if (!(date instanceof Date)) {
         date = new Date(date);
     }
@@ -88,7 +88,7 @@ function formatRelativeDate(date) {
     }
 }
 
-function getStatusText(status) {
+export function getStatusText(status) {
     if (!status) return 'Desconhecido';
     
     // Convert to uppercase for case-insensitive comparison
@@ -115,7 +115,7 @@ function getStatusText(status) {
     }
 }
 
-function getStatusClass(status) {
+export function getStatusClass(status) {
     if (!status) return 'status-default';
     
     // Convert to uppercase for case-insensitive comparison
@@ -142,7 +142,7 @@ function getStatusClass(status) {
     }
 }
 
-function checkAuth() {
+export function checkAuth() {
     const user = JSON.parse(localStorage.getItem('user'));
     
     // Skip authentication check on auth pages

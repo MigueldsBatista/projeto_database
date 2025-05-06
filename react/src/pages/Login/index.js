@@ -7,6 +7,7 @@ import { InputGroup, LoginBiometa, LoginContainer, LoginForm, RegisterLink } fro
 import { showToast } from "../../utils";
 import { CustomLink } from "../../styles/GlobalStyles";
 import { FaFingerprint } from "react-icons/fa";
+import { primaryBlue } from "../../config/colors";
 
 export default function Login() {
     const history = useHistory();
@@ -108,7 +109,7 @@ export default function Login() {
                 </CustomLink>
                 <LoginBiometa>
                     <BiometricButton>
-                        <FaFingerprint color="primaryBlue" size={24}/>
+                        <FaFingerprint color={primaryBlue} size={24}/>
                         <span>Login com biometria</span>
                     </BiometricButton>
                 </LoginBiometa>

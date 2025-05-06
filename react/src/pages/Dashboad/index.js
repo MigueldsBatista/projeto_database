@@ -1,28 +1,99 @@
-import React, { useState } from "react";
-
+import React, { useEffect, useState } from "react";
 import { FaBell, FaCoffee, FaDrumstickBite, FaIceCream, FaUtensils } from "react-icons/fa";
+import { useHistory } from "react-router-dom";
+import { showToast, formatCurrency, formatDate } from "../../utils"; // Import utility functions
 import { App, Badge, ContentArea, Header, HeaderActions, IconButton } from "../../styles/GlobalStyles";
 import { PatientInfo, UserAvatar, WelcomeCard, CustomLink, InvoiceSumary, SummaryHeader, TotalAmount, Status, CategoryMenu, Categories, CategoriesItem, CategoryIcon, SectionHeader, OrdersSection, OrderList } from "./styled";
-import { useHistory } from "react-router-dom";
-
 
 export default function Dashboard() {
+    const [user, setUser] = useState(null);
+    const [cart, setCart] = useState([]);
+    const [appState, setAppState] = useState({
+        dataLoaded: false,
+        userProfile: {
+            estadia: null,
+            quarto: null,
+            fatura: null,
+            pedidos: [],
+        }
+    });
+
     const history = useHistory();
+
+    useEffect(() => {
+        const storedUser = JSON.parse(localStorage.getItem('user'));
+        if (!storedUser) {
+            history.push("/");
+            return;
+        }
+        
+        setUser(storedUser);
+        localStorage.setItem('pacienteId', storedUser.id);
+        const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
+        setCart(storedCart);
+        
+        if (!appState.dataLoaded) {
+            loadUserData(storedUser.id);
+        }
+
+    }, [appState.dataLoaded]);
+
+    const loadUserData = async (userId) => {
+        try {
+            const estadia = await fetchEstadiaData(userId);
+            const quarto = await fetchQuartoData(estadia.quartoId);
+            const fatura = await fetchFaturaData(userId);
+            const pedidos = await fetchPedidosData(userId);
+
+            setAppState({
+                ...appState,
+                dataLoaded: true,
+                userProfile: { estadia, quarto, fatura, pedidos },
+            });
+
+            localStorage.setItem('roomNumber', quarto.numero);
+            localStorage.setItem('invoiceStatus', fatura.statusPagamento);
+            localStorage.setItem('invoiceValue', fatura.valorTotal);
+
+        } catch (error) {
+            console.error('Error loading user data:', error);
+            showToast('Erro ao carregar informações do dashboard', 'error');
+        }
+    };
+
+    const fetchEstadiaData = async (pacienteId) => {
+        return { quartoId: 1 };
+    };
+
+    const fetchQuartoData = async (quartoId) => {
+        return { numero: "101" };
+    };
+
+    const fetchFaturaData = async (pacienteId) => {
+        return { statusPagamento: "Pendente", valorTotal: 200.0 };
+    };
+
+    const fetchPedidosData = async (pacienteId) => {
+        return [
+            { id: 1, dataPedido: "2025-05-01", detalhes: "Item A", valor: 50.0 },
+            { id: 2, dataPedido: "2025-05-02", detalhes: "Item B", valor: 100.0 }
+        ];
+    };
 
     return (
         <App className="screen active">
             <Header>
                 <PatientInfo>
-                    <h2>Olá,<span id="patient-name"></span></h2>
-                    <p>Quarto <span id="room-number"></span></p>
+                    <h2>Olá, {user?.name || 'Nome Indisponível'}</h2>
+                    <p>Quarto <span>{appState.userProfile.quarto?.numero || 'N/A'}</span></p>
                 </PatientInfo>
                 <HeaderActions>
                     <UserAvatar id="profile-avatar" onClick={() => {history.push("/profile")}}>
-                        <span id="user-initials"></span>
+                        <span id="user-initials">{user?.name?.split(" ").map((name) => name[0]).join("") || 'U'}</span>
                     </UserAvatar>
                     <IconButton onClick={() => {history.push("/notifications")}}>
                         <FaBell size={24}/>
-                        <Badge>2</Badge>
+                        <Badge>{cart.reduce((total, item) => total + item.quantity, 0)}</Badge>
                     </IconButton>
                 </HeaderActions>
             </Header>
@@ -37,8 +108,8 @@ export default function Dashboard() {
                         <CustomLink to="/invoice">Ver detalhes</CustomLink>
                     </SummaryHeader>
                     <>
-                        <TotalAmount><span id="invoice-total-value"></span></TotalAmount>
-                        <Status>Status: <span id="invoice-status"></span></Status>
+                        <TotalAmount><span>R$ {formatCurrency(appState.userProfile.fatura?.valorTotal || 0)}</span></TotalAmount>
+                        <Status>Status: <span>{appState.userProfile.fatura?.statusPagamento || 'N/A'}</span></Status>
                     </>
                 </InvoiceSumary>
                 <CategoryMenu>
@@ -54,7 +125,7 @@ export default function Dashboard() {
                             <CategoryIcon>
                                 <FaUtensils size={24} />
                             </CategoryIcon>
-                            <p>almoco</p>
+                            <p>Almoço</p>
                         </CategoriesItem>
                         <CategoriesItem datatype="dinner" onClick={() => history.push("/menu:?dinner")}>
                             <CategoryIcon>
@@ -71,14 +142,19 @@ export default function Dashboard() {
                     </Categories>
                 </CategoryMenu>
             </ContentArea>
-            {/* Recent Orders Section - Updated structure to match orders page */}
             <OrdersSection>
                 <SectionHeader>
                     <h3 className="section-title">Pedidos Recentes</h3>
                     <CustomLink to="/orders">Ver todos</CustomLink>
                 </SectionHeader>
-                <OrderList id="recent-orders">
-                    {/*Orders will be loaded dynamically by JavaScript*/}
+                <OrderList>
+                    {appState.userProfile.pedidos.slice(0, 3).map(order => (
+                        <div key={order.id}>
+                            <p>{formatDate(new Date(order.dataPedido))}</p>
+                            <p>{order.detalhes}</p>
+                            <p>R$ {formatCurrency(order.valor)}</p>
+                        </div>
+                    ))}
                 </OrderList>
             </OrdersSection>
         </App>

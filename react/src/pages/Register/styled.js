@@ -14,7 +14,7 @@ export const LoginContainer = styled.div`
     .logo{
         align-self: center;
         width: 120px;
-        margin-bottom: ${spacing.xl};
+        margin-bottom: ${spacing.xs};
     }
     h1{
         font-size: ${fontSize.h1};
@@ -25,24 +25,26 @@ export const LoginContainer = styled.div`
     .subtitle{
         font-size: ${fontSize.body};
         color: ${textSecondaryColor};
-        margin-bottom: ${spacing.xl};
+        margin-bottom: ${spacing.sm};
     }
 `;
 
-export const RegisterForm = styled.form``;
+export const RegisterForm = styled.form`
+`;
 
 export const InputGroup = styled.div`
-    margin-bottom: ${spacing.lg};
+    margin-bottom: ${spacing.sm};
     label{
         display: block;
-        margin-bottom: ${spacing.sm};
+        margin-bottom: ${spacing.xs};
         font-size: ${fontSize.caption};
         font-weight: 500;
         color: ${textSecondaryColor};
+        
     }
     input{
         width: 100%;
-        height: 56px;
+        height: 30px;
         padding: 0 ${spacing.md};
         font-size: ${fontSize.body};
         border: 1px solid ${borderColor};
@@ -62,7 +64,7 @@ export const InputGroup = styled.div`
 
 export const LoginLink = styled.div`
     text-align: center;
-    margin-top: ${spacing.xl};
+    margin-top: ${spacing.md};
     color: ${textSecondaryColor};
     font-size: ${fontSize.caption};
     a {

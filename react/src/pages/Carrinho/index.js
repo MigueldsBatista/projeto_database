@@ -12,7 +12,7 @@ import {
     CartTotalRow,
     CartNotes,
 } from "./styled";
-import { showToast, formatCurrency } from "../../utils";
+import { showToast, formatCurrency } from "../../utils/index";
 
 export default function Cart() {
     const history = useHistory();

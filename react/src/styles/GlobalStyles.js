@@ -206,11 +206,11 @@ export const Card = styled.div`
 
 export const PrimaryButton = styled.button`
     width: 100%;
-    height: 56px;
+    height: 50px;
     background-color: ${primaryBlue};
     color: white;
     border: none;
-    border-radius: ${borderRadius.md};
+    border-radius: ${borderRadius.sm};
     font-size: ${fontSize.button};
     font-weight: 600;
     cursor: pointer;
