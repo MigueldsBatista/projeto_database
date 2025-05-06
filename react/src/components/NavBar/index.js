@@ -14,7 +14,7 @@ export default function NavBar() {
                 <FaBookOpen size={24}/>
                 <span>Cardápio</span>
             </Link>
-            <Link to='/cart' className="nav-item">
+            <Link to='/carrinho' className="nav-item">
                 <FaShoppingCart size={24} />
                 <span>Carrinho</span>
                 <span className="badge">0</span>
@@ -23,7 +23,7 @@ export default function NavBar() {
                 <FaClipboardList size={24}/>
                 <span>Pedidos</span>
             </Link> 
-            <Link to='/invoice' className="nav-item">
+            <Link to='/fatura' className="nav-item">
                 <FaFileInvoiceDollar size={24}/>
                 <span>Faturas</span>
             </Link>         

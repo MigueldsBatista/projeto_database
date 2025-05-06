@@ -76,7 +76,7 @@ export default function Register() {
         };
         console.log("Dados do usuário:", userData);
         try {
-            console.log(1);
+            console.log(userData);
             showToast("Criando sua conta...", "info");
             const response = await axios.post('/api/pacientes/create', userData);
             const result = response.data;
@@ -98,9 +98,11 @@ export default function Register() {
     return (
         <App className="screen active">
             <LoginContainer>
-                <img src={logo} alt="Hospital Santa Joana" className="logo" />
-                <h1>Criar Conta</h1>
-                <p className="subtitle">Preencha os dados para se cadastrar</p>
+                <BotarDoLado>
+                    <img src={logo} alt="Hospital Santa Joana" className="logo" />
+                    <h1>Criar Conta</h1>
+                    <p className="subtitle">Preencha os dados para se cadastrar</p>
+                </BotarDoLado>
                 <RegisterForm onSubmit={handleSubmit}>
                     <InputGroup>
                         <label htmlFor="name">Nome Completo</label>
