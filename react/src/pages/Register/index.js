@@ -5,7 +5,7 @@ import logo from "../../static/img/hsj_logo.png";
 import { isEmail } from "validator";
 import { useHistory } from "react-router-dom";
 import { App, PrimaryButton } from "../../styles/GlobalStyles";
-import { InputGroup, LoginContainer, LoginLink, RegisterForm } from "./styled";
+import { BotarDoLado, HeaderBotarDoLado, InputGroup, LoginContainer, LoginLink, RegisterForm, TextContainer } from "./styled";
 import { showToast } from "../../utils";
 import { CustomLink } from "../../styles/GlobalStyles";
 
@@ -98,11 +98,13 @@ export default function Register() {
     return (
         <App className="screen active">
             <LoginContainer>
-                <BotarDoLado>
+                <HeaderBotarDoLado>
                     <img src={logo} alt="Hospital Santa Joana" className="logo" />
-                    <h1>Criar Conta</h1>
-                    <p className="subtitle">Preencha os dados para se cadastrar</p>
-                </BotarDoLado>
+                    <TextContainer>
+                        <h1>Criar Conta</h1>
+                        <p className="subtitle">Preencha os dados para se cadastrar</p>
+                    </TextContainer>
+                </HeaderBotarDoLado>
                 <RegisterForm onSubmit={handleSubmit}>
                     <InputGroup>
                         <label htmlFor="name">Nome Completo</label>
@@ -120,15 +122,17 @@ export default function Register() {
                         <label htmlFor="address">Endereço</label>
                         <input type="text" id="address" value={address} onChange={e => setAddress(e.target.value)} required />
                     </InputGroup>
-                    <InputGroup>
-                        <label htmlFor="phone">Telefone</label>
-                        <input type="tel" id="phone" value={phone} onChange={handlePhoneChange} required />
-                    </InputGroup>
-                    <InputGroup>
-                        <label htmlFor="birth-date">Data de Nascimento</label>
-                        <input type="date" id="birth-date" value={birthDate} onChange={e => setBirthDate(e.target.value)} required />
-                    </InputGroup>
-                    <InputGroup>
+                    <BotarDoLado>
+                        <InputGroup variant="inline">
+                           <label htmlFor="phone">Telefone</label>
+                            <input type="tel" id="phone" value={phone} onChange={handlePhoneChange} required />
+                        </InputGroup>
+                        <InputGroup variant="inline">
+                            <label htmlFor="birth-date">Data de Nascimento</label>
+                            <input type="date" id="birth-date" value={birthDate} onChange={e => setBirthDate(e.target.value)} required />
+                        </InputGroup>
+                    </BotarDoLado>
+                    <InputGroup variant>
                         <label htmlFor="password">Senha</label>
                         <input type="password" id="password" value={password} onChange={e => setPassword(e.target.value)} required />
                     </InputGroup>

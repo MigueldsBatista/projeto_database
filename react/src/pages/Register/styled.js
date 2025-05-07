@@ -40,8 +40,10 @@ export const InputGroup = styled.div`
         font-size: ${fontSize.caption};
         font-weight: 500;
         color: ${textSecondaryColor};
-        
     }
+    ${(props)=> props.variant === 'inline' && `
+        padding: ${spacing.xxs};
+    `}
     input{
         width: 100%;
         height: 30px;
@@ -74,3 +76,31 @@ export const LoginLink = styled.div`
     }
 `;
 
+export const HeaderBotarDoLado = styled.div`
+    display: flex;
+    flex-direction: row;
+    align-items: left;
+    margin-bottom: ${spacing.xxs};
+    .logo {
+        width: 80px;
+        height: auto;
+        margin-right: ${spacing.xs};
+    }
+`;
+
+export const BotarDoLado = styled.div`
+  display: flex;
+    flex-direction: row;
+    align-items: left;
+`;
+
+
+export const TextContainer = styled.div` 
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: left;
+    h1 {
+        margin-bottom: ${spacing.xs};
+    }
+`;
