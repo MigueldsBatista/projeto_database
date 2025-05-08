@@ -11,7 +11,7 @@ export default function MyRoute({ component: Component, isClosed, ...rest }) {
         toast.error('Você precisa estar logado');
         return (
             <Redirect
-                to={{ pathname: '/login', state: { prevPath: rest.location.pathname } }}
+                to={{ pathname: '/', state: { prevPath: rest.location.pathname } }}
             />
         );
     }

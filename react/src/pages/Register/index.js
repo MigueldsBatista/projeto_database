@@ -79,6 +79,7 @@ export default function Register() {
             console.log(userData);
             showToast("Criando sua conta...", "info");
             const response = await axios.post('/api/pacientes/create', userData);
+            history.push("/");
             const result = response.data;
 
             if (!response.ok || response.status !== 201) {
@@ -86,9 +87,6 @@ export default function Register() {
                 showToast(errorMessage, "error");
                 return;
             }
-
-            showToast("Conta criada com sucesso!", "success");
-            history.push("/login");
         } catch (error) {
             console.error("Erro ao criar conta:", error);
             showToast("Erro inesperado. Tente novamente mais tarde.", "error");

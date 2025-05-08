@@ -37,13 +37,15 @@ public class PacienteControllerTest extends BaseControllerTest {
     @Transactional
     void testCreatePaciente() throws Exception {
         // Create a test paciente
-        Paciente paciente = new Paciente(
-            "João Silva", 
-            "12345678900", 
-            LocalDate.of(1980, 1, 1), 
-            StatusPaciente.INTERNADO
-        );
-        
+        Paciente paciente = new Paciente();
+        paciente.setNome("João Silva");
+        paciente.setCpf("12345678900");
+        paciente.setEmail("joaosilva@gmail.com");
+        paciente.setDataNascimento(LocalDate.parse("1985-05-15"));
+        paciente.setTelefone("11987654321");
+        paciente.setSenha("senha123");
+        paciente.setEndereco("Rua das Flores, 123");
+        paciente.setStatus(StatusPaciente.INTERNADO);
         // Test creating a paciente
         String pacienteJson = objectMapper.writeValueAsString(paciente);
         mockMvc.perform(post("/api/pacientes/create")

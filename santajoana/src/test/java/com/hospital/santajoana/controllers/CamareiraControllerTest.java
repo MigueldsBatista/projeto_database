@@ -42,6 +42,9 @@ public class CamareiraControllerTest extends BaseControllerTest {
         camareira.setCpf("98765432100");
         camareira.setCre("54321");
         camareira.setCargo("Camareira");
+        camareira.setEmail("anasilva@gmail.com");
+        camareira.setTelefone("11987654321");
+        camareira.setSenha("senha123");
         camareira.setSetor("Limpeza");
         camareira.setDataNascimento(LocalDate.parse("1990-01-01"));
         

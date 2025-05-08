@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { FaBell, FaCoffee, FaDrumstickBite, FaIceCream, FaUtensils } from "react-icons/fa";
 import { useHistory } from "react-router-dom";
+import axios from "../../services/axios"; // Added missing axios import
 import { showToast, formatCurrency, formatDate } from "../../utils"; // Import utility functions
 import { App, Badge, ContentArea, Header, HeaderActions, IconButton } from "../../styles/GlobalStyles";
 import { PatientInfo, UserAvatar, WelcomeCard, CustomLink, InvoiceSumary, SummaryHeader, TotalAmount, Status, CategoryMenu, Categories, CategoriesItem, CategoryIcon, SectionHeader, OrdersSection, OrderList } from "./styled";
@@ -62,22 +63,89 @@ export default function Dashboard() {
     };
 
     const fetchEstadiaData = async (pacienteId) => {
-        return { quartoId: 1 };
+        try {
+            const response = await axios.get(`/api/pacientes/estadia-ativa/${pacienteId}`);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching estadia data:', error);
+            showToast('Não foi possível carregar os dados da estadia', 'error');
+            return {};
+        }
     };
 
     const fetchQuartoData = async (quartoId) => {
-        return { numero: "101" };
+        if (!quartoId) return {};
+        try {
+            const response = await axios.get(`/api/quartos/${quartoId}`);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching quarto data:', error);
+            showToast('Não foi possível carregar os dados do quarto', 'error');
+            return {};
+        }
     };
 
     const fetchFaturaData = async (pacienteId) => {
-        return { statusPagamento: "Pendente", valorTotal: 200.0 };
+        try {
+            const response = await axios.get(`/api/pacientes/fatura-recente/${pacienteId}`);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching fatura data:', error);
+            showToast('Não foi possível carregar os dados da fatura', 'error');
+            return {};
+        }
     };
 
     const fetchPedidosData = async (pacienteId) => {
-        return [
-            { id: 1, dataPedido: "2025-05-01", detalhes: "Item A", valor: 50.0 },
-            { id: 2, dataPedido: "2025-05-02", detalhes: "Item B", valor: 100.0 }
-        ];
+        try {
+            // Primeiro buscamos a estadia ativa do paciente
+            const estadiaResponse = await axios.get(`/api/pacientes/estadia-ativa/${pacienteId}`);
+            const estadia = estadiaResponse.data;
+            
+            if (!estadia || !estadia.id) {
+                return [];
+            }
+            
+            // Em seguida, buscamos os pedidos relacionados a esta estadia
+            const pedidosResponse = await axios.get(`/api/estadias/${estadia.id}/pedidos`);
+            const pedidos = pedidosResponse.data;
+            
+            // Para cada pedido, buscamos os produtos associados
+            const detailedPedidos = await Promise.all(
+                pedidos.map(async (pedido) => {
+                    try {
+                        const produtosResponse = await axios.get(`/api/pedidos/${pedido.id}/produtos`);
+                        const produtos = produtosResponse.data;
+                        
+                        // Calculamos o valor total do pedido
+                        const valorTotal = produtos.reduce((sum, produto) => {
+                            return sum + (produto.preco * produto.quantidade);
+                        }, 0);
+                        
+                        return {
+                            ...pedido,
+                            produtos,
+                            valor: valorTotal,
+                            detalhes: `${produtos.length} item(s)`
+                        };
+                    } catch (error) {
+                        console.error(`Error fetching products for order ${pedido.id}:`, error);
+                        return {
+                            ...pedido,
+                            produtos: [],
+                            valor: 0,
+                            detalhes: 'Detalhes indisponíveis'
+                        };
+                    }
+                })
+            );
+            
+            return detailedPedidos;
+        } catch (error) {
+            console.error('Error fetching pedidos data:', error);
+            showToast('Não foi possível carregar os dados dos pedidos', 'error');
+            return [];
+        }
     };
 
     return (
