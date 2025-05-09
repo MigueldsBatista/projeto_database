@@ -16,23 +16,56 @@ import {
 } from "./styled";
 import { showToast } from "../../utils";
 
+const formatPhoneNumber = (phone) => {
+    if (!phone) return "";
+    
+    const numericPhone = phone.replace(/\D/g, "");
+    
+    if (numericPhone.length === 11) {
+        return numericPhone.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
+    } else if (numericPhone.length === 10) {
+        return numericPhone.replace(/(\d{2})(\d{4})(\d{4})/, "($1) $2-$3");
+    } else {
+        return numericPhone;
+    }
+};
+
 export default function Profile() {
     const history = useHistory();
     const [user, setUser] = useState(null);
     const [editMode, setEditMode] = useState(false);
-    const [phone, setPhone] = useState("");
-    const [address, setAddress] = useState("");
+    const [phone, setPhone] = useState(null);
+    const [address, setAddress] = useState(null);
+    const [name, setName] = useState(null);
+    const [email, setEmail] = useState(null);
 
     useEffect(() => {
         // Recupera os dados do usuário do localStorage
         const storedUser = JSON.parse(localStorage.getItem("user"));
         if (!storedUser) {
-            history.push("/login");
+            history.push("/");
             return;
         }
         setUser(storedUser);
-        setPhone(storedUser.telefone || "");
-        setAddress(storedUser.endereco || "");
+        setName(storedUser.name);
+        setEmail(storedUser.email);
+        setPhone(formatPhoneNumber(storedUser.telefone));
+        setAddress(storedUser.endereco);
+        
+        const fetchUserData = async () => {
+            try {
+                const response = await axios.get(`/api/pacientes/${storedUser.id}`);
+                const userData = response.data;
+                setUser(userData);
+                setPhone(formatPhoneNumber(userData.telefone));
+                setAddress(userData.endereco);
+                localStorage.setItem("user", JSON.stringify(userData));
+            } catch (error) {
+                console.error("Erro ao buscar dados do usuário:", error);
+            }
+        };
+        
+        fetchUserData();
     }, [history]);
 
     const handleEditToggle = () => {
@@ -56,15 +89,24 @@ export default function Profile() {
         e.preventDefault();
         try {
             showToast("Atualizando informações...", "info");
+            // Enviar apenas os números para o backend
+            const phoneNumeric = phone.replace(/\D/g, "");
             const response = await axios.put(`/api/pacientes/update`, {
                 id: user.id,
-                telefone: phone.replace(/\D/g, ""),
+                telefone: phoneNumeric,
                 endereco: address,
             });
             const updatedUser = response.data;
+            
+            // Garantir que o telefone seja formatado no objeto do usuário
+            updatedUser.telefone = phoneNumeric;
+            
             setUser(updatedUser);
             localStorage.setItem("user", JSON.stringify(updatedUser));
             showToast("Informações atualizadas com sucesso!", "success");
+            
+            // Garantir que o número exibido esteja formatado
+            setPhone(formatPhoneNumber(phoneNumeric));
             setEditMode(false);
         } catch (error) {
             console.error("Erro ao atualizar informações:", error);
@@ -76,7 +118,7 @@ export default function Profile() {
         if (window.confirm("Tem certeza que deseja sair?")) {
             localStorage.removeItem("user");
             localStorage.removeItem("profileImage");
-            history.push("/login");
+            history.push("/");
         }
     };
 
@@ -89,7 +131,7 @@ export default function Profile() {
             await axios.delete(`/api/pacientes/delete/${user.id}`);
             localStorage.clear();
             showToast("Conta excluída com sucesso!", "success");
-            history.push("/login");
+            history.push("/");
         } catch (error) {
             console.error("Erro ao excluir conta:", error);
             showToast("Erro ao excluir conta. Tente novamente mais tarde.", "error");
@@ -97,7 +139,7 @@ export default function Profile() {
     };
 
     if (!user) {
-        return null; // Retorna nada enquanto os dados do usuário estão sendo carregados
+        return null;
     }
 
     return (
@@ -110,12 +152,12 @@ export default function Profile() {
                     <h2>Meu Perfil</h2>
                 </ProfileHeader>
                 <ProfilePicture>
-                    <span>{user.name?.split(" ").map((n) => n[0]).join("")}</span>
+                    <span>{name?.split(" ").map((n) => n[0]).join("")}</span>
                     <img src={user.profilePicture || localStorage.getItem("profileImage") || logo} alt="Foto de Perfil" />
                 </ProfilePicture>
                 <ProfileInfo>
-                    <h3>{user.name || "Nome Indisponível"}</h3>
-                    <p>{user.email || "Email Indisponível"}</p>
+                    <h3>{name || "Nome Indisponível"}</h3>
+                    <p>{email || "Email Indisponível"}</p>
                 </ProfileInfo>
                 <ProfileSection>
                     <h3>Informações Pessoais</h3>
