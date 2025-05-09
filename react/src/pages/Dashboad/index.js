@@ -98,26 +98,22 @@ export default function Dashboard() {
 
     const fetchPedidosData = async (pacienteId) => {
         try {
-            // Primeiro buscamos a estadia ativa do paciente
             const estadiaResponse = await axios.get(`/api/pacientes/estadia-ativa/${pacienteId}`);
             const estadia = estadiaResponse.data;
-            
+    
             if (!estadia || !estadia.id) {
                 return [];
             }
             
-            // Em seguida, buscamos os pedidos relacionados a esta estadia
             const pedidosResponse = await axios.get(`/api/estadias/${estadia.id}/pedidos`);
             const pedidos = pedidosResponse.data;
             
-            // Para cada pedido, buscamos os produtos associados
             const detailedPedidos = await Promise.all(
                 pedidos.map(async (pedido) => {
                     try {
                         const produtosResponse = await axios.get(`/api/pedidos/${pedido.id}/produtos`);
                         const produtos = produtosResponse.data;
                         
-                        // Calculamos o valor total do pedido
                         const valorTotal = produtos.reduce((sum, produto) => {
                             return sum + (produto.preco * produto.quantidade);
                         }, 0);
