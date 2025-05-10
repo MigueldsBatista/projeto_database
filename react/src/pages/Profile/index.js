@@ -89,7 +89,6 @@ export default function Profile() {
         e.preventDefault();
         try {
             showToast("Atualizando informações...", "info");
-            // Enviar apenas os números para o backend
             const phoneNumeric = phone.replace(/\D/g, "");
             const response = await axios.put(`/api/pacientes/update`, {
                 id: user.id,
@@ -98,14 +97,12 @@ export default function Profile() {
             });
             const updatedUser = response.data;
             
-            // Garantir que o telefone seja formatado no objeto do usuário
             updatedUser.telefone = phoneNumeric;
             
             setUser(updatedUser);
             localStorage.setItem("user", JSON.stringify(updatedUser));
             showToast("Informações atualizadas com sucesso!", "success");
             
-            // Garantir que o número exibido esteja formatado
             setPhone(formatPhoneNumber(phoneNumeric));
             setEditMode(false);
         } catch (error) {
