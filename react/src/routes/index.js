@@ -10,6 +10,9 @@ import Fatura from "../pages/Fatura";
 import Menu from "../pages/Menu";
 import PedidoConfirmado from "../pages/PedidoConfirmado";
 import Page404 from "../pages/Page404";
+import Pedido from "../pages/Pedido";
+import DetalhesPedido from "../pages/DetalhesPedido";
+import DetalhesProduto from "../pages/DetalhesProduto";
 import Dashboard from "../pages/Dashboad";
 
 export default function Rotas() {

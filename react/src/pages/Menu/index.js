@@ -1,3 +1,7 @@
+import React, { useState, useEffect, useRef } from "react";
+import { useHistory } from "react-router-dom";
+import axios from "../../services/axios";
+import { App } from "../../styles/GlobalStyles";
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import axios from "../../services/axios";
@@ -11,6 +15,11 @@ import {
     ProductCard,
     EmptyState,
     BottomNav,
+    MenuHeaderDiv,
+    MenuHeaderDivision,
+} from "./styled";
+import { showToast, formatCurrency } from "../../utils";
+import { FaArrowLeft } from "react-icons/fa";
 } from "./styled";
 import { showToast, formatCurrency } from "../../utils";
 
@@ -21,15 +30,17 @@ export default function Menu() {
     const [filteredProducts, setFilteredProducts] = useState([]);
     const [activeCategory, setActiveCategory] = useState("all");
     const [searchTerm, setSearchTerm] = useState("");
+    const tabsRef = useRef(null);
 
     useEffect(() => {
         const fetchMenuData = async () => {
             try {
-                // Fetch categories
                 const categoriesResponse = await axios.get("/api/categoria-produto");
                 setCategories(categoriesResponse.data);
 
-                // Fetch products
+                const categoriesResponse = await axios.get("/api/categoria-produto");
+                setCategories(categoriesResponse.data);
+
                 const productsResponse = await axios.get("/api/produtos");
                 setProducts(productsResponse.data);
                 setFilteredProducts(productsResponse.data);
@@ -41,6 +52,26 @@ export default function Menu() {
 
         fetchMenuData();
     }, []);
+  
+    useEffect(() => {
+        if (tabsRef.current && activeCategory) {
+            const activeButton = tabsRef.current.querySelector(`.tab-item.active`);
+            if (activeButton) {
+                const tabsContainer = tabsRef.current;
+                const buttonRect = activeButton.getBoundingClientRect();
+                const containerRect = tabsContainer.getBoundingClientRect();
+                
+                const scrollLeftTarget = activeButton.offsetLeft - (containerRect.width / 2) + (buttonRect.width / 2);
+                
+                tabsContainer.scrollTo({
+                    left: scrollLeftTarget,
+                    behavior: 'smooth'
+                });
+            }
+        }
+    }, [activeCategory, categories]);
+
+    const handleCategoryChange = (categoryId, buttonElement) => {
 
     const handleCategoryChange = (categoryId) => {
         setActiveCategory(categoryId);
@@ -50,6 +81,24 @@ export default function Menu() {
             setFilteredProducts(products);
         } else {
             setFilteredProducts(products.filter((product) => product.categoriaId === categoryId));
+        }
+        
+        if (buttonElement && tabsRef.current) {
+            const tabsContainer = tabsRef.current;
+            const buttonRect = buttonElement.getBoundingClientRect();
+            const containerRect = tabsContainer.getBoundingClientRect();
+            
+            const scrollLeftTarget = 
+                buttonElement.offsetLeft - 
+                (containerRect.width / 2) + 
+                (buttonRect.width / 2);
+            
+            setTimeout(() => {
+                tabsContainer.scrollTo({
+                    left: Math.max(0, scrollLeftTarget),
+                    behavior: 'smooth'
+                });
+            }, 10);
         }
     };
 
@@ -85,6 +134,13 @@ export default function Menu() {
     };
 
     return (
+        <>
+            <MenuHeaderDivision>
+                <MenuHeader>
+                    <a onClick={() => history.push("/dashboard")} className="back-button">
+                        <FaArrowLeft />
+                    </a>
+                    <h2>Cardápio</h2>
         <App>
             <MenuContainer>
                 <MenuHeader>
@@ -108,6 +164,10 @@ export default function Menu() {
                         onChange={handleSearch}
                     />
                 </SearchBar>
+                <CategoryTabs ref={tabsRef}>
+                    <button
+                        className={`tab-item ${activeCategory === "all" ? "active" : ""}`}
+                        onClick={(e) => handleCategoryChange("all", e.currentTarget)}
                 <CategoryTabs>
                     <button
                         className={`tab-item ${activeCategory === "all" ? "active" : ""}`}
@@ -119,12 +179,15 @@ export default function Menu() {
                         <button
                             key={category.id}
                             className={`tab-item ${activeCategory === category.id ? "active" : ""}`}
+                            onClick={(e) => handleCategoryChange(category.id, e.currentTarget)}
                             onClick={() => handleCategoryChange(category.id)}
                         >
                             {category.nome}
                         </button>
                     ))}
                 </CategoryTabs>
+                </MenuHeaderDivision>
+                <MenuContainer>
                 <ProductsGrid>
                     {filteredProducts.length > 0 ? (
                         filteredProducts.map((product) => (
@@ -151,6 +214,9 @@ export default function Menu() {
                         <EmptyState>Nenhum produto encontrado</EmptyState>
                     )}
                 </ProductsGrid>
+            </MenuContainer>
+        </>
+
                 <BottomNav>
                     <a href="/dashboard" className="nav-item">
                         <i className="fas fa-home"></i>
