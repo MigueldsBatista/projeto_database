@@ -8,8 +8,6 @@ import { borderColor, errorColor, primaryBlue, textSecondaryColor } from '../../
      background-color: white;
      padding: ${spacing.xs} ${spacing.lg};
      border-top: 1px solid ${borderColor};
-     padding: var(--spacing-sm) var(--spacing-md);
-     border-top: 1px solid var(--border);
      box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
      position: fixed;
      inset: auto 0 0;
@@ -24,10 +22,6 @@ import { borderColor, errorColor, primaryBlue, textSecondaryColor } from '../../
        font-size: 12px;
        position: relative;
        padding: ${spacing.xxs} 0;
-       color: var(--text-secondary);
-       font-size: 12px;
-       position: relative;
-       padding: var(--spacing-sm) 0;
      }
      .nav-item:i{
        font-size: 20px;
@@ -35,7 +29,6 @@ import { borderColor, errorColor, primaryBlue, textSecondaryColor } from '../../
      }
      .nav-item.active{
        color: ${primaryBlue};
-       color: var(--primary-blue);
        font-weight: 500;
      }
      .nav-item .badge {
@@ -43,7 +36,6 @@ import { borderColor, errorColor, primaryBlue, textSecondaryColor } from '../../
        top: 0;
        right: -5px;
        background-color: ${errorColor};
-       background-color: var(--error);
        color: white;
        font-size: 10px;
        min-width: 18px;
@@ -53,6 +45,5 @@ import { borderColor, errorColor, primaryBlue, textSecondaryColor } from '../../
        align-items: center;
        justify-content: center;
        padding: 0 ${spacing.xxs};
-       padding: 0 var(--spacing-xs);
      }
  `;
