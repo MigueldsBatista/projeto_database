@@ -137,28 +137,6 @@ export default function OrderDetails() {
                     </ActionButtons>
                 </div>
             </OrderDetailsContainer>
-            <BottomNav>
-                <a href="/dashboard" className="nav-item">
-                    <i className="fas fa-home"></i>
-                    <span>Início</span>
-                </a>
-                <a href="/menu" className="nav-item">
-                    <i className="fas fa-utensils"></i>
-                    <span>Cardápio</span>
-                </a>
-                <a href="/carrinho" className="nav-item">
-                    <i className="fas fa-shopping-cart"></i>
-                    <span>Carrinho</span>
-                </a>
-                <a href="/orders" className="nav-item active">
-                    <i className="fas fa-clipboard-list"></i>
-                    <span>Pedidos</span>
-                </a>
-                <a href="/fatura" className="nav-item">
-                    <i className="fas fa-file-invoice-dollar"></i>
-                    <span>Fatura</span>
-                </a>
-            </BottomNav>
         </App>
     );
 }

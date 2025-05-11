@@ -15,6 +15,8 @@ import {
     InfoDiv,
     EditFormDiv,
     PersonalizedButton,
+    AccountForm,
+    AccountForm2,
 } from "./styled";
 import { showToast } from "../../utils";
 import { FaArrowLeft, FaEdit, FaSave, FaSignOutAlt, FaTimes, FaTrash } from "react-icons/fa";
@@ -226,7 +228,7 @@ export default function Profile() {
     return (
         <App>
             <ProfileHeader>
-                <a onClick={() => history.push("/dashboard")} className="back-button">
+                <a  onClick={() => history.push("/dashboard")} className="back-button">
                     <FaArrowLeft />
                 </a>
                 <h2>Perfil do usuário</h2>
@@ -265,14 +267,19 @@ export default function Profile() {
                                 <FaSave/>
                                 <span className="button-tooltip">Salvar</span>
                             </PersonalizedButton>
-                            <PersonalizedButton onClick={handleLogout} title="Sair da conta">
-                                <FaSignOutAlt/>
-                                <span className="button-tooltip">Sair</span>
-                            </PersonalizedButton>
-                            <PersonalizedButton onClick={handleDeleteAccount} title="Excluir conta">
-                                <FaTrash/>
-                                <span className="button-tooltip">Excluir</span>
-                            </PersonalizedButton>
+                            <AccountForm>
+                                <p>Conta</p>
+                                <AccountForm2>
+                                    <PersonalizedButton onClick={handleLogout} title="Sair da conta">
+                                        <FaSignOutAlt/>
+                                        <span className="button-tooltip">Sair</span>
+                                    </PersonalizedButton>
+                                    <PersonalizedButton onClick={handleDeleteAccount} title="Excluir conta">
+                                        <FaTrash/>
+                                        <span className="button-tooltip">Excluir</span>
+                                    </PersonalizedButton>
+                                </AccountForm2>
+                            </AccountForm>
                         </ProfileMenu>
                     </EditForm>
                 </EditFormDiv>

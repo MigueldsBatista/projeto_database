@@ -1,38 +1,73 @@
 import styled from "styled-components";
+import { primaryBlue } from "../../config/colors";
+import { spacing } from "../../config/spacing";
 
 export const MenuContainer = styled.div`
     display: flex;
     flex-direction: column;
     padding: 20px;
+    height: calc(100% - 210px);
+    overflow-y: auto;
+    background-color: white;
+`;
+export const MenuHeaderDivision = styled.div`
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    height: auto;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background-color: white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 `;
 
 export const MenuHeader = styled.header`
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    background-color: white;
+    text-align: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    position: relative;
+    width: 100%;
 
     .back-button {
+        position: absolute;
+        left: 10px;
         background: none;
         border: none;
         font-size: 20px;
         cursor: pointer;
     }
+    
+    h2 {
+        flex: 1;
+        text-align: center;
+        font-weight: 700;
+    }
 
-    .icon-button {
-        background: none;
-        border: none;
-        font-size: 20px;
-        cursor: pointer;
+    .header-actions {
+        position: absolute;
+        right: 10px;
     }
 `;
 
 export const SearchBar = styled.div`
-    margin-bottom: 20px;
+    margin: 10px 0;
+    width: 100%;
+    background-color: white;
+    padding-bottom: 10px;
+    display: flex;
+    justify-content: center;
 
     input {
-        width: 100%;
         padding: 10px;
+        width: 90%;
+        max-width: 400px;
         font-size: 16px;
         border: 1px solid #ccc;
         border-radius: 5px;
@@ -41,20 +76,63 @@ export const SearchBar = styled.div`
 
 export const CategoryTabs = styled.div`
     display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-
+    gap: 6px;
+    margin-bottom: 10px;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; 
+    -ms-overflow-style: none; 
+    padding: ${spacing.sm};
+    width: 100%;
+    max-width: 460px;
+    margin: 0 auto;
+    z-index: 4;
+    scroll-behavior: smooth;
+    &::-webkit-scrollbar {
+        display: none;
+    }
+    
     .tab-item {
-        padding: 10px 15px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
+        padding: 12px 20px;
+        border: 1px solid #ddd;
+        border-radius: 25px;
+        font-size: 15px;
+        font-weight: 500;
         cursor: pointer;
-        background-color: #f8f9fa;
-
+        flex-shrink: 0;
+        transition: all 0.2s ease;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        
         &.active {
-            background-color: #007bff;
+            background-color: ${primaryBlue};
             color: white;
+            border-color: ${primaryBlue};
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px);
         }
+    }
+    
+    &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        height: 100%;
+        width: 40px;
+        pointer-events: none;
+    }
+    
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 15px;
+        pointer-events: none;
+        opacity: 0.8;
+        z-index: 1;
     }
 `;
 
@@ -62,6 +140,10 @@ export const ProductsGrid = styled.div`
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 20px;
+    margin-top: 240px; /* Aumentando para dar espaço ao header fixo */
+    padding-bottom: 40px;
+    position: relative;
+    z-index: 0;
 `;
 
 export const ProductCard = styled.div`

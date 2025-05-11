@@ -191,3 +191,17 @@ export const PersonalizedButton = styled.button`
         color: ${secondaryBlue};
     }
 `;
+
+export const AccountForm = styled.div`
+    display: flex;
+    flex-direction: column;
+    text-align:center;
+    border:1px solid ${primaryBlue};
+    border-radius: ${borderRadius.lg};  
+    color: ${primaryBlue};
+`;
+
+export const AccountForm2 = styled.div`
+    display: flex;
+    flex-direction: row;
+`;

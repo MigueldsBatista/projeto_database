@@ -26,7 +26,6 @@ export default function Login() {
         try {
             showToast("Autenticando...", "info");
 
-            // Tenta autenticar como paciente
             const patientResponse = await axios.post("/api/auth/pacientes/login", {
                 email,
                 senha: password,
@@ -37,7 +36,6 @@ export default function Login() {
                 return;
             }
 
-            // Se falhar, tenta autenticar como funcionário
             const staffResponse = await axios.post("/api/auth/camareiras/login", {
                 email,
                 senha: password,
@@ -48,7 +46,6 @@ export default function Login() {
                 return;
             }
 
-            // Se nenhuma autenticação funcionar
             showToast("Email ou senha incorretos", "error");
         } catch (error) {
             console.error("Erro ao fazer login:", error);
@@ -57,7 +54,6 @@ export default function Login() {
     };
 
     const handleSuccessfulLogin = (userData) => {
-        // Armazena os dados do usuário no localStorage
         localStorage.setItem("user", JSON.stringify(userData));
 
         if (userData.profilePicture) {
@@ -66,7 +62,6 @@ export default function Login() {
 
         showToast("Login realizado com sucesso!", "success");
 
-        // Redireciona com base no tipo de usuário
         const redirectUrl = userData.role === "camareira" ? "/staff-dashboard" : "/dashboard";
         history.push(redirectUrl);
     };

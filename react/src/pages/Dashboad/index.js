@@ -169,11 +169,13 @@ export default function Dashboard() {
                 <InvoiceSumary>
                     <SummaryHeader>
                         <h3>Resumo da Fatura</h3>
-                        <CustomLink to="/invoice">Ver detalhes</CustomLink>
+                        <CustomLink variant="verDetalhes" to="/invoice">Ver detalhes</CustomLink>
                     </SummaryHeader>
                     <>
                         <TotalAmount><span>R$ {formatCurrency(appState.userProfile.fatura?.valorTotal || 0)}</span></TotalAmount>
-                        <Status>Status: <span>{appState.userProfile.fatura?.statusPagamento || 'N/A'}</span></Status>
+                        <Status status={appState.userProfile.fatura?.statusPagamento}>
+                            Status: <span>{appState.userProfile.fatura?.statusPagamento || 'N/A'}</span>
+                        </Status>
                     </>
                 </InvoiceSumary>
                 <CategoryMenu>
