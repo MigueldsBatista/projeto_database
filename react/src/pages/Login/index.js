@@ -25,7 +25,6 @@ export default function Login() {
 
         try {
             showToast("Autenticando...", "info");
-
             const patientResponse = await axios.post("/api/auth/pacientes/login", {
                 email,
                 senha: password,
@@ -35,7 +34,6 @@ export default function Login() {
                 handleSuccessfulLogin(patientResponse.data);
                 return;
             }
-
             const staffResponse = await axios.post("/api/auth/camareiras/login", {
                 email,
                 senha: password,
@@ -45,7 +43,6 @@ export default function Login() {
                 handleSuccessfulLogin(staffResponse.data);
                 return;
             }
-
             showToast("Email ou senha incorretos", "error");
         } catch (error) {
             console.error("Erro ao fazer login:", error);
@@ -61,7 +58,7 @@ export default function Login() {
         }
 
         showToast("Login realizado com sucesso!", "success");
-
+      
         const redirectUrl = userData.role === "camareira" ? "/staff-dashboard" : "/dashboard";
         history.push(redirectUrl);
     };

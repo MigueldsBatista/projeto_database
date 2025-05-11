@@ -2,6 +2,10 @@ import React, { useState, useEffect, useRef } from "react";
 import { useHistory } from "react-router-dom";
 import axios from "../../services/axios";
 import { App } from "../../styles/GlobalStyles";
+import React, { useState, useEffect } from "react";
+import { useHistory } from "react-router-dom";
+import axios from "../../services/axios";
+import { App, PrimaryButton } from "../../styles/GlobalStyles";
 import {
     MenuContainer,
     MenuHeader,
@@ -16,6 +20,8 @@ import {
 } from "./styled";
 import { showToast, formatCurrency } from "../../utils";
 import { FaArrowLeft } from "react-icons/fa";
+} from "./styled";
+import { showToast, formatCurrency } from "../../utils";
 
 export default function Menu() {
     const history = useHistory();
@@ -32,6 +38,9 @@ export default function Menu() {
                 const categoriesResponse = await axios.get("/api/categoria-produto");
                 setCategories(categoriesResponse.data);
 
+                const categoriesResponse = await axios.get("/api/categoria-produto");
+                setCategories(categoriesResponse.data);
+
                 const productsResponse = await axios.get("/api/produtos");
                 setProducts(productsResponse.data);
                 setFilteredProducts(productsResponse.data);
@@ -43,7 +52,7 @@ export default function Menu() {
 
         fetchMenuData();
     }, []);
-    
+  
     useEffect(() => {
         if (tabsRef.current && activeCategory) {
             const activeButton = tabsRef.current.querySelector(`.tab-item.active`);
@@ -63,6 +72,8 @@ export default function Menu() {
     }, [activeCategory, categories]);
 
     const handleCategoryChange = (categoryId, buttonElement) => {
+
+    const handleCategoryChange = (categoryId) => {
         setActiveCategory(categoryId);
         setSearchTerm("");
 
@@ -130,6 +141,15 @@ export default function Menu() {
                         <FaArrowLeft />
                     </a>
                     <h2>Cardápio</h2>
+        <App>
+            <MenuContainer>
+                <MenuHeader>
+                    <div className="header-left">
+                        <button onClick={() => history.push("/dashboard")} className="back-button">
+                            <i className="fas fa-arrow-left"></i>
+                        </button>
+                        <h2>Cardápio</h2>
+                    </div>
                     <div className="header-actions">
                         <button className="icon-button">
                             <i className="fas fa-search"></i>
@@ -148,6 +168,10 @@ export default function Menu() {
                     <button
                         className={`tab-item ${activeCategory === "all" ? "active" : ""}`}
                         onClick={(e) => handleCategoryChange("all", e.currentTarget)}
+                <CategoryTabs>
+                    <button
+                        className={`tab-item ${activeCategory === "all" ? "active" : ""}`}
+                        onClick={() => handleCategoryChange("all")}
                     >
                         Todos
                     </button>
@@ -156,6 +180,7 @@ export default function Menu() {
                             key={category.id}
                             className={`tab-item ${activeCategory === category.id ? "active" : ""}`}
                             onClick={(e) => handleCategoryChange(category.id, e.currentTarget)}
+                            onClick={() => handleCategoryChange(category.id)}
                         >
                             {category.nome}
                         </button>
@@ -191,5 +216,30 @@ export default function Menu() {
                 </ProductsGrid>
             </MenuContainer>
         </>
+
+                <BottomNav>
+                    <a href="/dashboard" className="nav-item">
+                        <i className="fas fa-home"></i>
+                        <span>Início</span>
+                    </a>
+                    <a href="/menu" className="nav-item active">
+                        <i className="fas fa-utensils"></i>
+                        <span>Cardápio</span>
+                    </a>
+                    <a href="/carrinho" className="nav-item">
+                        <i className="fas fa-shopping-cart"></i>
+                        <span>Carrinho</span>
+                    </a>
+                    <a href="/orders" className="nav-item">
+                        <i className="fas fa-clipboard-list"></i>
+                        <span>Pedidos</span>
+                    </a>
+                    <a href="/fatura" className="nav-item">
+                        <i className="fas fa-file-invoice-dollar"></i>
+                        <span>Fatura</span>
+                    </a>
+                </BottomNav>
+            </MenuContainer>
+        </App>
     );
 }

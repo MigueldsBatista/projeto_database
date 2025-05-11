@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { primaryBlue } from "../../config/colors";
 import { spacing } from "../../config/spacing";
 
+
 export const MenuContainer = styled.div`
     display: flex;
     flex-direction: column;
@@ -23,6 +24,7 @@ export const MenuHeaderDivision = styled.div`
     z-index: 100;
     background-color: white;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+
 `;
 
 export const MenuHeader = styled.header`
@@ -38,6 +40,11 @@ export const MenuHeader = styled.header`
     .back-button {
         position: absolute;
         left: 10px;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+
+    .back-button {
         background: none;
         border: none;
         font-size: 20px;
@@ -53,6 +60,12 @@ export const MenuHeader = styled.header`
     .header-actions {
         position: absolute;
         right: 10px;
+
+    .icon-button {
+        background: none;
+        border: none;
+        font-size: 20px;
+        cursor: pointer;
     }
 `;
 
@@ -68,6 +81,11 @@ export const SearchBar = styled.div`
         padding: 10px;
         width: 90%;
         max-width: 400px;
+    margin-bottom: 20px;
+
+    input {
+        width: 100%;
+        padding: 10px;
         font-size: 16px;
         border: 1px solid #ccc;
         border-radius: 5px;
@@ -134,6 +152,22 @@ export const CategoryTabs = styled.div`
         opacity: 0.8;
         z-index: 1;
     }
+
+    gap: 10px;
+    margin-bottom: 20px;
+
+    .tab-item {
+        padding: 10px 15px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        cursor: pointer;
+        background-color: #f8f9fa;
+
+        &.active {
+            background-color: #007bff;
+            color: white;
+        }
+    }
 `;
 
 export const ProductsGrid = styled.div`
@@ -144,6 +178,7 @@ export const ProductsGrid = styled.div`
     padding-bottom: 40px;
     position: relative;
     z-index: 0;
+
 `;
 
 export const ProductCard = styled.div`

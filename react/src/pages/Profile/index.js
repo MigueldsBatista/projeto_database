@@ -4,6 +4,9 @@ import axios from "../../services/axios";
 import logo from "../../static/img/hsj_logo.png";
 import { App } from "../../styles/GlobalStyles";
 import {
+import { App, PrimaryButton, SecondaryButton } from "../../styles/GlobalStyles";
+import {
+    ProfileContainer,
     ProfileHeader,
     ProfilePicture,
     ProfileInfo,
@@ -20,6 +23,9 @@ import {
 } from "./styled";
 import { showToast } from "../../utils";
 import { FaArrowLeft, FaEdit, FaSave, FaSignOutAlt, FaTimes, FaTrash } from "react-icons/fa";
+} from "./styled";
+import { showToast } from "../../utils";
+
 
 const formatPhoneNumber = (phone) => {
     if (!phone) return "";
@@ -104,8 +110,9 @@ export default function Profile() {
             showToast('Erro ao carregar informações do Perfil', 'error');
         }
     };
-
+  
     useEffect(() => {
+
         const storedUser = JSON.parse(localStorage.getItem("user"));
         if (!storedUser) {
             history.push("/");
@@ -139,7 +146,18 @@ export default function Profile() {
                 setCpf(formatCpf(userData.cpf));
                 setPhone(formatPhoneNumber(userData.telefone));
                 setAddress(userData.endereco);
-                
+
+        setPhone(formatPhoneNumber(storedUser.telefone));
+        setAddress(storedUser.endereco);
+        
+        const fetchUserData = async () => {
+            try {
+                const response = await axios.get(`/api/pacientes/${storedUser.id}`);
+                const userData = response.data;
+                setUser(userData);
+                setPhone(formatPhoneNumber(userData.telefone));
+                setAddress(userData.endereco);
+
                 localStorage.setItem("user", JSON.stringify(userData));
             } catch (error) {
                 console.error("Erro ao buscar dados do usuário:", error);
@@ -170,6 +188,7 @@ export default function Profile() {
         e.preventDefault();
         try {
             showToast("Atualizando informações...", "info");
+
             const phoneNumeric = phone.replace(/\D/g, "");
             const response = await axios.put(`/api/pacientes/update`, {
                 id: user.id,
@@ -188,7 +207,13 @@ export default function Profile() {
             localStorage.setItem("user", JSON.stringify(updatedUser));
             
             showToast("Informações atualizadas com sucesso!", "success");
+
+            updatedUser.telefone = phoneNumeric;
             
+            setUser(updatedUser);
+            localStorage.setItem("user", JSON.stringify(updatedUser));
+            showToast("Informações atualizadas com sucesso!", "success");
+ 
             setPhone(formatPhoneNumber(phoneNumeric));
             setEditMode(false);
         } catch (error) {
@@ -326,6 +351,63 @@ export default function Profile() {
                 )}
             </ProfileSection>
 
+            <ProfileContainer>
+                <ProfileHeader>
+                    <button onClick={() => history.push("/dashboard")} className="back-button">
+                        <i className="fas fa-arrow-left"></i>
+                    </button>
+                    <h2>Meu Perfil</h2>
+                </ProfileHeader>
+                <ProfilePicture>
+                    <span>{name?.split(" ").map((n) => n[0]).join("")}</span>
+                    <img src={user.profilePicture || localStorage.getItem("profileImage") || logo} alt="Foto de Perfil" />
+                </ProfilePicture>
+                <ProfileInfo>
+                    <h3>{name || "Nome Indisponível"}</h3>
+                    <p>{email || "Email Indisponível"}</p>
+                </ProfileInfo>
+                <ProfileSection>
+                    <h3>Informações Pessoais</h3>
+                    {editMode ? (
+                        <EditForm onSubmit={handleSave}>
+                            <FormGroup>
+                                <label>Telefone:</label>
+                                <input type="tel" value={phone} onChange={handlePhoneChange} />
+                            </FormGroup>
+                            <FormGroup>
+                                <label>Endereço:</label>
+                                <input type="text" value={address} onChange={(e) => setAddress(e.target.value)} />
+                            </FormGroup>
+                            <div className="form-actions">
+                                <SecondaryButton type="button" onClick={handleEditToggle}>
+                                    Cancelar
+                                </SecondaryButton>
+                                <PrimaryButton type="submit">Salvar</PrimaryButton>
+                            </div>
+                        </EditForm>
+                    ) : (
+                        <>
+                            <InfoRow>
+                                <label>Telefone:</label>
+                                <span>{phone || "Não disponível"}</span>
+                            </InfoRow>
+                            <InfoRow>
+                                <label>Endereço:</label>
+                                <span>{address || "Não disponível"}</span>
+                            </InfoRow>
+                            <PrimaryButton onClick={handleEditToggle}>Editar</PrimaryButton>
+                        </>
+                    )}
+                </ProfileSection>
+                <ProfileMenu>
+                    <button onClick={handleLogout} className="logout">
+                        Sair
+                    </button>
+                    <button onClick={handleDeleteAccount} className="delete-account">
+                        Excluir Conta
+                    </button>
+                </ProfileMenu>
+            </ProfileContainer>
         </App>
     );
 }

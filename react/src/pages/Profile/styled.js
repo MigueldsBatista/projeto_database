@@ -26,6 +26,29 @@ export const ProfileHeader = styled.header`
         flex: 1;
         text-align: center;
         font-weight: 700;
+
+export const ProfileContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+`;
+
+export const ProfileHeader = styled.header`
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 20px;
+
+    .back-button {
+        background: none;
+        border: none;
+        font-size: 20px;
+        cursor: pointer;
+    }
+
+    h2 {
+        margin-left: 10px;
     }
 `;
 
@@ -42,6 +65,12 @@ export const ProfilePicture = styled.div`
     margin-bottom: ${spacing.md};
     overflow: hidden; 
     position: relative;
+    position: relative;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-bottom: 20px;
 
     img {
         width: 100%;
@@ -62,6 +91,19 @@ export const ProfilePicture = styled.div`
         align-items: center;
         justify-content: center;
         cursor: pointer;
+        object-fit: cover;
+    }
+
+    span {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        background-color: #ccc;
+        font-size: 40px;
+        font-weight: bold;
+        color: #fff;
     }
 `;
 
@@ -76,6 +118,9 @@ export const ProfileInfo = styled.div`
         font-size: var(--font-h2);
         font-weight: 700;
         margin-bottom: var(--spacing-xs);
+
+    h3 {
+        margin-bottom: 5px;
     }
 
     p {
@@ -97,6 +142,7 @@ export const InfoRow = styled.div`
     justify-content: space-between;
     margin-bottom: 10px;
     width: 100%;
+
 
     label {
         font-weight: bold;
@@ -134,6 +180,8 @@ export const ProfileMenu = styled.div`
     display: flex;
     flex-direction: row;
     gap: ${spacing.md};
+    margin-top: 20px;
+
     button {
         display: block;
         width: 100%;

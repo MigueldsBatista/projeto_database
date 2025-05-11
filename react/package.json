@@ -30,6 +30,9 @@
   },
   "scripts": {
     "start": "NODE_OPTIONS=--openssl-legacy-provider react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
     "spring": "cd ../santajoana && mvn spring-boot:run",
     "dev": "concurrently \"npm run spring\" \"npm start\""
   },
