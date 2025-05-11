@@ -1,11 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useHistory } from "react-router-dom";
 import axios from "../../services/axios";
-import { App } from "../../styles/GlobalStyles";
-import React, { useState, useEffect } from "react";
-import { useHistory } from "react-router-dom";
-import axios from "../../services/axios";
-import { App, PrimaryButton } from "../../styles/GlobalStyles";
 import {
     MenuContainer,
     MenuHeader,
@@ -17,11 +12,10 @@ import {
     BottomNav,
     MenuHeaderDiv,
     MenuHeaderDivision,
+    AddToCartButton,
 } from "./styled";
 import { showToast, formatCurrency } from "../../utils";
-import { FaArrowLeft } from "react-icons/fa";
-} from "./styled";
-import { showToast, formatCurrency } from "../../utils";
+import { FaArrowLeft, FaPlus } from "react-icons/fa";
 
 export default function Menu() {
     const history = useHistory();
@@ -35,9 +29,6 @@ export default function Menu() {
     useEffect(() => {
         const fetchMenuData = async () => {
             try {
-                const categoriesResponse = await axios.get("/api/categoria-produto");
-                setCategories(categoriesResponse.data);
-
                 const categoriesResponse = await axios.get("/api/categoria-produto");
                 setCategories(categoriesResponse.data);
 
@@ -72,8 +63,6 @@ export default function Menu() {
     }, [activeCategory, categories]);
 
     const handleCategoryChange = (categoryId, buttonElement) => {
-
-    const handleCategoryChange = (categoryId) => {
         setActiveCategory(categoryId);
         setSearchTerm("");
 
@@ -120,7 +109,7 @@ export default function Menu() {
     };
 
     const handleAddToCart = (product) => {
-        const cart = JSON.parse(localStorage.getItem("cart")) || [];
+        const cart = JSON.parse(localStorage.getItem("carrinho")) || [];
         const existingItem = cart.find((item) => item.id === product.id);
 
         if (existingItem) {
@@ -134,60 +123,41 @@ export default function Menu() {
     };
 
     return (
-        <>
-            <MenuHeaderDivision>
-                <MenuHeader>
-                    <a onClick={() => history.push("/dashboard")} className="back-button">
-                        <FaArrowLeft />
-                    </a>
-                    <h2>Cardápio</h2>
-        <App>
             <MenuContainer>
-                <MenuHeader>
-                    <div className="header-left">
+                <MenuHeaderDivision>
+                    <MenuHeader>
                         <button onClick={() => history.push("/dashboard")} className="back-button">
-                            <i className="fas fa-arrow-left"></i>
+                            <FaArrowLeft />
                         </button>
                         <h2>Cardápio</h2>
-                    </div>
-                    <div className="header-actions">
-                        <button className="icon-button">
-                            <i className="fas fa-search"></i>
-                        </button>
-                    </div>
-                </MenuHeader>
-                <SearchBar>
-                    <input
-                        type="text"
-                        placeholder="Buscar no cardápio"
-                        value={searchTerm}
-                        onChange={handleSearch}
-                    />
-                </SearchBar>
-                <CategoryTabs ref={tabsRef}>
-                    <button
-                        className={`tab-item ${activeCategory === "all" ? "active" : ""}`}
-                        onClick={(e) => handleCategoryChange("all", e.currentTarget)}
-                <CategoryTabs>
-                    <button
-                        className={`tab-item ${activeCategory === "all" ? "active" : ""}`}
-                        onClick={() => handleCategoryChange("all")}
-                    >
-                        Todos
-                    </button>
-                    {categories.map((category) => (
+                    </MenuHeader>
+                    <SearchBar>
+                        <input
+                            type="text"
+                            placeholder="Buscar no cardápio"
+                            value={searchTerm}
+                            onChange={handleSearch}
+                        />
+                    </SearchBar>
+                    <CategoryTabs ref={tabsRef}>
                         <button
-                            key={category.id}
-                            className={`tab-item ${activeCategory === category.id ? "active" : ""}`}
-                            onClick={(e) => handleCategoryChange(category.id, e.currentTarget)}
-                            onClick={() => handleCategoryChange(category.id)}
+                            className={`tab-item ${activeCategory === "all" ? "active" : ""}`}
+                            onClick={(e) => handleCategoryChange("all", e.currentTarget)}
                         >
-                            {category.nome}
+                            Todos
                         </button>
-                    ))}
-                </CategoryTabs>
+                        {categories.map((category) => (
+                            <button
+                                key={category.id}
+                                className={`tab-item ${activeCategory === category.id ? "active" : ""}`}
+                                onClick={(e) => handleCategoryChange(category.id, e.currentTarget)}
+                            >
+                                {category.nome}
+                            </button>
+                        ))}
+                    </CategoryTabs>
                 </MenuHeaderDivision>
-                <MenuContainer>
+                
                 <ProductsGrid>
                     {filteredProducts.length > 0 ? (
                         filteredProducts.map((product) => (
@@ -200,12 +170,9 @@ export default function Menu() {
                                     <p className="product-description">{product.descricao}</p>
                                     <div className="product-price-action">
                                         <p className="product-price">R$ {formatCurrency(product.preco)}</p>
-                                        <button
-                                            className="add-to-cart-button"
-                                            onClick={() => handleAddToCart(product)}
-                                        >
-                                            <i className="fas fa-plus"></i>
-                                        </button>
+                                        <AddToCartButton onClick={() => handleAddToCart(product)}>
+                                            <FaPlus/>
+                                        </AddToCartButton>
                                     </div>
                                 </div>
                             </ProductCard>
@@ -215,31 +182,5 @@ export default function Menu() {
                     )}
                 </ProductsGrid>
             </MenuContainer>
-        </>
-
-                <BottomNav>
-                    <a href="/dashboard" className="nav-item">
-                        <i className="fas fa-home"></i>
-                        <span>Início</span>
-                    </a>
-                    <a href="/menu" className="nav-item active">
-                        <i className="fas fa-utensils"></i>
-                        <span>Cardápio</span>
-                    </a>
-                    <a href="/carrinho" className="nav-item">
-                        <i className="fas fa-shopping-cart"></i>
-                        <span>Carrinho</span>
-                    </a>
-                    <a href="/orders" className="nav-item">
-                        <i className="fas fa-clipboard-list"></i>
-                        <span>Pedidos</span>
-                    </a>
-                    <a href="/fatura" className="nav-item">
-                        <i className="fas fa-file-invoice-dollar"></i>
-                        <span>Fatura</span>
-                    </a>
-                </BottomNav>
-            </MenuContainer>
-        </App>
     );
 }

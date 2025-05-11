@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { primaryBlue } from "../../config/colors";
 import { spacing } from "../../config/spacing";
+import { borderRadius } from "../../config/border";
 
 
 export const MenuContainer = styled.div`
@@ -40,9 +41,10 @@ export const MenuHeader = styled.header`
     .back-button {
         position: absolute;
         left: 10px;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
 
     .back-button {
         background: none;
@@ -56,10 +58,12 @@ export const MenuHeader = styled.header`
         text-align: center;
         font-weight: 700;
     }
+    
 
     .header-actions {
         position: absolute;
         right: 10px;
+    }
 
     .icon-button {
         background: none;
@@ -81,7 +85,8 @@ export const SearchBar = styled.div`
         padding: 10px;
         width: 90%;
         max-width: 400px;
-    margin-bottom: 20px;
+        margin-bottom: 20px;
+    }
 
     input {
         width: 100%;
@@ -101,7 +106,7 @@ export const CategoryTabs = styled.div`
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none; 
     -ms-overflow-style: none; 
-    padding: ${spacing.sm};
+    padding: ${spacing.xxs};
     width: 100%;
     max-width: 460px;
     margin: 0 auto;
@@ -134,20 +139,14 @@ export const CategoryTabs = styled.div`
     &::after {
         content: '';
         position: absolute;
-        top: 0;
-        right: 0;
         height: 100%;
-        width: 40px;
         pointer-events: none;
     }
     
     &::before {
         content: '';
         position: absolute;
-        top: 0;
-        left: 0;
         height: 100%;
-        width: 15px;
         pointer-events: none;
         opacity: 0.8;
         z-index: 1;
@@ -155,26 +154,13 @@ export const CategoryTabs = styled.div`
 
     gap: 10px;
     margin-bottom: 20px;
-
-    .tab-item {
-        padding: 10px 15px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        cursor: pointer;
-        background-color: #f8f9fa;
-
-        &.active {
-            background-color: #007bff;
-            color: white;
-        }
-    }
 `;
 
 export const ProductsGrid = styled.div`
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 20px;
-    margin-top: 240px; /* Aumentando para dar espaço ao header fixo */
+    margin-top: 240px;
     padding-bottom: 40px;
     position: relative;
     z-index: 0;
@@ -210,22 +196,28 @@ export const ProductCard = styled.div`
             display: flex;
             justify-content: space-between;
             align-items: center;
-
-            .product-price {
+        }
+        .product-price {
                 font-size: 16px;
                 font-weight: bold;
                 color: #007bff;
-            }
-
-            .add-to-cart-button {
-                background: none;
-                border: none;
-                font-size: 20px;
-                cursor: pointer;
-                color: #007bff;
-            }
         }
     }
+`;
+
+export const AddToCartButton = styled.button`
+        background-color: ${primaryBlue};
+        color: white;
+        border: none;
+        border-radius: ${borderRadius.full};
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+
+        &:hover {
+            background-color: #0056b3;
+        }
 `;
 
 export const EmptyState = styled.div`

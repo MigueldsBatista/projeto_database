@@ -10,6 +10,7 @@ import {
     BottomNav,
 } from "./styled";
 import { showToast, formatCurrency, formatDateTime } from "../../utils";
+import { FaCheck, FaClock } from "react-icons/fa";
 
 export default function OrderConfirmation() {
     const history = useHistory();
@@ -70,7 +71,7 @@ export default function OrderConfirmation() {
         <App>
             <ConfirmationContainer>
                 <SuccessAnimation>
-                    <i className="fas fa-check"></i>
+                    <FaCheck/>
                 </SuccessAnimation>
                 <h1 className="confirmation-title">Pedido Confirmado!</h1>
                 <p className="confirmation-message">
@@ -95,7 +96,7 @@ export default function OrderConfirmation() {
                     </div>
                 </OrderInfoCard>
                 <DeliveryTime>
-                    <i className="fas fa-clock"></i>
+                    <FaClock/>
                     <p>
                         Tempo estimado de entrega: <strong>30 minutos</strong>
                     </p>
@@ -112,28 +113,6 @@ export default function OrderConfirmation() {
                     </SecondaryButton>
                 </ActionButtons>
             </ConfirmationContainer>
-            <BottomNav>
-                <a href="/dashboard" className="nav-item">
-                    <i className="fas fa-home"></i>
-                    <span>Início</span>
-                </a>
-                <a href="/menu" className="nav-item">
-                    <i className="fas fa-utensils"></i>
-                    <span>Cardápio</span>
-                </a>
-                <a href="/carrinho" className="nav-item">
-                    <i className="fas fa-shopping-cart"></i>
-                    <span>Carrinho</span>
-                </a>
-                <a href="/orders" className="nav-item active">
-                    <i className="fas fa-clipboard-list"></i>
-                    <span>Pedidos</span>
-                </a>
-                <a href="/fatura" className="nav-item">
-                    <i className="fas fa-file-invoice-dollar"></i>
-                    <span>Fatura</span>
-                </a>
-            </BottomNav>
         </App>
     );
 }

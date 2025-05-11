@@ -14,6 +14,7 @@ import {
     BottomNav,
 } from "./styled";
 import { showToast, formatCurrency, formatDateTime } from "../../utils";
+import { FaArrowLeft, FaHeadset, FaRedo } from "react-icons/fa";
 
 export default function OrderDetails() {
     const history = useHistory();
@@ -86,7 +87,7 @@ export default function OrderDetails() {
                 <OrderHeader>
                     <div className="header-left">
                         <button onClick={() => history.push("/orders")} className="back-button">
-                            <i className="fas fa-arrow-left"></i>
+                            <FaArrowLeft/>
                         </button>
                         <h2>Detalhes do Pedido</h2>
                     </div>
@@ -129,10 +130,10 @@ export default function OrderDetails() {
                     </OrderTotalSection>
                     <ActionButtons>
                         <SecondaryButton onClick={handleContactSupport}>
-                            <i className="fas fa-headset"></i> Suporte
+                            <FaHeadset/> Suporte
                         </SecondaryButton>
                         <PrimaryButton onClick={handleReorder}>
-                            <i className="fas fa-redo"></i> Repetir Pedido
+                            <FaRedo/>Repetir Pedido
                         </PrimaryButton>
                     </ActionButtons>
                 </div>

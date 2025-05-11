@@ -1,16 +1,17 @@
 import styled from 'styled-components';
 import { spacing } from '../../config/spacing';
-import { borderColor, primaryBlue, secondaryBlue } from '../../config/colors';
+import { borderColor, errorColor, primaryBlue, secondaryBlue, textDisabledColor } from '../../config/colors';
 import { borderRadius } from '../../config/border';
+import { fontSize } from '../../config/font';
 
 export const ProfileHeader = styled.header`
     display: flex;
     flex-direction: row;
     align-items: center;
-    padding: ${spacing.lg};
+    padding: ${spacing.md};
     background-color: white;
     border-bottom: 1px solid ${borderColor};
-    margin-bottom: ${spacing.md};
+    margin-bottom: ${spacing.xxs};
     position: relative;
 
     a{  
@@ -26,6 +27,15 @@ export const ProfileHeader = styled.header`
         flex: 1;
         text-align: center;
         font-weight: 700;
+    }
+
+    .back-button {
+        background: none;
+        border: none;
+        font-size: 20px;
+        cursor: pointer;
+    }
+`;
 
 export const ProfileContainer = styled.div`
     display: flex;
@@ -34,27 +44,9 @@ export const ProfileContainer = styled.div`
     padding: 20px;
 `;
 
-export const ProfileHeader = styled.header`
-    display: flex;
-    align-items: center;
-    width: 100%;
-    margin-bottom: 20px;
-
-    .back-button {
-        background: none;
-        border: none;
-        font-size: 20px;
-        cursor: pointer;
-    }
-
-    h2 {
-        margin-left: 10px;
-    }
-`;
-
 export const ProfilePicture = styled.div`
-    width: 100px;
-    height: 100px;
+    width: 120px;
+    height: 120px;
     border-radius: 50%;
     background-color: ${primaryBlue};
     display: flex;
@@ -62,15 +54,10 @@ export const ProfilePicture = styled.div`
     justify-content: center;
     color: white;
     font-size: 40px;
-    margin-bottom: ${spacing.md};
+    margin-bottom: 20px;
     overflow: hidden; 
     position: relative;
-    position: relative;
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    overflow: hidden;
-    margin-bottom: 20px;
+    border: 2px solid ${textDisabledColor};
 
     img {
         width: 100%;
@@ -80,7 +67,7 @@ export const ProfilePicture = styled.div`
     
 
     .edit-icon {
-         position: absolute;
+        position: absolute;
         bottom: 0;
         right: 0;
         background-color: ${secondaryBlue};
@@ -100,10 +87,10 @@ export const ProfilePicture = styled.div`
         justify-content: center;
         width: 100%;
         height: 100%;
-        background-color: #ccc;
+        background-color: ${primaryBlue};
         font-size: 40px;
         font-weight: bold;
-        color: #fff;
+        color: white;
     }
 `;
 
@@ -115,16 +102,8 @@ export const ProfileInfo = styled.div`
     flex-direction: column;
 
     h3 {
-        font-size: var(--font-h2);
+        font-size:${fontSize.h2};
         font-weight: 700;
-        margin-bottom: var(--spacing-xs);
-
-    h3 {
-        margin-bottom: 5px;
-    }
-
-    p {
-        color: #666;
     }
 `;
 
@@ -142,7 +121,6 @@ export const InfoRow = styled.div`
     justify-content: space-between;
     margin-bottom: 10px;
     width: 100%;
-
 
     label {
         font-weight: bold;

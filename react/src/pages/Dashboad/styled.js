@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import { fontSize } from "../../config/font";
 import { primaryBlue, secondaryBlue, textPrimaryColor, textSecondaryColor, warningColor } from "../../config/colors";
-import { primaryBlue, textPrimaryColor, textSecondaryColor } from "../../config/colors";
 import { spacing } from "../../config/spacing";
 import { borderRadius } from "../../config/border";
 import { Link } from "react-router-dom";
@@ -70,14 +69,12 @@ export const CustomLink = styled(Link)`
     font-size: ${fontSize.caption};
     color: ${props => props.color || secondaryBlue};
     text-decoration: none;
+    
     ${({ variant }) => variant === "verDetalhes" && `
         font-size: ${fontSize.caption};
         color: ${secondaryBlue};
-        `
-    }
-    font-size: var(--font-caption);
-    color: var(--secondary-blue);
-    text-decoration: none;
+        font-weight: 500;
+    `}
 `;
 
 export const TotalAmount = styled.div`

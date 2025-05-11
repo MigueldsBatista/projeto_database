@@ -13,6 +13,7 @@ import {
     CartNotes,
 } from "./styled";
 import { showToast, formatCurrency } from "../../utils/index";
+import { FaArrowLeft, FaMinus, FaPlus, FaShoppingCart, FaTrash } from "react-icons/fa";
 
 export default function Cart() {
     const history = useHistory();
@@ -51,10 +52,8 @@ export default function Cart() {
         try {
             showToast("Processando pedido...", "info");
 
-            // Obter o ID do paciente do localStorage
             const pacienteId = localStorage.getItem("pacienteId") || 1;
 
-            // Obter estadia ativa do paciente
             const estadiaResponse = await axios.get(`/api/pacientes/estadia-ativa/${pacienteId}`);
             const estadia = estadiaResponse.data;
 
@@ -63,7 +62,6 @@ export default function Cart() {
                 return;
             }
 
-            // Criar o pedido
             const orderResponse = await axios.post("/api/pedidos/create", {
                 dataEntradaEstadia: estadia.id,
                 status: "PENDENTE",
@@ -71,7 +69,6 @@ export default function Cart() {
             });
             const order = orderResponse.data;
 
-            // Adicionar itens ao pedido
             await Promise.all(
                 cart.map((item) =>
                     axios.post("/api/produto-pedidos/create", {
@@ -82,11 +79,9 @@ export default function Cart() {
                 )
             );
 
-            // Limpar o carrinho após o pedido ser concluído
             setCart([]);
             localStorage.setItem("cart", JSON.stringify([]));
 
-            // Salvar informações do pedido para a página de confirmação
             localStorage.setItem(
                 "lastOrder",
                 JSON.stringify({
@@ -134,12 +129,12 @@ export default function Cart() {
                 <CartContainer>
                     <CartHeader>
                         <button onClick={() => history.push("/dashboard")} className="back-button">
-                            <i className="fas fa-arrow-left"></i>
+                            <FaArrowLeft />
                         </button>
                         <h2>Carrinho</h2>
                     </CartHeader>
                     <EmptyCartMessage>
-                        <i className="fas fa-shopping-cart"></i>
+                        <FaShoppingCart/>
                         <h3>Seu carrinho está vazio</h3>
                         <p>Adicione itens do cardápio para fazer um pedido</p>
                         <PrimaryButton onClick={() => history.push("/menu")}>Ver Cardápio</PrimaryButton>
@@ -154,11 +149,11 @@ export default function Cart() {
             <CartContainer>
                 <CartHeader>
                     <button onClick={() => history.push("/dashboard")} className="back-button">
-                        <i className="fas fa-arrow-left"></i>
+                        <FaArrowLeft />
                     </button>
                     <h2>Carrinho</h2>
                     <button onClick={handleClearCart} className="icon-button">
-                        <i className="fas fa-trash"></i>
+                        <FaTrash />
                     </button>
                 </CartHeader>
                 <CartItemsContainer>
@@ -172,14 +167,14 @@ export default function Cart() {
                                 <p className="cart-item-price">R$ {formatCurrency(item.price)}</p>
                                 <div className="cart-quantity-control">
                                     <button onClick={() => handleQuantityChange(item.id, -1)} className="quantity-button decrease">
-                                        <i className="fas fa-minus"></i>
+                                       <FaMinus/>
                                     </button>
                                     <span className="quantity-value">{item.quantity}</span>
                                     <button onClick={() => handleQuantityChange(item.id, 1)} className="quantity-button increase">
-                                        <i className="fas fa-plus"></i>
+                                        <FaPlus/>
                                     </button>
                                     <button onClick={() => handleRemoveItem(item.id)} className="icon-button remove">
-                                        <i className="fas fa-trash"></i>
+                                        <FaTrash />
                                     </button>
                                 </div>
                             </div>
@@ -188,7 +183,6 @@ export default function Cart() {
                 </CartItemsContainer>
                 <CartSummary>
                     <CartTotalRow>
-                    import Dashboard from "../pages/Dashboad";
                         <span>Total</span>
                         <span>R$ {formatCurrency(total)}</span>
                     </CartTotalRow>

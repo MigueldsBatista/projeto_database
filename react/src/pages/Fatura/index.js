@@ -16,6 +16,7 @@ import {
     ActionButtons,
 } from "./styled";
 import { showToast, formatCurrency, formatDate } from "../../utils";
+import { FaArrowLeft, FaFilePdf } from "react-icons/fa";
 
 export default function Invoice() {
     const history = useHistory();
@@ -30,23 +31,18 @@ export default function Invoice() {
             try {
                 const pacienteId = localStorage.getItem("pacienteId") || 1;
 
-                // Fetch patient details
                 const patientResponse = await axios.get(`/api/pacientes/${pacienteId}`);
                 setPatient(patientResponse.data);
 
-                // Fetch active stay
                 const stayResponse = await axios.get(`/api/pacientes/estadia-ativa/${pacienteId}`);
                 setStay(stayResponse.data);
 
-                // Fetch invoice
                 const invoiceResponse = await axios.get(`/api/pacientes/fatura-recente/${pacienteId}`);
                 setInvoice(invoiceResponse.data);
 
-                // Fetch room details
                 const roomResponse = await axios.get(`/api/quartos/${stayResponse.data.quartoId}`);
                 setRoom(roomResponse.data);
 
-                // Fetch orders and group by date
                 const ordersResponse = await axios.get(`/api/estadias/${stayResponse.data.id}/pedidos`);
                 const orders = ordersResponse.data;
 
@@ -66,7 +62,6 @@ export default function Invoice() {
                     })
                 );
 
-                // Group orders by date
                 const groupedOrders = ordersWithItems.reduce((groups, order) => {
                     const dateStr = formatDate(order.date);
                     if (!groups[dateStr]) {
@@ -122,7 +117,7 @@ export default function Invoice() {
                 <InvoiceHeader>
                     <div className="header-left">
                         <button onClick={() => history.push("/dashboard")} className="back-button">
-                            <i className="fas fa-arrow-left"></i>
+                            <FaArrowLeft/>
                         </button>
                         <h2>Minha Fatura</h2>
                     </div>
@@ -201,7 +196,7 @@ export default function Invoice() {
                     </PaymentInfo>
                     <ActionButtons>
                         <SecondaryButton onClick={handleDownloadPDF}>
-                            <i className="fas fa-file-pdf"></i> Baixar PDF
+                            <FaFilePdf/>Baixar PDF
                         </SecondaryButton>
                         <PrimaryButton onClick={handleHelp}>Pagamento</PrimaryButton>
                     </ActionButtons>

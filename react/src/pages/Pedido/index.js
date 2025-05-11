@@ -12,6 +12,7 @@ import {
     BottomNav,
 } from "./styled";
 import { showToast, formatCurrency, formatRelativeDate } from "../../utils";
+import { FaArrowLeft, FaClipboardList } from "react-icons/fa";
 
 export default function Orders() {
     const history = useHistory();
@@ -63,7 +64,7 @@ export default function Orders() {
             <App>
                 <OrdersContainer>
                     <EmptyOrdersMessage>
-                        <i className="fas fa-clipboard-list"></i>
+                        <FaClipboardList/>
                         <h3>Nenhum pedido encontrado</h3>
                         <p>Você ainda não possui pedidos nesta categoria</p>
                         <PrimaryButton onClick={() => history.push("/menu")}>
@@ -81,7 +82,7 @@ export default function Orders() {
                 <header className="app-header">
                     <div className="header-left">
                         <button onClick={() => history.push("/dashboard")} className="back-button">
-                            <i className="fas fa-arrow-left"></i>
+                            <FaArrowLeft/>
                         </button>
                         <h2>Meus Pedidos</h2>
                     </div>
@@ -135,28 +136,6 @@ export default function Orders() {
                     ))}
                 </OrderList>
             </OrdersContainer>
-            <BottomNav>
-                <a href="/dashboard" className="nav-item">
-                    <i className="fas fa-home"></i>
-                    <span>Início</span>
-                </a>
-                <a href="/menu" className="nav-item">
-                    <i className="fas fa-utensils"></i>
-                    <span>Cardápio</span>
-                </a>
-                <a href="/carrinho" className="nav-item">
-                    <i className="fas fa-shopping-cart"></i>
-                    <span>Carrinho</span>
-                </a>
-                <a href="/orders" className="nav-item active">
-                    <i className="fas fa-clipboard-list"></i>
-                    <span>Pedidos</span>
-                </a>
-                <a href="/fatura" className="nav-item">
-                    <i className="fas fa-file-invoice-dollar"></i>
-                    <span>Fatura</span>
-                </a>
-            </BottomNav>
         </App>
     );
 }

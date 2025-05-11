@@ -2,8 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import axios from "../../services/axios";
 import logo from "../../static/img/hsj_logo.png";
-import { App } from "../../styles/GlobalStyles";
-import {
 import { App, PrimaryButton, SecondaryButton } from "../../styles/GlobalStyles";
 import {
     ProfileContainer,
@@ -23,8 +21,6 @@ import {
 } from "./styled";
 import { showToast } from "../../utils";
 import { FaArrowLeft, FaEdit, FaSave, FaSignOutAlt, FaTimes, FaTrash } from "react-icons/fa";
-} from "./styled";
-import { showToast } from "../../utils";
 
 
 const formatPhoneNumber = (phone) => {
@@ -112,7 +108,6 @@ export default function Profile() {
     };
   
     useEffect(() => {
-
         const storedUser = JSON.parse(localStorage.getItem("user"));
         if (!storedUser) {
             history.push("/");
@@ -144,17 +139,6 @@ export default function Profile() {
                 setName(userData.name);
                 setEmail(userData.email);
                 setCpf(formatCpf(userData.cpf));
-                setPhone(formatPhoneNumber(userData.telefone));
-                setAddress(userData.endereco);
-
-        setPhone(formatPhoneNumber(storedUser.telefone));
-        setAddress(storedUser.endereco);
-        
-        const fetchUserData = async () => {
-            try {
-                const response = await axios.get(`/api/pacientes/${storedUser.id}`);
-                const userData = response.data;
-                setUser(userData);
                 setPhone(formatPhoneNumber(userData.telefone));
                 setAddress(userData.endereco);
 
@@ -198,22 +182,13 @@ export default function Profile() {
             const updatedUser = response.data;
             
             updatedUser.telefone = phoneNumeric;
-            
             updatedUser.name = name;
             updatedUser.email = email;
             
             setUser(updatedUser);
-            
-            localStorage.setItem("user", JSON.stringify(updatedUser));
-            
-            showToast("Informações atualizadas com sucesso!", "success");
-
-            updatedUser.telefone = phoneNumeric;
-            
-            setUser(updatedUser);
             localStorage.setItem("user", JSON.stringify(updatedUser));
             showToast("Informações atualizadas com sucesso!", "success");
- 
+            
             setPhone(formatPhoneNumber(phoneNumeric));
             setEditMode(false);
         } catch (error) {
@@ -284,14 +259,19 @@ export default function Profile() {
                             <input type="text" value={address} onChange={(e) => setAddress(e.target.value)} />
                         </FormGroup>
                         <ProfileMenu>
-                            <PersonalizedButton type="button" onClick={handleEditToggle} title="Cancelar edição">
-                                <FaTimes/>
-                                <span className="button-tooltip">Cancelar</span>
-                            </PersonalizedButton>
-                            <PersonalizedButton type="submit" title="Salvar alterações">
-                                <FaSave/>
-                                <span className="button-tooltip">Salvar</span>
-                            </PersonalizedButton>
+                            <AccountForm>
+                                <p>Dados Pessoais</p>
+                                <AccountForm2>
+                                    <PersonalizedButton type="button" onClick={handleEditToggle} title="Cancelar edição">
+                                        <FaTimes/>
+                                        <span className="button-tooltip">Cancelar</span>
+                                    </PersonalizedButton>
+                                    <PersonalizedButton type="submit" title="Salvar alterações">
+                                        <FaSave/>
+                                        <span className="button-tooltip">Salvar</span>
+                                    </PersonalizedButton>
+                                </AccountForm2>
+                            </AccountForm>
                             <AccountForm>
                                 <p>Conta</p>
                                 <AccountForm2>
@@ -350,64 +330,6 @@ export default function Profile() {
                     </InfoDiv>
                 )}
             </ProfileSection>
-
-            <ProfileContainer>
-                <ProfileHeader>
-                    <button onClick={() => history.push("/dashboard")} className="back-button">
-                        <i className="fas fa-arrow-left"></i>
-                    </button>
-                    <h2>Meu Perfil</h2>
-                </ProfileHeader>
-                <ProfilePicture>
-                    <span>{name?.split(" ").map((n) => n[0]).join("")}</span>
-                    <img src={user.profilePicture || localStorage.getItem("profileImage") || logo} alt="Foto de Perfil" />
-                </ProfilePicture>
-                <ProfileInfo>
-                    <h3>{name || "Nome Indisponível"}</h3>
-                    <p>{email || "Email Indisponível"}</p>
-                </ProfileInfo>
-                <ProfileSection>
-                    <h3>Informações Pessoais</h3>
-                    {editMode ? (
-                        <EditForm onSubmit={handleSave}>
-                            <FormGroup>
-                                <label>Telefone:</label>
-                                <input type="tel" value={phone} onChange={handlePhoneChange} />
-                            </FormGroup>
-                            <FormGroup>
-                                <label>Endereço:</label>
-                                <input type="text" value={address} onChange={(e) => setAddress(e.target.value)} />
-                            </FormGroup>
-                            <div className="form-actions">
-                                <SecondaryButton type="button" onClick={handleEditToggle}>
-                                    Cancelar
-                                </SecondaryButton>
-                                <PrimaryButton type="submit">Salvar</PrimaryButton>
-                            </div>
-                        </EditForm>
-                    ) : (
-                        <>
-                            <InfoRow>
-                                <label>Telefone:</label>
-                                <span>{phone || "Não disponível"}</span>
-                            </InfoRow>
-                            <InfoRow>
-                                <label>Endereço:</label>
-                                <span>{address || "Não disponível"}</span>
-                            </InfoRow>
-                            <PrimaryButton onClick={handleEditToggle}>Editar</PrimaryButton>
-                        </>
-                    )}
-                </ProfileSection>
-                <ProfileMenu>
-                    <button onClick={handleLogout} className="logout">
-                        Sair
-                    </button>
-                    <button onClick={handleDeleteAccount} className="delete-account">
-                        Excluir Conta
-                    </button>
-                </ProfileMenu>
-            </ProfileContainer>
         </App>
     );
 }
