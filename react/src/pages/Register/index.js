@@ -6,7 +6,7 @@ import { isEmail } from "validator";
 import { useHistory } from "react-router-dom";
 import { App, PrimaryButton } from "../../styles/GlobalStyles";
 import { BotarDoLado, HeaderBotarDoLado, InputGroup, LoginContainer, LoginLink, RegisterForm, TextContainer } from "./styled";
-import { showToast } from "../../utils";
+import { toast } from "react-toastify";
 import { CustomLink } from "../../styles/GlobalStyles";
 
 export default function Register() {
@@ -51,17 +51,17 @@ export default function Register() {
         e.preventDefault();
 
         if (!name || !cpf || !email || !password || !confirmPassword || !birthDate) {
-            showToast("Por favor, preencha todos os campos obrigatórios", "error");
+            toast.error("Por favor, preencha todos os campos obrigatórios");
             return;
         }
 
         if (!isEmail(email)) {
-            showToast("E-mail inválido", "error");
+            toast.error("E-mail inválido");
             return;
         }
 
         if (password !== confirmPassword) {
-            showToast("As senhas não coincidem", "error");
+            toast.error("As senhas não coincidem");
             return;
         }
 
@@ -77,19 +77,19 @@ export default function Register() {
         console.log("Dados do usuário:", userData);
         try {
             console.log(userData);
-            showToast("Criando sua conta...", "info");
+            toast.info("Criando sua conta...");
             const response = await axios.post('/api/pacientes/create', userData);
             history.push("/");
             const result = response.data;
 
             if (!response.ok || response.status !== 201) {
                 const errorMessage = result.message || "Erro ao criar conta. Por favor, tente novamente.";
-                showToast(errorMessage, "error");
+                toast.error(errorMessage);
                 return;
             }
         } catch (error) {
             console.error("Erro ao criar conta:", error);
-            showToast("Erro inesperado. Tente novamente mais tarde.", "error");
+            toast.error("Erro inesperado. Tente novamente mais tarde.");
         }
     };
 

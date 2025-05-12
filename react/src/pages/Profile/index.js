@@ -2,9 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import axios from "../../services/axios";
 import logo from "../../static/img/hsj_logo.png";
-import { App, PrimaryButton, SecondaryButton } from "../../styles/GlobalStyles";
+import { App, } from "../../styles/GlobalStyles";
 import {
-    ProfileContainer,
     ProfileHeader,
     ProfilePicture,
     ProfileInfo,
@@ -19,7 +18,7 @@ import {
     AccountForm,
     AccountForm2,
 } from "./styled";
-import { showToast } from "../../utils";
+import { toast } from "react-toastify";
 import { FaArrowLeft, FaEdit, FaSave, FaSignOutAlt, FaTimes, FaTrash } from "react-icons/fa";
 
 
@@ -72,7 +71,7 @@ export default function Profile() {
             return response.data;
         } catch (error) {
             console.error('Error fetching estadia data:', error);
-            showToast('Não foi possível carregar os dados da estadia', 'error');
+            toast.error('Não foi possível carregar os dados da estadia');
             return {};
         }
     };
@@ -84,7 +83,7 @@ export default function Profile() {
             return response.data;
         } catch (error) {
             console.error('Error fetching quarto data:', error);
-            showToast('Não foi possível carregar os dados do quarto', 'error');
+            toast.error('Não foi possível carregar os dados do quarto');
             return {};
         }
     };
@@ -103,7 +102,7 @@ export default function Profile() {
             }
         } catch (error) {
             console.error('Error loading user data:', error);
-            showToast('Erro ao carregar informações do Perfil', 'error');
+            toast.error('Erro ao carregar informações do Perfil');
         }
     };
   
@@ -171,7 +170,7 @@ export default function Profile() {
     const handleSave = async (e) => {
         e.preventDefault();
         try {
-            showToast("Atualizando informações...", "info");
+            toast.info("Atualizando informações...");
 
             const phoneNumeric = phone.replace(/\D/g, "");
             const response = await axios.put(`/api/pacientes/update`, {
@@ -187,13 +186,13 @@ export default function Profile() {
             
             setUser(updatedUser);
             localStorage.setItem("user", JSON.stringify(updatedUser));
-            showToast("Informações atualizadas com sucesso!", "success");
+            toast.success("Informações atualizadas com sucesso!");
             
             setPhone(formatPhoneNumber(phoneNumeric));
             setEditMode(false);
         } catch (error) {
             console.error("Erro ao atualizar informações:", error);
-            showToast("Erro ao atualizar informações. Tente novamente mais tarde.", "error");
+            toast.error("Erro ao atualizar informações. Tente novamente mais tarde.");
         }
     };
 
@@ -210,14 +209,14 @@ export default function Profile() {
             return;
         }
         try {
-            showToast("Excluindo conta...", "info");
+            toast.info("Excluindo conta...");
             await axios.delete(`/api/pacientes/delete/${user.id}`);
             localStorage.clear();
-            showToast("Conta excluída com sucesso!", "success");
+            toast.success("Conta excluída com sucesso!");
             history.push("/");
         } catch (error) {
             console.error("Erro ao excluir conta:", error);
-            showToast("Erro ao excluir conta. Tente novamente mais tarde.", "error");
+            toast.error("Erro ao excluir conta. Tente novamente mais tarde.");
         }
     };
 

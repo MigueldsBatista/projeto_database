@@ -11,7 +11,8 @@ import {
     EmptyOrdersMessage,
     BottomNav,
 } from "./styled";
-import { showToast, formatCurrency, formatRelativeDate } from "../../utils";
+import { toast } from "react-toastify";
+import { formatCurrency, formatRelativeDate } from "../../utils";
 import { FaArrowLeft, FaClipboardList } from "react-icons/fa";
 
 export default function Orders() {
@@ -25,7 +26,7 @@ export default function Orders() {
             try {
                 const user = JSON.parse(localStorage.getItem("user"));
                 if (!user) {
-                    showToast("Você precisa estar logado para acessar seus pedidos", "error");
+                    toast.error("Você precisa estar logado para acessar seus pedidos");
                     history.push("/login");
                     return;
                 }
@@ -38,7 +39,7 @@ export default function Orders() {
                 setFilteredOrders(pedidos);
             } catch (error) {
                 console.error("Erro ao carregar pedidos:", error);
-                showToast("Erro ao carregar pedidos. Tente novamente mais tarde.", "error");
+                toast.error("Erro ao carregar pedidos. Tente novamente mais tarde.");
             }
         };
 

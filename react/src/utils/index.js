@@ -1,31 +1,3 @@
-export function showToast(message, type = 'default', duration = 3000) {
-    // Remove any existing toasts
-    const existingToast = document.querySelector('.toast');
-    if (existingToast) {
-        existingToast.remove();
-    }
-    
-    // Create new toast
-    const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    toast.textContent = message;
-    
-    document.body.appendChild(toast);
-    
-    // Show the toast
-    setTimeout(() => {
-        toast.classList.add('show');
-    }, 10);
-    
-    // Hide and remove the toast after duration
-    setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => {
-            toast.remove();
-        }, 300);
-    }, duration);
-}
-
 export function updateCartBadge(count) {
     const badges = document.querySelectorAll('.cart-badge');
     

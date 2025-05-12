@@ -13,7 +13,8 @@ import {
     ActionButtons,
     BottomNav,
 } from "./styled";
-import { showToast, formatCurrency, formatDateTime } from "../../utils";
+import { toast } from "react-toastify";
+import { formatCurrency, formatDateTime } from "../../utils";
 import { FaArrowLeft, FaHeadset, FaRedo } from "react-icons/fa";
 
 export default function OrderDetails() {
@@ -26,7 +27,7 @@ export default function OrderDetails() {
         const orderId = urlParams.get("id");
 
         if (!orderId) {
-            showToast("ID do pedido não encontrado", "error");
+            toast.error("ID do pedido não encontrado");
             setTimeout(() => {
                 history.push("/orders");
             }, 3000);
@@ -48,7 +49,7 @@ export default function OrderDetails() {
                 });
             } catch (error) {
                 console.error("Erro ao carregar detalhes do pedido:", error);
-                showToast("Erro ao carregar detalhes do pedido", "error");
+                toast.error("Erro ao carregar detalhes do pedido");
                 setTimeout(() => {
                     history.push("/orders");
                 }, 3000);
@@ -70,12 +71,12 @@ export default function OrderDetails() {
             quantity: item.quantidade,
         }));
         localStorage.setItem("cart", JSON.stringify(cart));
-        showToast("Itens adicionados ao carrinho", "success");
+        toast.success("Itens adicionados ao carrinho");
         history.push("/carrinho");
     };
 
     const handleContactSupport = () => {
-        showToast("Conectando ao suporte...", "info");
+        toast.info("Conectando ao suporte...");
         setTimeout(() => {
             alert("Entre em contato com o suporte pelo telefone (81) 3216-5555.");
         }, 1000);

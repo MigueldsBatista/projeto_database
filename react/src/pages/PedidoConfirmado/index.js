@@ -9,7 +9,8 @@ import {
     ActionButtons,
     BottomNav,
 } from "./styled";
-import { showToast, formatCurrency, formatDateTime } from "../../utils";
+import { toast } from "react-toastify";
+import { formatCurrency, formatDateTime } from "../../utils";
 import { FaCheck, FaClock } from "react-icons/fa";
 
 export default function OrderConfirmation() {
@@ -22,7 +23,7 @@ export default function OrderConfirmation() {
         const orderId = urlParams.get("id");
 
         if (!orderId) {
-            showToast("ID do pedido não encontrado", "error");
+            toast.error("ID do pedido não encontrado");
             setTimeout(() => {
                 history.push("/orders");
             }, 3000);
@@ -45,7 +46,7 @@ export default function OrderConfirmation() {
                 return;
             }
 
-            showToast("Pedido não encontrado", "error");
+            toast.error("Pedido não encontrado");
             setTimeout(() => {
                 history.push("/orders");
             }, 3000);

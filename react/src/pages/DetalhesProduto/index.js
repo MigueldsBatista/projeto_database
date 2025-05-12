@@ -6,7 +6,7 @@ import {
     ProductDetailsContainer,
     ProductImage,
     ProductDetailsCard,
-    ProductName,
+    ProductName, 
     ProductPrice,
     ProductDescription,
     QuantityControl,
@@ -15,7 +15,8 @@ import {
     InfoItem,
     BottomNav,
 } from "./styled";
-import { showToast, formatCurrency } from "../../utils";
+import { toast } from "react-toastify";
+import { formatCurrency } from "../../utils";
 
 export default function ProductDetails() {
     const history = useHistory();
@@ -30,7 +31,7 @@ export default function ProductDetails() {
                 const productId = urlParams.get("id");
 
                 if (!productId) {
-                    showToast("ID do produto não encontrado", "error");
+                    toast.error("ID do produto não encontrado");
                     history.push("/menu");
                     return;
                 }
@@ -39,7 +40,7 @@ export default function ProductDetails() {
                 setProduct(response.data);
             } catch (error) {
                 console.error("Erro ao carregar detalhes do produto:", error);
-                showToast("Erro ao carregar detalhes do produto", "error");
+                toast.error("Erro ao carregar detalhes do produto");
                 history.push("/menu");
             }
         };
@@ -64,7 +65,7 @@ export default function ProductDetails() {
         }
 
         localStorage.setItem("cart", JSON.stringify(cart));
-        showToast(`${quantity}x ${product.nome} adicionado ao carrinho`, "success");
+        toast.success(`${quantity}x ${product.nome} adicionado ao carrinho`);
     };
 
     if (!product) {

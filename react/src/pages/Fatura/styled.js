@@ -4,6 +4,8 @@ export const InvoiceContainer = styled.div`
     display: flex;
     flex-direction: column;
     padding: 20px;
+    margin-bottom: 20px;
+    min-height: 100%;
 `;
 
 export const InvoiceHeader = styled.header`
@@ -193,4 +195,10 @@ export const ActionButtons = styled.div`
     button {
         flex: 1;
     }
+`;
+
+export const InvoiceContent = styled.div`
+    overflow-y: auto;
+    flex-grow: 1;
+    padding-bottom: 20px;
 `;

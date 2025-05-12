@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { FaBell, FaCoffee, FaDrumstickBite, FaIceCream, FaUtensils } from "react-icons/fa";
 import { useHistory } from "react-router-dom";
 import axios from "../../services/axios";
-import { showToast, formatCurrency, formatDate } from "../../utils";
+import { toast } from "react-toastify";
+import { formatCurrency, formatDate } from "../../utils";
 import { App, Badge, ContentArea, Header, HeaderActions, IconButton } from "../../styles/GlobalStyles";
 import { PatientInfo, UserAvatar, WelcomeCard, CustomLink, InvoiceSumary, SummaryHeader, TotalAmount, Status, CategoryMenu, Categories, CategoriesItem, CategoryIcon, SectionHeader, OrdersSection, OrderList } from "./styled";
 
@@ -58,7 +59,7 @@ export default function Dashboard() {
 
         } catch (error) {
             console.error('Error loading user data:', error);
-            showToast('Erro ao carregar informações do dashboard', 'error');
+            toast.error('Erro ao carregar informações do dashboard');
         }
     };
 
@@ -68,7 +69,7 @@ export default function Dashboard() {
             return response.data;
         } catch (error) {
             console.error('Error fetching estadia data:', error);
-            showToast('Não foi possível carregar os dados da estadia', 'error');
+            toast.error('Não foi possível carregar os dados da estadia');
             return {};
         }
     };
@@ -80,7 +81,7 @@ export default function Dashboard() {
             return response.data;
         } catch (error) {
             console.error('Error fetching quarto data:', error);
-            showToast('Não foi possível carregar os dados do quarto', 'error');
+            toast.error('Não foi possível carregar os dados do quarto');
             return {};
         }
     };
@@ -91,7 +92,7 @@ export default function Dashboard() {
             return response.data;
         } catch (error) {
             console.error('Error fetching fatura data:', error);
-            showToast('Não foi possível carregar os dados da fatura', 'error');
+            toast.error('Não foi possível carregar os dados da fatura');
             return {};
         }
     };
@@ -139,7 +140,7 @@ export default function Dashboard() {
             return detailedPedidos;
         } catch (error) {
             console.error('Error fetching pedidos data:', error);
-            showToast('Não foi possível carregar os dados dos pedidos', 'error');
+            toast.error('Não foi possível carregar os dados dos pedidos');
             return [];
         }
     };

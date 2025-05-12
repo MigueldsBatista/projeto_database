@@ -4,7 +4,7 @@ import axios from "../../services/axios";
 import logo from "../../static/img/hsj_logo.png";
 import { App, BiometricButton, PrimaryButton } from "../../styles/GlobalStyles";
 import { InputGroup, LoginBiometa, LoginContainer, LoginForm, RegisterLink } from "./styled";
-import { showToast } from "../../utils";
+import { toast } from "react-toastify";
 import { CustomLink } from "../../styles/GlobalStyles";
 import { FaFingerprint } from "react-icons/fa";
 import { primaryBlue } from "../../config/colors";
@@ -19,12 +19,12 @@ export default function Login() {
         e.preventDefault();
 
         if (!email || !password) {
-            showToast("Por favor, preencha todos os campos", "error");
+            toast.error("Por favor, preencha todos os campos");
             return;
         }
 
         try {
-            showToast("Autenticando...", "info");
+            toast.info("Autenticando...");
             const patientResponse = await axios.post("/api/auth/pacientes/login", {
                 email,
                 senha: password,
@@ -43,10 +43,10 @@ export default function Login() {
                 handleSuccessfulLogin(staffResponse.data);
                 return;
             }
-            showToast("Email ou senha incorretos", "error");
+            toast.error("Email ou senha incorretos");
         } catch (error) {
             console.error("Erro ao fazer login:", error);
-            showToast("Erro ao conectar com o servidor. Tente novamente mais tarde.", "error");
+            toast.error("Erro ao conectar com o servidor. Tente novamente mais tarde.");
         }
     };
 
@@ -57,7 +57,7 @@ export default function Login() {
             localStorage.setItem("profileImage", userData.profilePicture);
         }
 
-        showToast("Login realizado com sucesso!", "success");
+        toast.success("Login realizado com sucesso!");
       
         const redirectUrl = userData.role === "camareira" ? "/staff-dashboard" : "/dashboard";
         history.push(redirectUrl);

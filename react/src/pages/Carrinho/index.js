@@ -12,7 +12,8 @@ import {
     CartTotalRow,
     CartNotes,
 } from "./styled";
-import { showToast, formatCurrency } from "../../utils/index";
+import { toast } from "react-toastify";
+import { formatCurrency } from "../../utils/index";
 import { FaArrowLeft, FaMinus, FaPlus, FaShoppingCart, FaTrash } from "react-icons/fa";
 
 export default function Cart() {
@@ -37,20 +38,20 @@ export default function Cart() {
         if (cart.length > 0 && window.confirm("Tem certeza que deseja esvaziar o carrinho?")) {
             setCart([]);
             localStorage.setItem("cart", JSON.stringify([]));
-            showToast("Carrinho esvaziado com sucesso", "success");
+            toast.success("Carrinho esvaziado com sucesso");
         } else {
-            showToast("Seu carrinho já está vazio", "info");
+            toast.info("Seu carrinho já está vazio");
         }
     };
 
     const handleCheckout = async () => {
         if (cart.length === 0) {
-            showToast("Seu carrinho está vazio", "error");
+            toast.error("Seu carrinho está vazio");
             return;
         }
 
         try {
-            showToast("Processando pedido...", "info");
+            toast.info("Processando pedido...");
 
             const pacienteId = localStorage.getItem("pacienteId") || 1;
 
@@ -58,7 +59,7 @@ export default function Cart() {
             const estadia = estadiaResponse.data;
 
             if (!estadia) {
-                showToast("Não foi possível encontrar uma estadia ativa", "error");
+                toast.error("Não foi possível encontrar uma estadia ativa");
                 return;
             }
 
@@ -93,11 +94,11 @@ export default function Cart() {
                 })
             );
 
-            showToast("Pedido realizado com sucesso!", "success");
+            toast.success("Pedido realizado com sucesso!");
             history.push(`/order-confirmation?id=${encodeURIComponent(order.dataPedido)}`);
         } catch (error) {
             console.error("Erro ao enviar pedido:", error);
-            showToast("Erro ao enviar pedido. Por favor, tente novamente.", "error");
+            toast.error("Erro ao enviar pedido. Por favor, tente novamente.");
         }
     };
 
@@ -120,7 +121,7 @@ export default function Cart() {
         setCart(updatedCart);
         localStorage.setItem("cart", JSON.stringify(updatedCart));
         calculateTotal(updatedCart);
-        showToast("Item removido do carrinho", "success");
+        toast.success("Item removido do carrinho");
     };
 
     if (cart.length === 0) {

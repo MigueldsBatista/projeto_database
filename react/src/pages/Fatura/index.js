@@ -14,8 +14,10 @@ import {
     InvoiceDayTotal,
     PaymentInfo,
     ActionButtons,
+    InvoiceContent,
 } from "./styled";
-import { showToast, formatCurrency, formatDate } from "../../utils";
+import { toast } from "react-toastify";
+import { formatCurrency, formatDate } from "../../utils";
 import { FaArrowLeft, FaFilePdf } from "react-icons/fa";
 
 export default function Invoice() {
@@ -77,7 +79,7 @@ export default function Invoice() {
                 setInvoiceItems(Object.values(groupedOrders));
             } catch (error) {
                 console.error("Erro ao carregar dados da fatura:", error);
-                showToast("Erro ao carregar os dados da fatura", "error");
+                toast.error("Erro ao carregar os dados da fatura");
             }
         };
 
@@ -85,21 +87,21 @@ export default function Invoice() {
     }, []);
 
     const handleDownloadInvoice = () => {
-        showToast("Preparando download da fatura...", "info");
+        toast.info("Preparando download da fatura...");
         setTimeout(() => {
-            showToast("Fatura enviada para seu email", "success");
+            toast.success("Fatura enviada para seu email");
         }, 2000);
     };
 
     const handleDownloadPDF = () => {
-        showToast("Gerando PDF da fatura...", "info");
+        toast.info("Gerando PDF da fatura...");
         setTimeout(() => {
-            showToast("PDF enviado para seu email", "success");
+            toast.success("PDF enviado para seu email");
         }, 2000);
     };
 
     const handleHelp = () => {
-        showToast("Conectando ao suporte...", "info");
+        toast.info("Conectando ao suporte...");
         setTimeout(() => {
             alert(
                 "Para qualquer dúvida sobre sua fatura, por favor entre em contato com a equipe de atendimento ao cliente do Hospital Santa Joana pelo telefone (81) 3216-5555."
@@ -127,7 +129,7 @@ export default function Invoice() {
                         </button>
                     </div>
                 </InvoiceHeader>
-                <div className="content-area">
+                <InvoiceContent>
                     <div className="invoice-header">
                         <h3 className="invoice-title">Fatura Hospital Santa Joana</h3>
                         <p className="invoice-date">
@@ -200,7 +202,7 @@ export default function Invoice() {
                         </SecondaryButton>
                         <PrimaryButton onClick={handleHelp}>Pagamento</PrimaryButton>
                     </ActionButtons>
-                </div>
+                </InvoiceContent>
             </InvoiceContainer>
         </App>
     );

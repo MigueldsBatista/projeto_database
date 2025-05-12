@@ -9,12 +9,11 @@ import {
     ProductsGrid,
     ProductCard,
     EmptyState,
-    BottomNav,
-    MenuHeaderDiv,
     MenuHeaderDivision,
     AddToCartButton,
 } from "./styled";
-import { showToast, formatCurrency } from "../../utils";
+import { toast } from "react-toastify";
+import { formatCurrency } from "../../utils";
 import { FaArrowLeft, FaPlus } from "react-icons/fa";
 
 export default function Menu() {
@@ -37,7 +36,7 @@ export default function Menu() {
                 setFilteredProducts(productsResponse.data);
             } catch (error) {
                 console.error("Erro ao carregar dados do menu:", error);
-                showToast("Erro ao carregar os produtos. Tente novamente mais tarde.", "error");
+                toast.error("Erro ao carregar os produtos. Tente novamente mais tarde.");
             }
         };
 
@@ -109,18 +108,19 @@ export default function Menu() {
     };
 
     const handleAddToCart = (product) => {
-        const cart = JSON.parse(localStorage.getItem("carrinho")) || [];
-        const existingItem = cart.find((item) => item.id === product.id);
+    const cart = JSON.parse(localStorage.getItem("carrinho")) || []; // Aqui está buscando "carrinho"
+    const existingItem = cart.find((item) => item.id === product.id);
 
-        if (existingItem) {
-            existingItem.quantity += 1;
-        } else {
-            cart.push({ id: product.id, name: product.nome, price: product.preco, quantity: 1 });
-        }
+    if (existingItem) {
+        existingItem.quantity += 1;
+    } else {
+        cart.push({ id: product.id, name: product.nome, price: product.preco, quantity: 1 });
+    }
 
-        localStorage.setItem("cart", JSON.stringify(cart));
-        showToast(`${product.nome} adicionado ao carrinho`, "success");
-    };
+    localStorage.setItem("cart", JSON.stringify(cart)); // Aqui está salvando como "cart"
+    toast.success(`${product.nome} adicionado ao carrinho`);
+};
+
 
     return (
             <MenuContainer>

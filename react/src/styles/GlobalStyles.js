@@ -158,7 +158,8 @@ export const App = styled.div`
     margin: 0 auto;
     height: 100vh;
     position: relative;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
     background-color: ${backgroundColor};
 `;
 
