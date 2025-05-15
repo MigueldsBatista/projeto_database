@@ -1,27 +1,33 @@
 import styled from "styled-components";
-
-export const InvoiceContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
-    margin-bottom: 20px;
-    min-height: 100%;
-`;
+import { borderColor, darkBlue, primaryBlue, secondaryBlue, sucessColor, textPrimaryColor, textSecondaryColor, warningColor} from "../../config/colors";
+import { spacing } from "../../config/spacing";
 
 export const InvoiceHeader = styled.header`
     display: flex;
-    justify-content: space-between;
+    flex-direction: row;
     align-items: center;
-    margin-bottom: 20px;
+    padding: ${spacing.md};
+    background-color: white;
+    border-bottom: 1px solid ${borderColor};
+    margin-bottom: ${spacing.xxs};
+    position: relative;
 
-    .back-button {
-        background: none;
-        border: none;
-        font-size: 20px;
+    a{  
+        position: absolute;
+        left: ${spacing.md};
         cursor: pointer;
     }
+    a:hover{
+        color: ${primaryBlue};
+    }
+    
+    h2 {
+        flex: 1;
+        text-align: center;
+        font-weight: 700;
+    }
 
-    .icon-button {
+    .back-button {
         background: none;
         border: none;
         font-size: 20px;
@@ -30,47 +36,55 @@ export const InvoiceHeader = styled.header`
 `;
 
 export const InvoiceTotalCard = styled.div`
-    background-color: #f8f9fa;
-    border: 1px solid #dee2e6;
+    background: linear-gradient(to bottom, #00205B, #1E3A8A, #3B82F6);
     border-radius: 8px;
-    padding: 15px;
+    padding: 20px;
     margin-bottom: 20px;
-    text-align: center;
+    text-align: left;
 
-    .invoice-total-label {
+    
+    h5 {
+        margin: 0 0 8px 0;
+        font-weight: 600;
         font-size: 16px;
-        font-weight: bold;
-        color: #6c757d;
+        color: #FFFFFF;
+        text-align: left;
     }
-
-    .invoice-total-value {
-        font-size: 24px;
-        font-weight: bold;
-        color: #007bff;
-        margin: 10px 0;
+    
+    p {
+        margin: 0 0 5px 0;
+        color: #FFFFFF;
+        font-weight: 700;
+        font-size: 32px;
+        text-align: left;
     }
-
-    .invoice-status {
+    
+    span {
+        display: inline-block;
         font-size: 14px;
         font-weight: bold;
-        padding: 5px 10px;
-        border-radius: 5px;
-        display: inline-block;
-
+        padding: 6px 16px;
+        border-radius: 20px;
+        color: #fff;
+        
         &.pending {
-            background-color: #ffc107;
+            background-color: ${warningColor};
             color: #fff;
         }
 
         &.paid {
-            background-color: #28a745;
+            background-color: ${sucessColor};
             color: #fff;
         }
     }
 `;
 
 export const InvoiceSummary = styled.div`
+    border: 1px solid ${borderColor};
     margin-bottom: 20px;
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
 
     h3 {
         font-size: 18px;
@@ -144,49 +158,6 @@ export const InvoiceItem = styled.div`
     }
 `;
 
-export const InvoiceDayTotal = styled.div`
-    display: flex;
-    justify-content: space-between;
-    font-weight: bold;
-    margin-top: 10px;
-    border-top: 1px solid #dee2e6;
-    padding-top: 10px;
-
-    span {
-        color: #343a40;
-    }
-`;
-
-export const PaymentInfo = styled.div`
-    margin-bottom: 20px;
-
-    h3 {
-        font-size: 18px;
-        font-weight: bold;
-        margin-bottom: 10px;
-    }
-
-    .patient-info-row {
-        display: flex;
-        justify-content: space-between;
-
-        .patient-info-label {
-            font-weight: bold;
-            color: #6c757d;
-        }
-
-        .patient-info-value {
-            color: #343a40;
-        }
-    }
-
-    .invoice-payment-note {
-        margin-top: 10px;
-        font-size: 14px;
-        color: #6c757d;
-    }
-`;
-
 export const ActionButtons = styled.div`
     display: flex;
     justify-content: space-between;
@@ -200,5 +171,29 @@ export const ActionButtons = styled.div`
 export const InvoiceContent = styled.div`
     overflow-y: auto;
     flex-grow: 1;
-    padding-bottom: 20px;
+    padding: 20px;
+
+`;
+
+export const InvoiceTitle = styled.div`
+    border-radius: 8px;
+    border: 1px solid  ${borderColor};
+    background-color: #f8f9fa;
+    margin-bottom:20px;
+
+    h3{
+        color: ${textPrimaryColor};
+        font-size: 16px;
+        font-weight: 700;
+        padding-top: 10px;
+        padding-left: 10px;
+    }
+
+    p{
+        font-size: 14px;
+        color: ${textSecondaryColor};
+        margin: 0;
+        padding-left: 10px;
+        padding-bottom: 10px;
+    }
 `;

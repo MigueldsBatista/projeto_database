@@ -127,7 +127,6 @@ export default function Cart() {
     if (cart.length === 0) {
         return (
             <App>
-                <CartContainer>
                     <CartHeader>
                         <button onClick={() => history.push("/dashboard")} className="back-button">
                             <FaArrowLeft />
@@ -140,14 +139,12 @@ export default function Cart() {
                         <p>Adicione itens do cardápio para fazer um pedido</p>
                         <PrimaryButton onClick={() => history.push("/menu")}>Ver Cardápio</PrimaryButton>
                     </EmptyCartMessage>
-                </CartContainer>
             </App>
         );
     }
 
     return (
         <App>
-            <CartContainer>
                 <CartHeader>
                     <button onClick={() => history.push("/dashboard")} className="back-button">
                         <FaArrowLeft />
@@ -198,7 +195,6 @@ export default function Cart() {
                     </CartNotes>
                     <PrimaryButton onClick={handleCheckout}>Confirmar Pedido</PrimaryButton>
                 </CartSummary>
-            </CartContainer>
         </App>
     );
 }

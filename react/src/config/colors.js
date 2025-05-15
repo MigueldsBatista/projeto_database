@@ -1,6 +1,8 @@
 /* Cores Primarias */
 export const primaryBlue=`#1E3A8A`;
 export const secondaryBlue = `#3B82F6`;
+export const darkBlue = `#00205`;
+
 
 /* Cores Neutras */
 export const backgroundColor = `#F9FAFB`;

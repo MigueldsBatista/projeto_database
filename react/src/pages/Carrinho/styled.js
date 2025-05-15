@@ -1,4 +1,6 @@
 import styled from "styled-components";
+import { spacing } from "../../config/spacing";
+import { borderColor, primaryBlue } from "../../config/colors";
 
 export const CartContainer = styled.div`
     display: flex;
@@ -8,23 +10,35 @@ export const CartContainer = styled.div`
 
 export const CartHeader = styled.header`
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-
-    .back-button {
-        background: none;
-        border: none;
-        font-size: 20px;
-        cursor: pointer;
-    }
-
-    .icon-button {
-        background: none;
-        border: none;
-        font-size: 20px;
-        cursor: pointer;
-    }
+        flex-direction: row;
+        align-items: center;
+        padding: ${spacing.md};
+        background-color: white;
+        border-bottom: 1px solid ${borderColor};
+        margin-bottom: ${spacing.xxs};
+        position: relative;
+    
+        a{  
+            position: absolute;
+            left: ${spacing.md};
+            cursor: pointer;
+        }
+        a:hover{
+            color: ${primaryBlue};
+        }
+        
+        h2 {
+            flex: 1;
+            text-align: center;
+            font-weight: 700;
+        }
+    
+        .back-button {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+        }
 `;
 
 export const CartItemsContainer = styled.div`

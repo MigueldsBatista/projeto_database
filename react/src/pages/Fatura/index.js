@@ -3,7 +3,6 @@ import { useHistory } from "react-router-dom";
 import axios from "../../services/axios";
 import { App, PrimaryButton, SecondaryButton } from "../../styles/GlobalStyles";
 import {
-    InvoiceContainer,
     InvoiceHeader,
     InvoiceTotalCard,
     InvoiceSummary,
@@ -11,10 +10,9 @@ import {
     InvoiceItem,
     InvoiceDayGroup,
     InvoiceDayHeader,
-    InvoiceDayTotal,
-    PaymentInfo,
     ActionButtons,
     InvoiceContent,
+    InvoiceTitle,
 } from "./styled";
 import { toast } from "react-toastify";
 import { formatCurrency, formatDate } from "../../utils";
@@ -114,54 +112,50 @@ export default function Invoice() {
     }
 
     return (
-        <App>
-            <InvoiceContainer>
-                <InvoiceHeader>
-                    <div className="header-left">
-                        <button onClick={() => history.push("/dashboard")} className="back-button">
-                            <FaArrowLeft/>
-                        </button>
-                        <h2>Minha Fatura</h2>
-                    </div>
-                    <div className="header-actions">
-                        <button onClick={handleDownloadInvoice} className="icon-button">
-                            <i className="fas fa-download"></i>
-                        </button>
-                    </div>
-                </InvoiceHeader>
-                <InvoiceContent>
-                    <div className="invoice-header">
-                        <h3 className="invoice-title">Fatura Hospital Santa Joana</h3>
-                        <p className="invoice-date">
-                            Atualizada em: <span>{formatDate(new Date(invoice.dataEmissao))}</span>
-                        </p>
-                    </div>
-                    <InvoiceTotalCard>
-                        <p className="invoice-total-label">Valor Total</p>
-                        <p className="invoice-total-value">R$ {formatCurrency(invoice.valorTotal)}</p>
-                        <span className="invoice-status pending">Pendente</span>
-                    </InvoiceTotalCard>
-                    <InvoiceSummary>
-                        <h3>Informações do Paciente</h3>
-                        <div className="invoice-patient-info">
-                            <div className="patient-info-row">
-                                <span className="patient-info-label">Nome:</span>
-                                <span className="patient-info-value">{patient.nome}</span>
-                            </div>
-                            <div className="patient-info-row">
-                                <span className="patient-info-label">Quarto:</span>
-                                <span className="patient-info-value">{room.numero}</span>
-                            </div>
-                            <div className="patient-info-row">
-                                <span className="patient-info-label">Data de entrada:</span>
-                                <span className="patient-info-value">{formatDate(new Date(stay.dataEntrada))}</span>
-                            </div>
+        <App style={{marginBottom: "45px"}}>
+            <InvoiceHeader>
+                <button onClick={() => history.push("/dashboard")} className="back-button">
+                    <FaArrowLeft/>
+                </button>
+                <h2>Minha Fatura</h2>
+            </InvoiceHeader>
+            <InvoiceContent>
+                <InvoiceTitle>
+                    <h3>Fatura Hospital Santa Joana</h3>
+                    <p>
+                        Atualizada em: <span>{formatDate(new Date(invoice.dataEmissao))}</span>
+                    </p>
+                </InvoiceTitle>
+                <InvoiceTotalCard>
+                    <h5>Valor Total</h5>
+                    <p>R$ {formatCurrency(invoice.valorTotal)}</p>
+                    <span className={invoice.statusPagamento?.toLowerCase() === 'pago' ? 'paid' : 'pending'}>
+                        {invoice.statusPagamento}
+                    </span>
+                </InvoiceTotalCard>
+                <InvoiceSummary>
+                    <h3>Informações do Paciente</h3>
+                    <div className="invoice-patient-info">
+                        <div className="patient-info-row">
+                            <span className="patient-info-label">Nome:</span>
+                            <span className="patient-info-value">{patient.nome}</span>
                         </div>
-                    </InvoiceSummary>
-                    <InvoiceItemsSection>
-                        <h3>Detalhes dos Consumos</h3>
-                        {invoiceItems.map((day) => (
+                        <div className="patient-info-row">
+                            <span className="patient-info-label">Quarto:</span>
+                            <span className="patient-info-value">{room.numero}</span>
+                        </div>
+                        <div className="patient-info-row">
+                            <span className="patient-info-label">Data de entrada:</span>
+                            <span className="patient-info-value">{formatDate(new Date(stay.dataEntrada))}</span>
+                        </div>
+                    </div>
+                </InvoiceSummary>
+                <InvoiceItemsSection>
+                    {invoiceItems
+                        .filter(day => day.items && day.items.length > 0)
+                        .map((day) => (
                             <InvoiceDayGroup key={day.date}>
+                                <h3>Detalhes dos Consumos</h3>
                                 <InvoiceDayHeader>{formatDate(new Date(day.date))}</InvoiceDayHeader>
                                 {day.items.map((item, index) => (
                                     <InvoiceItem key={index}>
@@ -172,38 +166,16 @@ export default function Invoice() {
                                         </span>
                                     </InvoiceItem>
                                 ))}
-                                <InvoiceDayTotal>
-                                    <span>Total do dia</span>
-                                    <span>
-                                        R$ {formatCurrency(day.items.reduce((sum, item) => sum + item.price * item.quantity, 0))}
-                                    </span>
-                                </InvoiceDayTotal>
                             </InvoiceDayGroup>
                         ))}
-                    </InvoiceItemsSection>
-                    <PaymentInfo>
-                        <h3>Informações de Pagamento</h3>
-                        <div className="patient-info-row">
-                            <span className="patient-info-label">Status:</span>
-                            <span className="patient-info-value">Pendente - A ser pago na alta hospitalar</span>
-                        </div>
-                        <div className="patient-info-row">
-                            <span className="patient-info-label">Métodos:</span>
-                            <span className="patient-info-value">Cartão de crédito, débito, dinheiro ou PIX</span>
-                        </div>
-                        <p className="invoice-payment-note">
-                            Todos os valores consumidos durante sua estadia serão consolidados em uma única fatura a ser paga no
-                            momento da alta hospitalar. Para mais informações, contate a recepção.
-                        </p>
-                    </PaymentInfo>
-                    <ActionButtons>
-                        <SecondaryButton onClick={handleDownloadPDF}>
-                            <FaFilePdf/>Baixar PDF
-                        </SecondaryButton>
-                        <PrimaryButton onClick={handleHelp}>Pagamento</PrimaryButton>
-                    </ActionButtons>
-                </InvoiceContent>
-            </InvoiceContainer>
+                </InvoiceItemsSection>
+                <ActionButtons>
+                    <SecondaryButton onClick={handleDownloadPDF}>
+                        <FaFilePdf/>Baixar PDF
+                    </SecondaryButton>
+                    <PrimaryButton onClick={handleHelp}>Pagamento</PrimaryButton>
+                </ActionButtons>
+            </InvoiceContent>
         </App>
     );
 }

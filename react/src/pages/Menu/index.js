@@ -108,7 +108,7 @@ export default function Menu() {
     };
 
     const handleAddToCart = (product) => {
-    const cart = JSON.parse(localStorage.getItem("carrinho")) || []; // Aqui está buscando "carrinho"
+    const cart = JSON.parse(localStorage.getItem("cart")) || []; // Carrega com a chave "cart"
     const existingItem = cart.find((item) => item.id === product.id);
 
     if (existingItem) {
@@ -117,7 +117,7 @@ export default function Menu() {
         cart.push({ id: product.id, name: product.nome, price: product.preco, quantity: 1 });
     }
 
-    localStorage.setItem("cart", JSON.stringify(cart)); // Aqui está salvando como "cart"
+    localStorage.setItem("cart", JSON.stringify(cart)); // Salva com a mesma chave "cart"
     toast.success(`${product.nome} adicionado ao carrinho`);
 };
 
