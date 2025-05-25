@@ -70,6 +70,12 @@ public class EstadiaMediator extends BaseMediator<Estadia, LocalDateTime> {
         return repository.findPacienteEstadias(id);
     }
 
+    public Double findTempoMedioEstadia() {
+
+        return repository.findTempoMedioEstadia();
+
+    }
+
 
 
 }

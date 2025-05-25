@@ -69,4 +69,17 @@ public class EstadiaRepository extends BaseRepository<Estadia, LocalDateTime> {
         return findBySql(sql, pacienteId);
     
     }
+
+    public Double findTempoMedioEstadia() {
+        String sql =
+                """
+                SELECT AVG(
+                    DATEDIFF(`DATA_EMISSAO`, `DATA_ENTRADA_ESTADIA`)
+                ) as tempo_medio
+                from `FATURA`
+                """;
+
+        return jdbcTemplate.queryForObject(sql, Double.class);
+
+    }
 }

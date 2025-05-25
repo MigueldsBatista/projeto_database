@@ -60,6 +60,17 @@ public class PedidoController extends BaseController<Pedido, LocalDateTime> {
 
         return ResponseEntity.ok(dtos);
     }
+    @GetMapping("/media-diaria")
+    public ResponseEntity<Map<String, Object>> findMediapedidosByDia() {
+        
+
+        var media = pedidoMediator.findMediapedidosByDia();
+
+        Map<String, Object> mediaDiaria = Map.of(
+            "mediaDiaria", media
+        );
+        return ResponseEntity.ok(mediaDiaria);
+    }
 
 
 }

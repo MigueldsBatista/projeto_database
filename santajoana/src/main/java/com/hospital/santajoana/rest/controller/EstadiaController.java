@@ -60,6 +60,15 @@ public class EstadiaController extends BaseController<Estadia, LocalDateTime> {
 
         return ResponseEntity.ok(pedidos);
     }
+    @GetMapping("/tempo-medio")
+    public ResponseEntity<Map<String, Object>> findTempoMedioEstadia(){
+        
+        var tempo = estadiaMediator.findTempoMedioEstadia();
+        Map<String, Object> tempoMedio = Map.of(
+            "tempoMedio", tempo
+        );
+        return ResponseEntity.ok(tempoMedio);
+    }
 
     @GetMapping
     @Override

@@ -72,6 +72,24 @@ public class PedidoRepository extends BaseRepository<Pedido, LocalDateTime> {
 
     }
 
-    
+    public Double findMediapedidosByDia() {
+        
+        String sql= """
+                SELECT 
+                AVG(pedidos_por_dia) AS media_pedidos_por_dia
+                FROM (
+                SELECT 
+                    DATE(p.`DATA_PEDIDO`) AS dia,
+                    COUNT(*) AS pedidos_por_dia
+                FROM PEDIDO p
+                GROUP BY DATE(p.`DATA_PEDIDO`)
+                ) AS contagem_diaria;
+
+                """;
+
+        return jdbcTemplate.queryForObject(sql, Double.class);
+
+
+    }
 
 }

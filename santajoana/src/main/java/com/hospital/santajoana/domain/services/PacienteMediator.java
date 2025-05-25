@@ -181,4 +181,9 @@ public class PacienteMediator extends BaseMediator<Paciente, Long> {
     public Optional<List<Paciente>> findPacientesWithEstadiasAtivas() {
         return pacienteRepository.findPacientesWithEstadiasAtivas();
     }
+
+    public Double findPacienteIdadeMedia() {
+
+        return pacienteRepository.findPacienteIdadeMedia();
+    }
 }

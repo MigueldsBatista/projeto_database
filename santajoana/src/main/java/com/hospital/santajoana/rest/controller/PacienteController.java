@@ -164,6 +164,17 @@ public class PacienteController extends BaseController<Paciente, Long> {
 
         return ResponseEntity.ok(fatura.get());
     }
+    @GetMapping("/idade-media")
+    public ResponseEntity<Map<String, Double>> findPacienteIdadeMedia() {
+
+        var idade = pacienteMediator.findPacienteIdadeMedia();
+
+        Map<String, Double> idadeMap = Map.of(
+            "idadeMedia", idade
+        );
+
+        return ResponseEntity.ok(idadeMap);
+    }
 
     
 

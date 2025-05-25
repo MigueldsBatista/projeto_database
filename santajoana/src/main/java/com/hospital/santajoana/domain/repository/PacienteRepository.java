@@ -199,4 +199,14 @@ public class PacienteRepository extends BaseRepository<Paciente, Long> {
         return Optional.of(pacientes);
 
     }
+
+    public Double findPacienteIdadeMedia() {
+        String sql = 
+            """
+            SELECT AVG(TIMESTAMPDIFF(YEAR, DATA_NASCIMENTO, CURDATE())) AS idade_media
+            FROM PACIENTE
+            """;
+
+        return jdbcTemplate.queryForObject(sql, Double.class);
+    }
 }

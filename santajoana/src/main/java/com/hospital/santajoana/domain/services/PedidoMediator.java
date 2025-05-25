@@ -86,4 +86,9 @@ public class PedidoMediator extends BaseMediator<Pedido, LocalDateTime> {
 
     }
 
+    public Double findMediapedidosByDia() {
+        
+        return pedidoRepository.findMediapedidosByDia();
+    }
+
 }
