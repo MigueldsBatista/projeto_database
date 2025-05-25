@@ -4,9 +4,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.jdbc.core.RowMapper;
+
 import java.time.LocalDateTime;
 
 import com.hospital.santajoana.domain.entity.Fatura;
@@ -87,17 +91,19 @@ public class FaturaRepository extends BaseRepository<Fatura, LocalDateTime> {
     }
 
 
-    //TODO - Na segunda entrega isso aq vira um procedure, e uma function
+    //TODO - TRIGGER
+    //SHOWABLE
     public void updateValorTotal(LocalDateTime dataEmissao){
-        String updateSql = "UPDATE FATURA\r\n" + //
-                        "SET VALOR_TOTAL = (\r\n" + //
-                        "    SELECT SUM(PRODUTO_PEDIDO.QUANTIDADE * PRODUTO.PRECO)\r\n" + //
-                        "    FROM PEDIDO\r\n" + //
-                        "    JOIN PRODUTO_PEDIDO ON PEDIDO.DATA_PEDIDO = PRODUTO_PEDIDO.DATA_PEDIDO\r\n" + //
-                        "    JOIN PRODUTO ON PRODUTO_PEDIDO.ID_PRODUTO = PRODUTO.ID_PRODUTO\r\n" + //
-                        "    WHERE PEDIDO.DATA_ENTRADA_ESTADIA = FATURA.DATA_ENTRADA_ESTADIA\r\n" + //
-                        ")\r\n" + //
-                        "WHERE FATURA.DATA_EMISSAO = ?";
+        String updateSql = """
+                UPDATE FATURA
+                SET VALOR_TOTAL = (
+                    SELECT SUM(PRODUTO_PEDIDO.QUANTIDADE * PRODUTO.PRECO)
+                    FROM PEDIDO
+                    JOIN PRODUTO_PEDIDO ON PEDIDO.DATA_PEDIDO = PRODUTO_PEDIDO.DATA_PEDIDO
+                    JOIN PRODUTO ON PRODUTO_PEDIDO.ID_PRODUTO = PRODUTO.ID_PRODUTO
+                    WHERE PEDIDO.DATA_ENTRADA_ESTADIA = FATURA.DATA_ENTRADA_ESTADIA
+                )
+                WHERE FATURA.DATA_EMISSAO = ?""";
         jdbcTemplate.update(updateSql, dataEmissao);
     }
 
@@ -107,5 +113,43 @@ public class FaturaRepository extends BaseRepository<Fatura, LocalDateTime> {
         return findBySql(sql, dataPedido).stream().findFirst().orElse(null);
     }
 
+    //TODO - Na segunda entrega isso aq vira um procedure, e uma function
+    /**
+     * Encontra a média de gastos por fatura para um paciente específico
+     * @return A média de gastos por fatura para o paciente
+     */
+    //SHOWABLE
+    public BigDecimal findAvgPacienteGastoFatura() {
+        
+        String sql = """
+                SELECT 
+                    AVG(VALOR_TOTAL) AS MEDIA
+                    FROM FATURA
+                    INNER JOIN ESTADIA ON
+                    FATURA.DATA_ENTRADA_ESTADIA = ESTADIA.DATA_ENTRADA
+                    """;
+        RowMapper<BigDecimal> rowMapper = (rs, rowNum) -> rs.getBigDecimal("MEDIA");
+        
+        return this.jdbcTemplate.queryForObject(sql, rowMapper);
+    }
+
+    //TODO - Na segunda entrega isso aq vira um procedure, e uma function
+    //SHOWABLE
+    /**
+     * Encontra a média de gastos por fatura para um paciente específico
+     * @return A média de gastos por fatura para o paciente
+     */
+    public BigDecimal findMonthTotalFaturamento() {
+        
+        String sql = """
+                SELECT 
+                    SUM(VALOR_TOTAL) AS TOTAL
+                    FROM FATURA
+                    WHERE MONTH(FATURA.DATA_PAGAMENTO) = MONTH(CURRENT_DATE())
+                """;
+        RowMapper<BigDecimal> rowMapper = (rs, rowNum) -> rs.getBigDecimal("TOTAL");
+        
+        return this.jdbcTemplate.queryForObject(sql, rowMapper);
+    }
 
 }

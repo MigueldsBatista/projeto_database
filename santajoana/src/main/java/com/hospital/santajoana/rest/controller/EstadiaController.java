@@ -53,4 +53,5 @@ public class EstadiaController extends BaseController<Estadia, LocalDateTime> {
 
         return ResponseEntity.ok(pedidos);
     }
+
 }

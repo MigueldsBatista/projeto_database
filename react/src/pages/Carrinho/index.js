@@ -55,7 +55,7 @@ export default function Cart() {
 
             const pacienteId = localStorage.getItem("pacienteId") || 1;
 
-            const estadiaResponse = await axios.get(`/api/pacientes/estadia-ativa/${pacienteId}`);
+            const estadiaResponse = await axios.get(`/api/pacientes/obter-estadia/${pacienteId}`);
             const estadia = estadiaResponse.data;
 
             if (!estadia) {

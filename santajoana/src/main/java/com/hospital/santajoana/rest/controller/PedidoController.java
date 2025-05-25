@@ -60,4 +60,6 @@ public class PedidoController extends BaseController<Pedido, LocalDateTime> {
 
         return ResponseEntity.ok(dtos);
     }
+
+
 }

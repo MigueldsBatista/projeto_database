@@ -61,7 +61,7 @@ export const staysService = {
    * @returns {Promise} Promise com a lista de estadias ativas
    */
   getActiveStays: async () => {
-    const response = await api.get('/estadias/ativas');
+    const response = await api.get('/pacientes/estadias-ativas');
     return response.data;
   }
 };

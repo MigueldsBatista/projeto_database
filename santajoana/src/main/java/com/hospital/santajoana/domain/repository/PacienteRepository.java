@@ -4,6 +4,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Date;
+import java.util.List;
 import java.util.Optional;
 
 import com.hospital.santajoana.domain.entity.Paciente;
@@ -180,5 +181,22 @@ public class PacienteRepository extends BaseRepository<Paciente, Long> {
         
         // Check if any rows were affected by the update
         return rowsAffected > 0;
+    }
+
+
+    public Optional<List<Paciente>> findPacientesWithEstadiasAtivas() {
+
+        String sql = "SELECT * FROM PACIENTE P WHERE EXISTS (" +
+                     "SELECT 1 FROM ESTADIA E WHERE E.ID_PACIENTE = P.ID_PACIENTE AND E.DATA_SAIDA IS NULL" +
+                     ")";
+
+        List<Paciente> pacientes = super.findBySql(sql);
+        
+        if (pacientes.isEmpty()) {
+            return Optional.empty();
+        }
+        
+        return Optional.of(pacientes);
+
     }
 }

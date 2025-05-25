@@ -1,8 +1,11 @@
 package com.hospital.santajoana.domain.services;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.hospital.santajoana.domain.entity.Produto;
+import com.hospital.santajoana.domain.entity.auxiliar.ProdutoQuantidade;
 import com.hospital.santajoana.domain.repository.ProdutoRepository;
 
 @Service
@@ -27,4 +30,7 @@ public class ProdutoMediator extends BaseMediator<Produto, Long> {
         return produtoRepository.update(produto);
     }
 
+     public List<ProdutoQuantidade> findMaisPedidosByCategoria(){
+        return produtoRepository.findMaisPedidosByCategoria();
+     }
 }

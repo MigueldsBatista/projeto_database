@@ -59,7 +59,7 @@ export const roomsService = {
    * @returns {Promise} Promise com a lista de quartos disponíveis
    */
   getAvailable: async () => {
-    const response = await api.get('/quartos/disponiveis');
+    const response = await api.get('/quartos/livres');
     return response.data;
   }
 };

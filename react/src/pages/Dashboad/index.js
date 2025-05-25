@@ -65,7 +65,7 @@ export default function Dashboard() {
 
     const fetchEstadiaData = async (pacienteId) => {
         try {
-            const response = await axios.get(`/api/pacientes/estadia-ativa/${pacienteId}`);
+            const response = await axios.get(`/api/pacientes/obter-estadia/${pacienteId}`);
             return response.data;
         } catch (error) {
             console.error('Error fetching estadia data:', error);
@@ -99,7 +99,7 @@ export default function Dashboard() {
 
     const fetchPedidosData = async (pacienteId) => {
         try {
-            const estadiaResponse = await axios.get(`/api/pacientes/estadia-ativa/${pacienteId}`);
+            const estadiaResponse = await axios.get(`/api/pacientes/obter-estadia/${pacienteId}`);
             const estadia = estadiaResponse.data;
     
             if (!estadia || !estadia.id) {

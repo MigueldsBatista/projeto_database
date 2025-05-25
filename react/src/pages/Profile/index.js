@@ -67,7 +67,7 @@ export default function Profile() {
 
     const fetchEstadiaData = async (pacienteId) => {
         try {
-            const response = await axios.get(`/api/pacientes/estadia-ativa/${pacienteId}`);
+            const response = await axios.get(`/api/pacientes/obter-estadia/${pacienteId}`);
             return response.data;
         } catch (error) {
             console.error('Error fetching estadia data:', error);

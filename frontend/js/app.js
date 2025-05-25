@@ -83,7 +83,7 @@ async function loadUserData() {
 
 async function fetchEstadiaData(pacienteId) {
     try {
-        const response = await fetch(`${API_URL}/api/pacientes/estadia-ativa/${pacienteId}`, {
+        const response = await fetch(`${API_URL}/api/pacientes/obter-estadia/${pacienteId}`, {
             headers: { 'Accept': 'application/json' },
             mode: 'cors'
         });

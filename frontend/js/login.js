@@ -114,7 +114,7 @@ async function handleSuccessfulLogin(userData) {
     if (userData.role !== 'camareira') {
         try {
             // Check if user has an active estadia
-            const estadiaResponse = await fetch(`${API_URL}/api/pacientes/estadia-ativa/${userData.id}`, {
+            const estadiaResponse = await fetch(`${API_URL}/api/pacientes/obter-estadia/${userData.id}`, {
                 headers: { 'Accept': 'application/json' },
             });
             

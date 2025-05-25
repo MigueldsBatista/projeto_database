@@ -53,5 +53,10 @@ export const productsService = {
   delete: async (id) => {
     const response = await api.delete(`/produtos/delete/${id}`);
     return response.data;
+  },
+
+    getMostOrderedByCategory: async () => {
+    const response = await api.get('/produtos/mais-pedidos-por-categoria');
+    return response.data;
   }
 };

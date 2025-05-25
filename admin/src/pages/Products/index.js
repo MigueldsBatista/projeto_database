@@ -266,6 +266,8 @@ const Products = () => {
     e.preventDefault();
     
     try {
+      console.log(formData);
+      
       const formattedData = {
         ...formData,
         preco: parseFloat(formData.preco),

@@ -9,6 +9,7 @@ import com.hospital.santajoana.domain.services.FaturaMediator;
 
 import java.util.List;
 import java.util.Map;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import org.springframework.http.ResponseEntity;
@@ -65,12 +66,42 @@ public class FaturaController extends BaseController<Fatura, LocalDateTime> {
     public ResponseEntity<Fatura> findByDataEntradaEstadia(@PathVariable LocalDateTime dataEntradaEstadia){
         return faturaMediator.findByDataEntradaEstadia(dataEntradaEstadia).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
+    @GetMapping("/paciente/{pacienteId}")
+    public ResponseEntity<Fatura> findByPaciente(@PathVariable Long pacienteId){
+        return faturaMediator.findMostRecentFaturaByPacienteId(pacienteId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/media-por-paciente")
+    public ResponseEntity<Map<String, BigDecimal>> findAvgPacienteGastoFatura(){
+        BigDecimal mediaGasto = faturaMediator.findAvgPacienteGastoFatura();
+        if (mediaGasto == null) {
+            return ResponseEntity.noContent().build();
+        }
+        Map<String, BigDecimal> mediaGastoMap = Map.of("media", mediaGasto);
+
+        return ResponseEntity.ok(mediaGastoMap);
+    }
 
     @PatchMapping("/{id}/update/status")
     public ResponseEntity<Fatura> updateStatus(@PathVariable("id") String id, @RequestBody Map<String, String> status){
         LocalDateTime dataEmissao = LocalDateTime.parse(id);
         var result = faturaMediator.updateStatus(dataEmissao, Fatura.StatusPagamento.fromString(status.get("status")));
         return result.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    }
+    @GetMapping("/faturamento/mes-atual")
+    public ResponseEntity<Map<String, BigDecimal>> findMonthTotalFaturamento(){
+
+        var total = faturaMediator.findMonthTotalFaturamento();
+        Map<String, BigDecimal> totalMap;
+
+        if (total == null) {
+            totalMap = Map.of("total", BigDecimal.ZERO);
+            return ResponseEntity.ok(totalMap);
+        }
+
+        return  ResponseEntity.ok(Map.of("total", total));
     }
 
 

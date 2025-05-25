@@ -1,5 +1,6 @@
 package com.hospital.santajoana.domain.services;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -91,5 +92,16 @@ public class FaturaMediator extends BaseMediator<Fatura, LocalDateTime> {
         }
 
         faturaRepository.updateValorTotal(dataEmissao);
+    }
+
+    public BigDecimal findAvgPacienteGastoFatura() {
+
+        return faturaRepository.findAvgPacienteGastoFatura();
+
+    }
+    public BigDecimal findMonthTotalFaturamento() {
+
+        return faturaRepository.findMonthTotalFaturamento();
+
     }
 }

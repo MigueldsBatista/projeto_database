@@ -56,5 +56,6 @@ public class ProdutoPedidoRepository extends BaseRepository<ProdutoPedido, Local
         String sql = "SELECT * FROM PRODUTO_PEDIDO WHERE DATA_PEDIDO = ?";
         return super.findBySql(sql, data);
     }
+    
 
 }

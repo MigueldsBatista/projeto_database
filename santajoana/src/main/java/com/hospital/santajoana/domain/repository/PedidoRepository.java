@@ -4,10 +4,12 @@ import java.util.List;
 import java.time.LocalDateTime;
 
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import com.hospital.santajoana.domain.entity.Pedido;
 import com.hospital.santajoana.domain.entity.Pedido.StatusPedido;
+import com.hospital.santajoana.domain.entity.auxiliar.ProdutoQuantidade;
 
 import lombok.Getter;
 
@@ -69,5 +71,7 @@ public class PedidoRepository extends BaseRepository<Pedido, LocalDateTime> {
         return findBySql(sql, dataEntradaEstadia);
 
     }
+
+    
 
 }

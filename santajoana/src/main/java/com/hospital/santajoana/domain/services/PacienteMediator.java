@@ -1,5 +1,6 @@
 package com.hospital.santajoana.domain.services;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -175,5 +176,9 @@ public class PacienteMediator extends BaseMediator<Paciente, Long> {
         pacienteEntity.setSenha(newPassword);
 
         return pacienteRepository.updatePassword(id, newPassword);
+    }
+
+    public Optional<List<Paciente>> findPacientesWithEstadiasAtivas() {
+        return pacienteRepository.findPacientesWithEstadiasAtivas();
     }
 }

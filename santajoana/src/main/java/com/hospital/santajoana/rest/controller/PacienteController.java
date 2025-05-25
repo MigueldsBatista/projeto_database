@@ -124,7 +124,7 @@ public class PacienteController extends BaseController<Paciente, Long> {
         return ResponseEntity.ok(savedPaciente);
     }
 
-    @GetMapping("/estadia-ativa/{id}")
+    @GetMapping("/obter-estadia/{id}")
     public ResponseEntity<Estadia> findEstadiaByPacienteId(@PathVariable Long id) {
         var estadia = estadiaMediator.findMostRecentEstadiaByPacienteId(id);
 
@@ -134,6 +134,18 @@ public class PacienteController extends BaseController<Paciente, Long> {
 
         return ResponseEntity.ok(estadia.get());
     }
+
+    @GetMapping("/estadias-ativas")
+    public ResponseEntity<List<Paciente>> findPacientesWithEstadiasAtivas() {
+        var listPacientes = pacienteMediator.findPacientesWithEstadiasAtivas();
+
+        if (listPacientes.isEmpty()) {
+            throw new IllegalArgumentException("Nenhum paciente com estadia ativa encontrado");
+        }
+
+        return ResponseEntity.ok(listPacientes.get());
+    }
+
     @GetMapping("/fatura-recente/{id}")
     public ResponseEntity<Fatura> findFaturaByPacienteId(@PathVariable Long id) {
 

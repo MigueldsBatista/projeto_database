@@ -6,7 +6,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.hospital.santajoana.domain.entity.Camareira;
-import com.hospital.santajoana.domain.entity.Paciente;
 
 @Repository
 public class CamareiraRepository extends BaseRepository<Camareira, Long> {

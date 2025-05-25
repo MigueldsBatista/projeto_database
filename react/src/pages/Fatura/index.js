@@ -34,7 +34,7 @@ export default function Invoice() {
                 const patientResponse = await axios.get(`/api/pacientes/${pacienteId}`);
                 setPatient(patientResponse.data);
 
-                const stayResponse = await axios.get(`/api/pacientes/estadia-ativa/${pacienteId}`);
+                const stayResponse = await axios.get(`/api/pacientes/obter-estadia/${pacienteId}`);
                 setStay(stayResponse.data);
 
                 const invoiceResponse = await axios.get(`/api/pacientes/fatura-recente/${pacienteId}`);

@@ -1,9 +1,13 @@
 package com.hospital.santajoana.domain.repository;
 
+import java.util.List;
+
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import com.hospital.santajoana.domain.entity.Produto;
+import com.hospital.santajoana.domain.entity.auxiliar.ProdutoQuantidade;
 
 @Repository
 public class ProdutoRepository extends BaseRepository<Produto, Long> {
@@ -21,7 +25,8 @@ public class ProdutoRepository extends BaseRepository<Produto, Long> {
             rs.getObject("PROTEINAS_G") != null ? rs.getInt("PROTEINAS_G") : null,
             rs.getObject("CARBOIDRATOS_G") != null ? rs.getInt("CARBOIDRATOS_G") : null,
             rs.getObject("GORDURAS_G") != null ? rs.getInt("GORDURAS_G") : null,
-            rs.getObject("SODIO_MG") != null ? rs.getInt("SODIO_MG") : null
+            rs.getObject("SODIO_MG") != null ? rs.getInt("SODIO_MG") : null,
+            rs.getBoolean("ATIVO")
         );
         produto.setId(rs.getLong("ID_PRODUTO"));
         return produto;
@@ -62,5 +67,40 @@ public class ProdutoRepository extends BaseRepository<Produto, Long> {
             produto.getId()
         );
         return produto;
+    }
+
+    //SHOWABLE FUNCTION
+    public List<ProdutoQuantidade> findMaisPedidosByCategoria(){
+
+        String sql = """
+        SELECT
+                cp.NOME AS categoria,
+                p.NOME AS produto,
+                COUNT(pp.ID_PRODUTO) AS total_pedidos
+            FROM PRODUTO_PEDIDO pp
+            JOIN PRODUTO p ON pp.ID_PRODUTO = p.ID_PRODUTO
+            JOIN CATEGORIA_PRODUTO cp ON p.ID_CATEGORIA_PRODUTO = cp.ID_CATEGORIA
+            GROUP BY cp.ID_CATEGORIA, cp.NOME, p.ID_PRODUTO, p.NOME
+            HAVING COUNT(pp.ID_PRODUTO) = (
+                SELECT MAX(sub.cnt)
+                FROM (
+                    SELECT COUNT(*) AS cnt
+                    FROM PRODUTO_PEDIDO pp2
+                    JOIN PRODUTO p2 ON pp2.ID_PRODUTO = p2.ID_PRODUTO
+                    WHERE p2.ID_CATEGORIA_PRODUTO = p.ID_CATEGORIA_PRODUTO
+                    GROUP BY pp2.ID_PRODUTO
+                ) AS sub
+            );
+            """;
+
+        RowMapper<ProdutoQuantidade> rowMapper = (rs, rowNum) -> {
+            String categoria = rs.getString("categoria");
+            String produto = rs.getString("produto");
+            int totalPedidos = rs.getInt("total_pedidos");
+            return new ProdutoQuantidade(categoria, produto, totalPedidos);
+        };
+        
+        return jdbcTemplate.query(sql, rowMapper);
+
     }
 }

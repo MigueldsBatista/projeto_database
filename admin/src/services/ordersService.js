@@ -65,5 +65,7 @@ export const ordersService = {
   getByHousekeeper: async (housekeeperId) => {
     const response = await api.get(`/pedidos/camareira/${housekeeperId}`);
     return response.data;
-  }
+  },
+
+
 };

@@ -130,16 +130,27 @@ const Dashboard = () => {
 
         // Obter gasto médio por paciente
         const avgSpending = await billingService.getAverageSpendingPerPatient();
+        console.log("Avg speding", avgSpending);
+        
         setAvgSpendingPerPatient(avgSpending.media || 0);
 
+        const mostOrdered = await productsService.getMostOrderedByCategory();
         // Produtos mais pedidos por categoria (mockup por enquanto)
-        setMostOrderedByCategory([
-          { name: 'Refeições', value: 45 },
-          { name: 'Bebidas', value: 32 },
-          { name: 'Lanches', value: 18 },
-          { name: 'Higiene', value: 15 },
-          { name: 'Medicamentos', value: 10 }
-        ]);
+        // setMostOrderedByCategory([
+        //   { name: 'Refeições', value: 45 },
+        //   { name: 'Bebidas', value: 32 },
+        //   { name: 'Lanches', value: 18 },
+        //   { name: 'Higiene', value: 15 },
+        //   { name: 'Medicamentos', value: 10 }
+        // ]);
+        console.log("Most ordered", mostOrdered);
+        
+        setMostOrderedByCategory(mostOrdered.map(item => {
+          return {
+            name: `${item.nome} (${item.categoria})`,
+            value: item.quantidade
+            }
+        }));
 
         setLoading(false);
       } catch (error) {

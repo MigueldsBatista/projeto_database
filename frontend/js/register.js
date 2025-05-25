@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Check if user already has an active estadia
                 try {
-                    const estadiaResponse = await fetch(`${API_URL}/api/pacientes/estadia-ativa/${pacienteId}`, {
+                    const estadiaResponse = await fetch(`${API_URL}/api/pacientes/obter-estadia/${pacienteId}`, {
                         headers: { 'Accept': 'application/json' },
                     });
                     
@@ -196,7 +196,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     async function checkExistingEstadia(pacienteId) {
         try {
-            const response = await fetch(`${API_URL}/api/pacientes/estadia-ativa/${pacienteId}`, {
+            const response = await fetch(`${API_URL}/api/pacientes/obter-estadia/${pacienteId}`, {
                 headers: { 'Accept': 'application/json' },
             });
             

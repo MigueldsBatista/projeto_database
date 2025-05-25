@@ -380,7 +380,7 @@ function setupChangePasswordFunctionality(user) {
 
 async function fetchEstadiaAndRoom(patientId) {
     try {
-        const estadiaResponse = await fetch(`${API_URL}/api/pacientes/estadia-ativa/${patientId}`, {
+        const estadiaResponse = await fetch(`${API_URL}/api/pacientes/obter-estadia/${patientId}`, {
             headers: { 'Accept': 'application/json' },
             mode: 'cors'
         });

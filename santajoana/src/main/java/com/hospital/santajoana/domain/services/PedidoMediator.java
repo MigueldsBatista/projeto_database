@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.hospital.santajoana.domain.entity.Estadia;
 import com.hospital.santajoana.domain.entity.Pedido;
+import com.hospital.santajoana.domain.entity.auxiliar.ProdutoQuantidade;
 import com.hospital.santajoana.domain.repository.PedidoRepository;
 
 
@@ -84,6 +85,5 @@ public class PedidoMediator extends BaseMediator<Pedido, LocalDateTime> {
         return this.findPedidosBydataEntradaEstadia(estadia.get().getId());
 
     }
-
 
 }
