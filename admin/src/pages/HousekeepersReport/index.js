@@ -161,6 +161,18 @@ const HousekeepersReport = () => {
     setPage(1);
   };
 
+  // Função utilitária para formatar datas
+  const formatDate = (date) => {
+    if (!date) return '-';
+    return new Date(date).toLocaleDateString('pt-BR');
+  };
+
+  // Função utilitária para formatar valores monetários
+  const formatCurrency = (value) => {
+    if (value === undefined || value === null) return '-';
+    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+  };
+
   return (
     <Container>
       <Title>Controle de Pedidos por Camareira</Title>
@@ -326,20 +338,13 @@ const HousekeepersReport = () => {
                       {currentPageOrders.map((order) => (
                         <TableRow key={order.id}>
                           <TableCell>{order.id}</TableCell>
-                          <TableCell>{order.patient ? order.patient.name : 'N/A'}</TableCell>
+                          <TableCell>{order.paciente ? order.paciente.nome : 'N/A'}</TableCell>
+                          <TableCell>{formatDate(order.data)}</TableCell>
+                          <TableCell>{order.quarto ? order.quarto.numero : 'N/A'}</TableCell>
+                          <TableCell>{formatCurrency(order.valorTotal)}</TableCell>
                           <TableCell>
-                            {new Date(order.createdAt).toLocaleDateString('pt-BR')}
-                          </TableCell>
-                          <TableCell>{order.room ? order.room.number : 'N/A'}</TableCell>
-                          <TableCell>
-                            {new Intl.NumberFormat('pt-BR', { 
-                              style: 'currency', 
-                              currency: 'BRL' 
-                            }).format(order.totalValue)}
-                          </TableCell>
-                          <TableCell>
-                            <Badge color={STATUS_COLORS[order.status]}>
-                              {STATUS_LABELS[order.status]}
+                            <Badge color={STATUS_COLORS[order.status] || 'default'}>
+                              {STATUS_LABELS[order.status] || order.status}
                             </Badge>
                           </TableCell>
                         </TableRow>

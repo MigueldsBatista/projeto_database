@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.hospital.santajoana.domain.entity.Fatura;
 import com.hospital.santajoana.domain.entity.Fatura.StatusPagamento;
+import com.hospital.santajoana.domain.entity.auxiliar.AggregatedFatura;
+import com.hospital.santajoana.domain.repository.FaturaRepository.AggregateMethods;
 import com.hospital.santajoana.domain.services.FaturaMediator;
 
 import java.util.List;
@@ -90,6 +92,7 @@ public class FaturaController extends BaseController<Fatura, LocalDateTime> {
         var result = faturaMediator.updateStatus(dataEmissao, Fatura.StatusPagamento.fromString(status.get("status")));
         return result.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
+
     @GetMapping("/faturamento/mes-atual")
     public ResponseEntity<Map<String, BigDecimal>> findMonthTotalFaturamento(){
 
@@ -102,6 +105,41 @@ public class FaturaController extends BaseController<Fatura, LocalDateTime> {
         }
 
         return  ResponseEntity.ok(Map.of("total", total));
+    }
+    @GetMapping("/faturamento")
+    public ResponseEntity<List<AggregatedFatura>> findTotalAggregated(
+        @RequestParam(required = false) String groupBy,
+        @RequestParam(required = false) String startDate,
+        @RequestParam(required = false) String endDate) {
+            
+        List<AggregatedFatura> faturas = List.of();
+
+        if (startDate != null && endDate != null) {
+            LocalDateTime start;
+            LocalDateTime end;
+            
+            // Verifica se a data está no formato simples (yyyy-MM-dd) e converte para LocalDateTime
+            if (startDate.length() == 10) {
+                start = LocalDateTime.parse(startDate + "T00:00:00");
+            } else {
+                start = LocalDateTime.parse(startDate);
+            }
+            
+            if (endDate.length() == 10) {
+                end = LocalDateTime.parse(endDate + "T23:59:59");
+            } else {
+                end = LocalDateTime.parse(endDate);
+            }
+            
+            faturas = faturaMediator.
+            findFilteredFatura(
+                start, 
+                end, 
+                AggregateMethods.fromString(groupBy)
+            );
+        } 
+
+        return ResponseEntity.ok(faturas);
     }
 
 

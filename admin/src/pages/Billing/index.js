@@ -233,21 +233,19 @@ const CustomTooltip = ({ active, payload, label }) => {
  */
 const generateReport = (data, groupBy) => {
   if (!data || data.length === 0) return [];
-  
+
   const groupedData = {};
-  
+
   data.forEach(item => {
     let key;
-    const date = new Date(item.data);
-    
+    const start = new Date(item.startDate);
     if (groupBy === 'day') {
-      key = formatDate(item.data);
+      key = start.toLocaleDateString('pt-BR');
     } else if (groupBy === 'month') {
-      key = `${date.getMonth() + 1}/${date.getFullYear()}`;
+      key = `${start.getMonth() + 1}/${start.getFullYear()}`;
     } else if (groupBy === 'year') {
-      key = date.getFullYear().toString();
+      key = start.getFullYear().toString();
     }
-    
     if (!groupedData[key]) {
       groupedData[key] = {
         period: key,
@@ -256,12 +254,11 @@ const generateReport = (data, groupBy) => {
         items: []
       };
     }
-    
-    groupedData[key].total += item.valorTotal;
+    groupedData[key].total += item.total;
     groupedData[key].quantity += 1;
     groupedData[key].items.push(item);
   });
-  
+
   return Object.values(groupedData);
 };
 
@@ -269,7 +266,7 @@ const Billing = () => {
   const [billingData, setBillingData] = useState([]);
   const [reportData, setReportData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [groupBy, setGroupBy] = useState('month');
+  const [groupBy, setGroupBy] = useState('day');
   const [dateRange, setDateRange] = useState({
     startDate: new Date(new Date().getFullYear(), new Date().getMonth() - 3).toISOString().split('T')[0],
     endDate: new Date().toISOString().split('T')[0]
@@ -282,6 +279,7 @@ const Billing = () => {
 
   useEffect(() => {
     fetchBillingData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -299,6 +297,7 @@ const Billing = () => {
         averageBilling: count > 0 ? total / count : 0
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [billingData, groupBy, dateRange]);
 
   const fetchBillingData = async () => {
@@ -335,10 +334,9 @@ const Billing = () => {
   const filterDataByDateRange = (data) => {
     const start = new Date(dateRange.startDate);
     const end = new Date(dateRange.endDate);
-    end.setHours(23, 59, 59, 999); // Final do dia
-    
+    end.setHours(23, 59, 59, 999);
     return data.filter(item => {
-      const itemDate = new Date(item.data);
+      const itemDate = new Date(item.startDate);
       return itemDate >= start && itemDate <= end;
     });
   };

@@ -12,7 +12,6 @@ import PatientsPage from './pages/Patients';
 import OrdersPage from './pages/Orders';
 import StaysPage from './pages/Stays';
 import BillingPage from './pages/Billing';
-import HousekeepersPage from './pages/HousekeepersReport';
 import styled from 'styled-components';
 
 const AppContainer = styled.div`
@@ -45,7 +44,6 @@ function App() {
               <Route path="/pedidos" element={<OrdersPage />} />
               <Route path="/estadias" element={<StaysPage />} />
               <Route path="/faturamento" element={<BillingPage />} />
-              <Route path="/camareiras" element={<HousekeepersPage />} />
             </Routes>
           </MainContent>
         </div>

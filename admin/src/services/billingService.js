@@ -32,9 +32,9 @@ export const billingService = {
    * @param {string} groupBy - Como agrupar os dados (dia, mes, ano)
    * @returns {Promise} Promise com os dados de faturamento agrupados
    */
-  getBillingByPeriod: async (startDate, endDate, groupBy = 'mes') => {
+  getBillingByPeriod: async (startDate, endDate, groupBy = 'dia') => {
     const response = await api.get('/faturas/faturamento', {
-      params: { dataInicio: startDate, dataFim: endDate, agruparPor: groupBy }
+      params: { startDate, endDate, groupBy }
     });
     return response.data;
   },

@@ -114,10 +114,7 @@ const Sidebar = () => {
           <NavIcon className="fas fa-file-invoice-dollar"></NavIcon>
           <NavLabel>Faturamento</NavLabel>
         </NavItem>
-        <NavItem to="/camareiras" className={isActive('/camareiras')}>
-          <NavIcon className="fas fa-user-tie"></NavIcon>
-          <NavLabel>Camareiras</NavLabel>
-        </NavItem>
+
       </NavMenu>
     </SidebarContainer>
   );

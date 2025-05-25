@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 import com.hospital.santajoana.domain.entity.Estadia;
 import com.hospital.santajoana.domain.entity.Fatura;
 import com.hospital.santajoana.domain.entity.Fatura.StatusPagamento;
+import com.hospital.santajoana.domain.entity.auxiliar.AggregatedFatura;
 import com.hospital.santajoana.domain.repository.FaturaRepository;
+import com.hospital.santajoana.domain.repository.FaturaRepository.AggregateMethods;
 
 @Service
 public class FaturaMediator extends BaseMediator<Fatura, LocalDateTime> {
@@ -103,5 +105,13 @@ public class FaturaMediator extends BaseMediator<Fatura, LocalDateTime> {
 
         return faturaRepository.findMonthTotalFaturamento();
 
+    }
+
+
+    public List<AggregatedFatura> findFilteredFatura(LocalDateTime startDate, LocalDateTime endDate, AggregateMethods method) {
+        if (startDate == null || endDate == null || method == null) {
+            return List.of();
+        }
+        return faturaRepository.findAggregatedTotalFaturamento(startDate, endDate, method);
     }
 }

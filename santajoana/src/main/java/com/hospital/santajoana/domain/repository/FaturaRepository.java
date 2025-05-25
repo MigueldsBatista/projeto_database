@@ -15,9 +15,32 @@ import java.time.LocalDateTime;
 
 import com.hospital.santajoana.domain.entity.Fatura;
 import com.hospital.santajoana.domain.entity.Fatura.StatusPagamento;
+import com.hospital.santajoana.domain.entity.auxiliar.AggregatedFatura;
 
 @Repository
 public class FaturaRepository extends BaseRepository<Fatura, LocalDateTime> {
+
+    public enum AggregateMethods {
+        DIA("DIA"),
+        MES("MES"),
+        ANO("ANO");
+        
+        private final String descricao;
+        AggregateMethods(String descricao) {
+            this.descricao = descricao;
+        }
+        public String getDescricao() {
+            return descricao;
+        }
+        public static AggregateMethods fromString(String descricao) {
+            for (AggregateMethods method : AggregateMethods.values()) {
+                if (method.descricao.equalsIgnoreCase(descricao)) {
+                    return method;
+                }
+            }
+            throw new IllegalArgumentException("Método de agregação inválido: " + descricao);
+        }
+    }
 
     @SuppressWarnings("unused")
     public FaturaRepository(JdbcTemplate jdbcTemplate) {
@@ -151,5 +174,49 @@ public class FaturaRepository extends BaseRepository<Fatura, LocalDateTime> {
         
         return this.jdbcTemplate.queryForObject(sql, rowMapper);
     }
+/**
+ * Busca o faturamento total agregado por período
+ * @param startDateTime Data inicial do período
+ * @param endDateTime Data final do período
+ * @param aggregateMethod Método de agregação (DIA, MES, ANO)
+ * @return Lista de faturas agregadas por período com valores totalizados
+ */
+public List<AggregatedFatura> findAggregatedTotalFaturamento(LocalDateTime startDateTime, LocalDateTime endDateTime, AggregateMethods aggregateMethod) {
+    
+    String groupByClause;
+    
+    switch (aggregateMethod) {
+        case DIA:
+            groupByClause = "GROUP BY YEAR(`DATA_PAGAMENTO`), MONTH(`DATA_PAGAMENTO`), DAY(`DATA_PAGAMENTO`)";
+            break;
+        case MES:
+            groupByClause = "GROUP BY YEAR(`DATA_PAGAMENTO`), MONTH(`DATA_PAGAMENTO`)";
+            break;
+        case ANO:
+            groupByClause = "GROUP BY YEAR(`DATA_PAGAMENTO`)";
+            break;
+        default:
+            throw new IllegalArgumentException("Método de agregação inválido: " + aggregateMethod);
+    }
+    
+    String sql = String.format("""
+        SELECT 
+            MIN(`DATA_PAGAMENTO`) AS startDate,
+            MAX(`DATA_PAGAMENTO`) AS endDate,
+            SUM(`VALOR_TOTAL`) AS total
+        FROM `FATURA`
+        WHERE `DATA_PAGAMENTO` BETWEEN ? AND ?
+        %s
+    """, groupByClause);
 
+    RowMapper<AggregatedFatura> rowMapper = (rs, rowNum) -> {
+        AggregatedFatura agg = new AggregatedFatura();
+        agg.setStartDate(rs.getTimestamp("startDate").toLocalDateTime());
+        agg.setEndDate(rs.getTimestamp("endDate").toLocalDateTime());
+        agg.setTotal(rs.getBigDecimal("total"));
+        return agg;
+    };
+
+    return jdbcTemplate.query(sql, rowMapper, Timestamp.valueOf(startDateTime), Timestamp.valueOf(endDateTime));
+}
 }

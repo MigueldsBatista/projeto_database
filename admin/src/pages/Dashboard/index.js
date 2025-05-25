@@ -8,6 +8,7 @@ import { productsService } from '../../services/productsService';
 import { productCategoriesService } from '../../services/productCategoriesService';
 import { billingService } from '../../services/billingService';
 import { ordersService } from '../../services/ordersService';
+import { Link } from "react-router-dom";
 
 const DashboardContainer = styled.div`
   display: grid;
@@ -247,7 +248,9 @@ const Dashboard = () => {
         </Card>
 
         <Card>
+          <Link to={"/billing"} style={{ textDecoration: 'none', color: 'inherit' }}>
           <CardTitle>Faturamento do Mês</CardTitle>
+          </Link>
           <CardValue>R$ {currentMonthBilling.toFixed(2)}</CardValue>
           <CardLabel>Total faturado no mês atual</CardLabel>
         </Card>
