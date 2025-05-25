@@ -265,9 +265,7 @@ const Stays = () => {
     pacienteId: '',
     pacienteNome: '',
     quartoId: '',
-    dataEntrada: formatDateForInput(new Date()),
     dataSaida: '',
-    observacao: ''
   });
   const [formErrors, setFormErrors] = useState({});
 
@@ -331,9 +329,7 @@ const Stays = () => {
       pacienteId: '',
       pacienteNome: '',
       quartoId: '',
-      dataEntrada: formatDateForInput(new Date()),
       dataSaida: '',
-      observacao: ''
     });
     setFormErrors({});
     setIsCreateModalOpen(true);
@@ -413,9 +409,7 @@ const Stays = () => {
       errors.quartoId = 'Selecione um quarto';
     }
     
-    if (!formData.dataEntrada) {
-      errors.dataEntrada = 'Informe a data de entrada';
-    }
+
     
     return errors;
   };
@@ -433,9 +427,7 @@ const Stays = () => {
       const newStay = {
         pacienteId: parseInt(formData.pacienteId),
         quartoId: parseInt(formData.quartoId),
-        dataEntrada: formData.dataEntrada,
-        dataSaida: formData.dataSaida || null,
-        observacao: formData.observacao
+        dataSaida: formData.dataSaida || null
       };
       
       await staysService.create(newStay);
@@ -451,7 +443,7 @@ const Stays = () => {
     e.preventDefault();
     
     try {
-      await staysService.finishStay(selectedStay.id, new Date().toISOString().split('T')[0]);
+      await staysService.finishStay(selectedStay);
       await fetchStays();
       await fetchAvailableRooms();
       closeFinishModal();
@@ -593,32 +585,6 @@ const Stays = () => {
                 {formErrors.quartoId && <ErrorMessage>{formErrors.quartoId}</ErrorMessage>}
               </FormGroup>
               
-              <FormRow>
-                <FormGroup>
-                  <Label htmlFor="dataEntrada">Data de Entrada</Label>
-                  <Input
-                    id="dataEntrada"
-                    name="dataEntrada"
-                    type="date"
-                    value={formData.dataEntrada}
-                    onChange={handleInputChange}
-                  />
-                  {formErrors.dataEntrada && <ErrorMessage>{formErrors.dataEntrada}</ErrorMessage>}
-                </FormGroup>
-              </FormRow>
-              
-              <FormGroup>
-                <Label htmlFor="observacao">Observações</Label>
-                <Input
-                  id="observacao"
-                  name="observacao"
-                  as="textarea"
-                  rows="3"
-                  value={formData.observacao}
-                  onChange={handleInputChange}
-                  style={{ resize: 'vertical' }}
-                />
-              </FormGroup>
               
               <ButtonsContainer>
                 <SecondaryButton type="button" onClick={closeCreateModal}>

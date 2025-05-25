@@ -79,5 +79,26 @@ public class EstadiaController extends BaseController<Estadia, LocalDateTime> {
 
         return ResponseEntity.ok(estadias);
     }
+    @GetMapping("/{estadiaId}")
+    @Override
+    public ResponseEntity<Estadia> findById(@PathVariable LocalDateTime estadiaId) {
+        var estadiaOpt = estadiaMediator.findById(estadiaId);
+        if (estadiaOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
 
-}
+        var estadia = estadiaOpt.get();
+
+        var pacienteOpt = pacienteMediator.findById(estadia.getPacienteId());
+        var quartoOpt = quartoMediator.findById(estadia.getQuartoId());
+
+        if (pacienteOpt.isEmpty() || quartoOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        estadia.setPacienteNome(pacienteOpt.get().getNome());
+        estadia.setQuartoNumero(quartoOpt.get().getNumero());
+
+        return ResponseEntity.ok(estadia);
+        }
+    }

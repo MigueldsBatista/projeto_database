@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { ordersService } from '../../services/ordersService';
 import { housekeepersService } from '../../services/housekeepersService';
 import { PrimaryButton, SecondaryButton, DangerButton } from '../../styles/GlobalStyles';
+import { staysService } from '../../services/staysService';
 
 const PageContainer = styled.div`
   padding: var(--spacing-md);
@@ -313,14 +314,26 @@ const Orders = () => {
   const fetchOrders = async () => {
     try {
       const data = await ordersService.getAll();
-      setOrders(data);
+      const mapped = await Promise.all(
+        data.map(async order => {
+          const estadia = await staysService.getById(order.dataEntradaEstadia);
+          console.log('estadia', estadia);
+          
+          return {
+            ...order,
+            pacienteNome: estadia.pacienteNome,
+            quartoNumero: estadia.quartoNumero,
+          };
+        })
+      );
+      console.log('mapped', mapped);
+      setOrders(mapped);
       setLoading(false);
     } catch (error) {
       console.error('Erro ao carregar pedidos:', error);
       setLoading(false);
     }
   };
-
   const fetchHousekeepers = async () => {
     try {
       const data = await housekeepersService.getAll();

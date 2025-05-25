@@ -51,8 +51,13 @@ export const staysService = {
    * @param {string} dataAlta - Data de alta do paciente
    * @returns {Promise} Promise com o status da operação
    */
-  finishStay: async (id, dataAlta) => {
-    const response = await api.post(`/estadias/${id}/finalizar`, { dataAlta });
+  finishStay: async (stay) => {
+    console.log("Finishing stay", stay);
+    
+    const response = await api.put(`/estadias/update`, {
+      ...stay,
+      dataSaida: new Date().toISOString(),
+      });
     return response.data;
   },
 
