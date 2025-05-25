@@ -7,7 +7,7 @@ import { staysService } from '../../services/staysService';
 import { productsService } from '../../services/productsService';
 import { productCategoriesService } from '../../services/productCategoriesService';
 import { billingService } from '../../services/billingService';
-import { ordersService } from '../../services/pedidosService';
+import { ordersService } from '../../services/ordersService';
 import { Link } from "react-router-dom";
 
 const DashboardContainer = styled.div`
@@ -100,10 +100,12 @@ const Dashboard = () => {
         });
 
         // Calcular média de tempo de estadia (mockup por enquanto)
-        setAvgStayLength(5.7);
+        const avgStay = await staysService.getAverageStayTime();
+        setAvgStayLength(avgStay.tempoMedio || 0);
 
         // Calcular média de idade dos pacientes (mockup por enquanto)
-        setAvgPatientAge(42);
+        const avgAge = await patientsService.getAverageAge();
+        setAvgPatientAge(avgAge.idadeMedia || 0);
 
         // Obter produtos por categoria
         const categories = await productCategoriesService.getAll();
@@ -127,7 +129,8 @@ const Dashboard = () => {
         setCurrentMonthBilling(billing.total || 0);
 
         // Obter throughput de pedidos (mockup por enquanto)
-        setOrderThroughput(24);
+        const ordersThroughput = await ordersService.getOrdersThroughput();
+        setOrderThroughput(ordersThroughput.mediaDiaria || 0);
 
         // Obter gasto médio por paciente
         const avgSpending = await billingService.getAverageSpendingPerPatient();
@@ -230,7 +233,7 @@ const Dashboard = () => {
           <Link to={"/pacientes"} style={{ textDecoration: 'none', color: 'inherit' }}>
           <CardTitle>Idade Média dos Pacientes</CardTitle>
           </Link>
-          <CardValue>{avgPatientAge}</CardValue>
+          <CardValue>{avgPatientAge.toFixed(2)}</CardValue>
           <CardLabel>Anos</CardLabel>
         </Card>
       </DashboardContainer>

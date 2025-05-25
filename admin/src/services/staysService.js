@@ -68,5 +68,14 @@ export const staysService = {
   getActiveStays: async () => {
     const response = await api.get('/pacientes/estadias-ativas');
     return response.data;
+  },
+
+  /**
+   * Busca o tempo médio de estadia dos pacientes
+   * @returns {Promise} Promise com o tempo médio de estadia
+   */
+  getAverageStayTime: async () => {
+    const response = await api.get('/estadias/tempo-medio');
+    return response.data;
   }
 };

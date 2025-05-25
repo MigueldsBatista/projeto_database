@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { ordersService } from '../../services/pedidosService';
+import { ordersService } from '../../services/ordersService';
 import { housekeepersService } from '../../services/housekeepersService';
 import { PrimaryButton, SecondaryButton, DangerButton } from '../../styles/GlobalStyles';
 import { staysService } from '../../services/staysService';

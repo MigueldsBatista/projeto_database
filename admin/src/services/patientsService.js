@@ -53,5 +53,13 @@ export const patientsService = {
   getStaysHistory: async (id) => {
     const response = await api.get(`/pacientes/${id}/estadias`);
     return response.data;
+  },
+  /**
+   * Busca a idade média dos pacientes
+   * @returns {Promise} Promise com a idade média dos pacientes
+   */
+  getAverageAge: async () => {
+    const response = await api.get('/pacientes/idade-media');
+    return response.data;
   }
 };

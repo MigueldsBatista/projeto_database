@@ -75,7 +75,7 @@ const Sidebar = () => {
   return (
     <SidebarContainer>
       <Logo>
-        <img src="/hsj_logo.png" alt="Hospital Santa Joana" />
+        <img src="/assets/images/logo_santa_joana.png" alt="Hospital Santa Joana" />
       </Logo>
       <NavMenu>
         <NavItem to="/" className={isActive('/')}>
@@ -99,7 +99,7 @@ const Sidebar = () => {
           <NavLabel>Categorias de Quartos</NavLabel>
         </NavItem>
         <NavItem to="/pacientes" className={isActive('/pacientes')}>
-          <NavIcon className="fas fa-user-injured"></NavIcon>
+          <NavIcon className="fas fa-hospital-user"></NavIcon>
           <NavLabel>Pacientes</NavLabel>
         </NavItem>
         <NavItem to="/pedidos" className={isActive('/pedidos')}>
@@ -107,7 +107,7 @@ const Sidebar = () => {
           <NavLabel>Pedidos</NavLabel>
         </NavItem>
         <NavItem to="/estadias" className={isActive('/estadias')}>
-          <NavIcon className="fas fa-calendar-check"></NavIcon>
+          <NavIcon className="fas fa-hospital"></NavIcon>
           <NavLabel>Estadias</NavLabel>
         </NavItem>
         <NavItem to="/faturamento" className={isActive('/faturamento')}>

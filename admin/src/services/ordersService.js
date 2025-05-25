@@ -38,8 +38,7 @@ export const ordersService = {
 
   /**
    * Associa uma camareira a um pedido
-   * @param {number} orderId - ID do pedido
-   * @param {number} housekeeperId - ID da camareira
+   * @param {Object} order - Objeto do pedido com as informações atualizadas, incluindo a camareira
    * @returns {Promise} Promise com os dados do pedido atualizado
    */
   assignHousekeeper: async (order) => {
@@ -67,5 +66,13 @@ export const ordersService = {
     return response.data;
   },
 
+  /**
+   * Obtém a média diária de pedidos (throughput)
+   * @returns {Promise} Promise com os dados de throughput de pedidos
+   */
+  getOrdersThroughput: async () => {
+    const response = await api.get(`/pedidos/media-diaria`);
+    return response.data;
+  },
 
 };
