@@ -179,7 +179,8 @@ const Products = () => {
     descricao: '',
     preco: '',
     categoriaId: '',
-    ativo: true
+    ativo: true,
+    tempoPreparoMinutos: ''
   });
 
   useEffect(() => {
@@ -223,7 +224,8 @@ const Products = () => {
       descricao: '',
       preco: '',
       categoriaId: categories.length > 0 ? categories[0].id : '',
-      ativo: true
+      ativo: true,
+      tempoPreparoMinutos: ''
     });
     setIsModalOpen(true);
   };
@@ -235,7 +237,8 @@ const Products = () => {
       descricao: product.descricao,
       preco: product.preco,
       categoriaId: product.categoriaId,
-      ativo: product.ativo
+      ativo: product.ativo,
+      tempoPreparoMinutos: product.tempoPreparoMinutos || ''
     });
     setIsModalOpen(true);
   };
@@ -264,22 +267,18 @@ const Products = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
     try {
-      console.log(formData);
-      
       const formattedData = {
         ...formData,
         preco: parseFloat(formData.preco),
-        categoriaId: parseInt(formData.categoriaId)
+        categoriaId: parseInt(formData.categoriaId),
+        tempoPreparoMinutos: formData.tempoPreparoMinutos ? parseInt(formData.tempoPreparoMinutos) : null
       };
-      
       if (formData.id) {
         await productsService.update(formattedData);
       } else {
         await productsService.create(formattedData);
       }
-      
       fetchProducts();
       closeModal();
     } catch (error) {
@@ -325,6 +324,7 @@ const Products = () => {
             <th>Descrição</th>
             <th>Preço</th>
             <th>Categoria</th>
+            <th>Tempo Preparo (min)</th>
             <th>Status</th>
             <th>Ações</th>
           </tr>
@@ -340,6 +340,7 @@ const Products = () => {
                 <TableCell>
                   {categories.find(cat => cat.id === product.categoriaId)?.nome || 'Sem categoria'}
                 </TableCell>
+                <TableCell>{product.tempoPreparoMinutos ?? '-'}</TableCell>
                 <TableCell>
                   <Status isActive={product.ativo}>
                     {product.ativo ? 'Ativo' : 'Inativo'}
@@ -359,7 +360,7 @@ const Products = () => {
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan="7" style={{ textAlign: 'center' }}>
+              <TableCell colSpan="8" style={{ textAlign: 'center' }}>
                 Nenhum produto encontrado
               </TableCell>
             </TableRow>
@@ -424,6 +425,19 @@ const Products = () => {
                     </option>
                   ))}
                 </Select>
+              </FormGroup>
+              <FormGroup>
+                <Label htmlFor="tempoPreparoMinutos">Tempo de Preparo (minutos)</Label>
+                <Input
+                  id="tempoPreparoMinutos"
+                  name="tempoPreparoMinutos"
+                  type="number"
+                  min="0"
+                  step="1"
+                  value={formData.tempoPreparoMinutos}
+                  onChange={handleInputChange}
+                  required
+                />
               </FormGroup>
               <FormGroup>
                 <Label>

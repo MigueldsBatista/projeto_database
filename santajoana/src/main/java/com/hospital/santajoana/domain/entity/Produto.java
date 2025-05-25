@@ -34,7 +34,7 @@ public class Produto extends Entity<Long> {
     }
 
     public Produto(Long produtoId, String nome, String descricao, BigDecimal preco, Integer tempoPreparoMinutos, Long categoriaId,
-            Integer caloriasKcal, Integer proteinasG, Integer carboidratosG, Integer gordurasG, Integer sodioMg, Boolean ativo) {
+        Integer caloriasKcal, Integer proteinasG, Integer carboidratosG, Integer gordurasG, Integer sodioMg, Boolean ativo) {
         super(produtoId);
         this.nome = nome;
         this.descricao = descricao;
@@ -48,6 +48,5 @@ public class Produto extends Entity<Long> {
         this.sodioMg = sodioMg;
         this.ativo = ativo;
     }
-
     
 }

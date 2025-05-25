@@ -445,24 +445,10 @@ const Patients = () => {
                       <PatientDetailLabel>Logradouro</PatientDetailLabel>
                       <PatientDetailValue>{selectedPatient.endereco || '-'}</PatientDetailValue>
                     </PatientDetailItem>
-                    <PatientDetailItem>
-                      <PatientDetailLabel>Número</PatientDetailLabel>
-                      <PatientDetailValue>{selectedPatient.numero || '-'}</PatientDetailValue>
-                    </PatientDetailItem>
+
                   </PatientDetailRow>
                   
-                  <PatientDetailRow>
-                    <PatientDetailItem>
-                      <PatientDetailLabel>Bairro</PatientDetailLabel>
-                      <PatientDetailValue>{selectedPatient.bairro || '-'}</PatientDetailValue>
-                    </PatientDetailItem>
-                    <PatientDetailItem>
-                      <PatientDetailLabel>Cidade/UF</PatientDetailLabel>
-                      <PatientDetailValue>
-                        {selectedPatient.cidade || '-'}/{selectedPatient.uf || '-'}
-                      </PatientDetailValue>
-                    </PatientDetailItem>
-                  </PatientDetailRow>
+
                 </PatientDetailSection>
                 
                 <PatientDetailSection>

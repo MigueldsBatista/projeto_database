@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import com.hospital.santajoana.domain.entity.Estadia;
@@ -63,6 +64,9 @@ public class EstadiaRepository extends BaseRepository<Estadia, LocalDateTime> {
             .findFirst();
     }
 
-
-
+    public List<Estadia> findPacienteEstadias(Long pacienteId) {
+        String sql = "SELECT * FROM ESTADIA WHERE ID_PACIENTE = ? ORDER BY DATA_ENTRADA DESC";
+        return findBySql(sql, pacienteId);
+    
+    }
 }

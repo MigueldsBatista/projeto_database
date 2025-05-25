@@ -134,6 +134,13 @@ public class PacienteController extends BaseController<Paciente, Long> {
 
         return ResponseEntity.ok(estadia.get());
     }
+    @GetMapping("/{id}/estadias")
+    public ResponseEntity<List<Estadia>> findPacienteEstadias(@PathVariable Long id) {
+
+        List<Estadia> estadias = estadiaMediator.findPacienteEstadias(id);
+
+        return ResponseEntity.ok(estadias);
+    }
 
     @GetMapping("/estadias-ativas")
     public ResponseEntity<List<Paciente>> findPacientesWithEstadiasAtivas() {

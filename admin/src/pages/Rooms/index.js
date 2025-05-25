@@ -173,7 +173,6 @@ const Rooms = () => {
   const [formData, setFormData] = useState({
     id: null,
     numero: '',
-    andar: '',
     categoriaId: '',
     disponivel: true
   });
@@ -206,17 +205,21 @@ const Rooms = () => {
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
   };
-
-  const filteredRooms = rooms.filter(room =>
-    room.numero.toString().includes(searchTerm) ||
-    room.andar.toString().includes(searchTerm)
+  
+  // Filtra os quartos com base no termo de busca inserido pelo usuário
+  const formattedRooms = rooms.filter(room => 
+    room.numero.toString().includes(searchTerm)
   );
+
+  const filteredRooms = formattedRooms.map(room => ({
+    ...room,
+    disponivel: room.disponivel ? 'Disponível' : 'Ocupado'
+  }));
 
   const openCreateModal = () => {
     setFormData({
       id: null,
       numero: '',
-      andar: '',
       categoriaId: categories.length > 0 ? categories[0].id : '',
       disponivel: true
     });
@@ -227,7 +230,6 @@ const Rooms = () => {
     setFormData({
       id: room.id,
       numero: room.numero,
-      andar: room.andar,
       categoriaId: room.categoriaId,
       disponivel: room.disponivel
     });
@@ -263,7 +265,6 @@ const Rooms = () => {
       const formattedData = {
         ...formData,
         numero: parseInt(formData.numero),
-        andar: parseInt(formData.andar),
         categoriaId: parseInt(formData.categoriaId)
       };
       
@@ -301,7 +302,7 @@ const Rooms = () => {
       <FilterContainer>
         <SearchInput
           type="text"
-          placeholder="Buscar quartos por número ou andar..."
+          placeholder="Buscar quartos por número..."
           value={searchTerm}
           onChange={handleSearchChange}
         />
@@ -325,7 +326,7 @@ const Rooms = () => {
                 
                 <RoomDetail>
                   <i className="fas fa-building"></i>
-                  <span>Andar: {room.andar}</span>
+                  <span>Andar: {room.numero}</span>
                 </RoomDetail>
                 
                 <RoomDetail>
@@ -369,17 +370,7 @@ const Rooms = () => {
                   required
                 />
               </FormGroup>
-              <FormGroup>
-                <Label htmlFor="andar">Andar</Label>
-                <Input
-                  id="andar"
-                  name="andar"
-                  type="number"
-                  value={formData.andar}
-                  onChange={handleInputChange}
-                  required
-                />
-              </FormGroup>
+
               <FormGroup>
                 <Label htmlFor="categoriaId">Categoria do Quarto</Label>
                 <Select
@@ -397,17 +388,7 @@ const Rooms = () => {
                   ))}
                 </Select>
               </FormGroup>
-              <FormGroup>
-                <Label>
-                  <input
-                    type="checkbox"
-                    name="disponivel"
-                    checked={formData.disponivel}
-                    onChange={handleInputChange}
-                  />
-                  {' '}Quarto disponível
-                </Label>
-              </FormGroup>
+
               <ButtonsContainer>
                 <SecondaryButton type="button" onClick={closeModal}>
                   Cancelar

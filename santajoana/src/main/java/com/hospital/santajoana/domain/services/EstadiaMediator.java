@@ -1,5 +1,6 @@
 package com.hospital.santajoana.domain.services;
 
+import java.util.List;
 import java.util.Optional;
 import java.time.LocalDateTime;
 
@@ -62,6 +63,11 @@ public class EstadiaMediator extends BaseMediator<Estadia, LocalDateTime> {
     public Optional<Estadia> findMostRecentEstadiaByPacienteId(Long pacienteId){
 
         return repository.findMostRecentEstadiaByPacienteId(pacienteId);
+    }
+
+    public List<Estadia> findPacienteEstadias(Long id) {
+        
+        return repository.findPacienteEstadias(id);
     }
 
 

@@ -174,7 +174,6 @@ const RoomCategories = () => {
     id: null,
     nome: '',
     descricao: '',
-    precoDiaria: ''
   });
 
   useEffect(() => {
@@ -206,7 +205,6 @@ const RoomCategories = () => {
       id: null,
       nome: '',
       descricao: '',
-      precoDiaria: ''
     });
     setIsModalOpen(true);
   };
@@ -215,8 +213,7 @@ const RoomCategories = () => {
     setFormData({
       id: category.id,
       nome: category.nome,
-      descricao: category.descricao || '',
-      precoDiaria: category.precoDiaria || ''
+      descricao: category.descricao || ''
     });
     setIsModalOpen(true);
   };
@@ -248,8 +245,7 @@ const RoomCategories = () => {
     
     try {
       const formattedData = {
-        ...formData,
-        precoDiaria: formData.precoDiaria ? parseFloat(formData.precoDiaria) : 0
+        ...formData
       };
       
       if (formData.id) {
@@ -301,14 +297,7 @@ const RoomCategories = () => {
             <CategoryCard key={category.id}>
               <CategoryName>{category.nome}</CategoryName>
               <CategoryDescription>{category.descricao || 'Sem descrição'}</CategoryDescription>
-              
-              {category.precoDiaria && (
-                <PriceDetail>
-                  <i className="fas fa-money-bill-wave" style={{ marginRight: 'var(--spacing-sm)' }}></i>
-                  Diária: R$ {parseFloat(category.precoDiaria).toFixed(2)}
-                </PriceDetail>
-              )}
-              
+                            
               <CategoryActions>
                 <SecondaryButton onClick={() => openEditModal(category)}>
                   <i className="fas fa-edit"></i> Editar
@@ -354,18 +343,7 @@ const RoomCategories = () => {
                   onChange={handleInputChange}
                 />
               </FormGroup>
-              <FormGroup>
-                <Label htmlFor="precoDiaria">Preço da Diária (R$)</Label>
-                <Input
-                  id="precoDiaria"
-                  name="precoDiaria"
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  value={formData.precoDiaria}
-                  onChange={handleInputChange}
-                />
-              </FormGroup>
+
               <ButtonsContainer>
                 <SecondaryButton type="button" onClick={closeModal}>
                   Cancelar
