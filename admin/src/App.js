@@ -12,7 +12,7 @@ import PatientsPage from './pages/Patients';
 import OrdersPage from './pages/Orders';
 import StaysPage from './pages/Stays';
 import BillingPage from './pages/Billing';
-import HousekeepersPage from './pages/Housekeepers';
+import HousekeepersPage from './pages/HousekeepersReport';
 import styled from 'styled-components';
 
 const AppContainer = styled.div`

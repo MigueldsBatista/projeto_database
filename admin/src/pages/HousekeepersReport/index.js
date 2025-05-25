@@ -22,7 +22,7 @@ import {
   Button
 } from '@nextui-org/react';
 import { Pie, PieChart, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
-import { SearchIcon } from '../../components/Icons/SearchIcon';
+import { FaSearch } from 'react-icons/fa';
 
 const Container = styled.div`
   padding: 20px;
@@ -152,6 +152,15 @@ const HousekeepersReport = () => {
     ].filter(item => item.value > 0);
   };
 
+  /**
+   * Atualiza a camareira selecionada e reseta a página para 1
+   * @param {Event} e Evento de mudança do select
+   */
+  const handleHousekeeperChange = (e) => {
+    setSelectedHousekeeper(e.target.value);
+    setPage(1);
+  };
+
   return (
     <Container>
       <Title>Controle de Pedidos por Camareira</Title>
@@ -159,12 +168,12 @@ const HousekeepersReport = () => {
       <FilterContainer>
         <Select 
           placeholder="Selecione uma camareira"
-          value={selectedHousekeeper}
-          onChange={(e) => setSelectedHousekeeper(e.target.value)}
+          value={selectedHousekeeper || ''}
+          onChange={handleHousekeeperChange}
           style={{ minWidth: '250px' }}
         >
           {housekeepers.map((housekeeper) => (
-            <SelectItem key={housekeeper.id} value={housekeeper.id}>
+            <SelectItem key={housekeeper.id} value={housekeeper.id.toString()}>
               {housekeeper.name}
             </SelectItem>
           ))}
@@ -261,14 +270,17 @@ const HousekeepersReport = () => {
                   placeholder="Buscar por ID ou paciente"
                   value={searchTerm}
                   onValueChange={setSearchTerm}
-                  startContent={<SearchIcon />}
+                  startContent={<FaSearch />}
                   style={{ minWidth: '250px' }}
                 />
                 
                 <Select 
                   placeholder="Filtrar por status"
                   value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
+                  onChange={(e) => {
+                    setStatusFilter(e.target.value);
+                    setPage(1);
+                  }}
                 >
                   <SelectItem key="all" value="all">
                     Todos os status
