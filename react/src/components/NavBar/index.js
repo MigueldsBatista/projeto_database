@@ -19,7 +19,7 @@ export default function NavBar() {
                 <span>Carrinho</span>
                 <span className="badge">0</span>
             </Link>
-            <Link to='/orders' className="nav-item">
+            <Link to='/pedidos' className="nav-item">
                 <FaClipboardList size={24}/>
                 <span>Pedidos</span>
             </Link> 

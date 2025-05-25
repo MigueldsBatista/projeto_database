@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { housekeepersService } from '../../services/housekeepersService';
-import { ordersService } from '../../services/ordersService';
+import { ordersService } from '../../services/pedidosService';
 import {
   Table,
   TableHeader,

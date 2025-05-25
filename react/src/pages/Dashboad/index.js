@@ -210,7 +210,7 @@ export default function Dashboard() {
             <OrdersSection>
                 <SectionHeader>
                     <h3 className="section-title">Pedidos Recentes</h3>
-                    <CustomLink to="/orders">Ver todos</CustomLink>
+                    <CustomLink to="/pedidos">Ver todos</CustomLink>
                 </SectionHeader>
                 <OrderList>
                     {appState.userProfile.pedidos.slice(0, 3).map(order => (

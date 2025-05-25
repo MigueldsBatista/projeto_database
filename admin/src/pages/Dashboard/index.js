@@ -7,7 +7,7 @@ import { staysService } from '../../services/staysService';
 import { productsService } from '../../services/productsService';
 import { productCategoriesService } from '../../services/productCategoriesService';
 import { billingService } from '../../services/billingService';
-import { ordersService } from '../../services/ordersService';
+import { ordersService } from '../../services/pedidosService';
 import { Link } from "react-router-dom";
 
 const DashboardContainer = styled.div`

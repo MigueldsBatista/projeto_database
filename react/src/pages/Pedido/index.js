@@ -57,7 +57,7 @@ export default function Orders() {
     };
 
     const handleOrderClick = (orderId) => {
-        history.push(`/order-details?id=${orderId}`);
+        history.push(`/detalhespedido?id=${orderId}`);
     };
 
     if (orders.length === 0) {

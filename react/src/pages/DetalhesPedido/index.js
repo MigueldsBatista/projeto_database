@@ -29,7 +29,7 @@ export default function OrderDetails() {
         if (!orderId) {
             toast.error("ID do pedido não encontrado");
             setTimeout(() => {
-                history.push("/orders");
+                history.push("/pedidos");
             }, 3000);
             return;
         }
@@ -51,7 +51,7 @@ export default function OrderDetails() {
                 console.error("Erro ao carregar detalhes do pedido:", error);
                 toast.error("Erro ao carregar detalhes do pedido");
                 setTimeout(() => {
-                    history.push("/orders");
+                    history.push("/pedidos");
                 }, 3000);
             }
         };
@@ -87,7 +87,7 @@ export default function OrderDetails() {
             <OrderDetailsContainer>
                 <OrderHeader>
                     <div className="header-left">
-                        <button onClick={() => history.push("/orders")} className="back-button">
+                        <button onClick={() => history.push("/pedidos")} className="back-button">
                             <FaArrowLeft/>
                         </button>
                         <h2>Detalhes do Pedido</h2>

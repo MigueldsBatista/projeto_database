@@ -95,7 +95,7 @@ export default function Cart() {
             );
 
             toast.success("Pedido realizado com sucesso!");
-            history.push(`/order-confirmation?id=${encodeURIComponent(order.dataPedido)}`);
+            history.push(`/pedidoconfirmado?id=${encodeURIComponent(order.dataPedido)}`);
         } catch (error) {
             console.error("Erro ao enviar pedido:", error);
             toast.error("Erro ao enviar pedido. Por favor, tente novamente.");

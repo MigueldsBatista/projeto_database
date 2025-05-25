@@ -25,7 +25,7 @@ export default function OrderConfirmation() {
         if (!orderId) {
             toast.error("ID do pedido não encontrado");
             setTimeout(() => {
-                history.push("/orders");
+                history.push("/pedidos");
             }, 3000);
             return;
         }
@@ -48,7 +48,7 @@ export default function OrderConfirmation() {
 
             toast.error("Pedido não encontrado");
             setTimeout(() => {
-                history.push("/orders");
+                history.push("/pedidos");
             }, 3000);
         };
 
@@ -61,7 +61,7 @@ export default function OrderConfirmation() {
 
     const handleViewOrderDetails = () => {
         const idToUse = order.dataPedido || order.id;
-        history.push(`/order-details?id=${idToUse}`);
+        history.push(`/detalhespedido?id=${idToUse}`);
     };
 
     const handleGoHome = () => {

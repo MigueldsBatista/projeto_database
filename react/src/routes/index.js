@@ -26,6 +26,9 @@ export default function Rotas() {
             <MyRoute exact path="/fatura/" component={Fatura} isClosed={false}/>
             <MyRoute exact path="/menu/" component={Menu} isClosed={false}/>
             <MyRoute exact path="/pedidoconfirmado/" component={PedidoConfirmado} isClosed={false}/>
+            <MyRoute exact path="/pedidos/" component={Pedido} isClosed={false}/>
+            <MyRoute exact path="/detalhespedido" component={DetalhesPedido} isClosed={false}/>
+            <MyRoute exact path="/detalhesproduto" component={DetalhesProduto} isClosed={false}/>
             <MyRoute  path="*" component={Page404}/>
         </Switch>
     );
