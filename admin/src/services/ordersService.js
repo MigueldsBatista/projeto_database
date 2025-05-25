@@ -32,7 +32,7 @@ export const ordersService = {
    * @returns {Promise} Promise com os dados do pedido atualizado
    */
   updateStatus: async (id, status) => {
-    const response = await api.put(`/pedidos/${id}/status`, { status });
+    const response = await api.patch(`/pedidos/update/status/${id}`, { status });
     return response.data;
   },
 
@@ -42,8 +42,8 @@ export const ordersService = {
    * @param {number} housekeeperId - ID da camareira
    * @returns {Promise} Promise com os dados do pedido atualizado
    */
-  assignHousekeeper: async (orderId, housekeeperId) => {
-    const response = await api.put(`/pedidos/${orderId}/camareira`, { camareiraId: housekeeperId });
+  assignHousekeeper: async (order) => {
+    const response = await api.put('/pedidos/update', order);
     return response.data;
   },
   

@@ -46,7 +46,8 @@ public class Pedido extends Entity<LocalDateTime> {
     public enum StatusPedido {
         EM_PREPARO("Em Preparo"),
         ENTREGUE("Entregue"),
-        PENDENTE("Pendente");   
+        PENDENTE("Pendente"),
+        CANCELADO("Cancelado");
         
         private final String descricao;
         

@@ -87,9 +87,9 @@ const Badge = styled.span`
     switch (props.status) {
       case 'PENDENTE':
         return 'var(--accent-yellow)';
-      case 'CONCLUIDO':
+      case 'ENTREGUE':
         return 'var(--secondary-green)';
-      case 'EM_ANDAMENTO':
+      case 'EM PREPARO':
         return 'var(--primary-blue)';
       case 'CANCELADO':
         return 'var(--accent-red)';
@@ -279,9 +279,9 @@ const translateOrderStatus = (status) => {
   switch (status) {
     case 'PENDENTE':
       return 'Pendente';
-    case 'EM_ANDAMENTO':
+    case 'EM PREPARO':
       return 'Em Andamento';
-    case 'CONCLUIDO':
+    case 'ENTREGUE':
       return 'Concluído';
     case 'CANCELADO':
       return 'Cancelado';
@@ -317,12 +317,20 @@ const Orders = () => {
       const mapped = await Promise.all(
         data.map(async order => {
           const estadia = await staysService.getById(order.dataEntradaEstadia);
+          
+          let camareira = { nome: null };
+          if (order.camareiraId && order.camareiraId !== 0) {
+            camareira = await housekeepersService.getById(order.camareiraId);
+          }
+          
           console.log('estadia', estadia);
+          console.log('camareira', camareira);
           
           return {
             ...order,
             pacienteNome: estadia.pacienteNome,
             quartoNumero: estadia.quartoNumero,
+            camareiraNome: camareira.nome,
           };
         })
       );
@@ -364,9 +372,9 @@ const Orders = () => {
     
     let matchesTab = true;
     if (currentTab === 'withHousekeeper') {
-      matchesTab = order.camareiraId !== null;
+      matchesTab = order.camareiraId !== null && order.camareiraId !== 0;
     } else if (currentTab === 'withoutHousekeeper') {
-      matchesTab = order.camareiraId === null;
+      matchesTab = order.camareiraId === null || order.camareiraId === 0;
     }
     
     return matchesSearch && matchesStatus && matchesTab;
@@ -434,10 +442,10 @@ const Orders = () => {
     e.preventDefault();
     
     try {
-      await ordersService.assignHousekeeper(
-        selectedOrder.id, 
-        formData.camareiraId ? parseInt(formData.camareiraId) : null
-      );
+      await ordersService.assignHousekeeper({
+        ...selectedOrder,
+        camareiraId: formData.camareiraId ? parseInt(formData.camareiraId) : null
+      });
       await fetchOrders();
       closeAssignModal();
     } catch (error) {
@@ -471,6 +479,7 @@ const Orders = () => {
           onClick={() => handleTabChange('withoutHousekeeper')}
         >
           Sem Camareira
+
         </Tab>
       </TabsContainer>
       
@@ -483,17 +492,16 @@ const Orders = () => {
         />
         <FilterSelect value={statusFilter} onChange={handleStatusFilterChange}>
           <option value="">Todos os Status</option>
-          <option value="PENDENTE">Pendentes</option>
-          <option value="EM_ANDAMENTO">Em Andamento</option>
-          <option value="CONCLUIDO">Concluídos</option>
-          <option value="CANCELADO">Cancelados</option>
+          <option value="Pendente">Pendentes</option>
+          <option value="Em Preparo">Em Preparo</option>
+          <option value="Entregue">Concluídos</option>
+          <option value="Cancelado">Cancelados</option>
         </FilterSelect>
       </FilterContainer>
       
       <Table>
         <TableHeader>
           <tr>
-            <th>ID</th>
             <th>Paciente</th>
             <th>Quarto</th>
             <th>Data do Pedido</th>
@@ -506,10 +514,9 @@ const Orders = () => {
           {filteredOrders.length > 0 ? (
             filteredOrders.map(order => (
               <TableRow key={order.id}>
-                <TableCell>{order.id}</TableCell>
                 <TableCell>{order.pacienteNome || `ID: ${order.pacienteId}`}</TableCell>
                 <TableCell>{order.quartoNumero || `ID: ${order.quartoId}`}</TableCell>
-                <TableCell>{formatDate(order.data)}</TableCell>
+                <TableCell>{formatDate(order.id)}</TableCell>
                 <TableCell>
                   <Badge status={order.status}>
                     {translateOrderStatus(order.status)}
@@ -565,8 +572,8 @@ const Orders = () => {
                   required
                 >
                   <option value="PENDENTE">Pendente</option>
-                  <option value="EM_ANDAMENTO">Em Andamento</option>
-                  <option value="CONCLUIDO">Concluído</option>
+                  <option value="EM PREPARO">Em Preparo</option>
+                  <option value="ENTREGUE">Concluído</option>
                   <option value="CANCELADO">Cancelado</option>
                 </Select>
               </FormGroup>
@@ -643,7 +650,7 @@ const Orders = () => {
               
               <OrderDetailRow>
                 <OrderDetailLabel>Data</OrderDetailLabel>
-                <OrderDetailValue>{formatDate(selectedOrder.data)}</OrderDetailValue>
+                <OrderDetailValue>{formatDate(selectedOrder.id)}</OrderDetailValue>
               </OrderDetailRow>
               
               <OrderDetailRow>
