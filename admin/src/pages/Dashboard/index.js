@@ -182,13 +182,18 @@ const Dashboard = () => {
       <SectionTitle>Indicadores de Pacientes</SectionTitle>
       <DashboardContainer>
         <Card>
+          <Link to={"/estadias"} style={{ textDecoration: 'none', color: 'inherit' }}>
+
           <CardTitle>Pacientes com Estadia</CardTitle>
+          </Link>
           <CardValue>{patientsWithStay}</CardValue>
           <CardLabel>Pacientes atualmente internados</CardLabel>
         </Card>
 
         <Card>
+      <Link to={"/quartos"} style={{ textDecoration: 'none', color: 'inherit' }}>
           <CardTitle>Ocupação de Quartos</CardTitle>
+      </Link>
           <ChartContainer>
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -214,13 +219,17 @@ const Dashboard = () => {
         </Card>
 
         <Card>
+          <Link to={"/estadias"} style={{ textDecoration: 'none', color: 'inherit' }}>
           <CardTitle>Tempo Médio de Estadia</CardTitle>
+          </Link>
           <CardValue>{avgStayLength}</CardValue>
           <CardLabel>Dias em média por paciente</CardLabel>
         </Card>
 
         <Card>
+          <Link to={"/pacientes"} style={{ textDecoration: 'none', color: 'inherit' }}>
           <CardTitle>Idade Média dos Pacientes</CardTitle>
+          </Link>
           <CardValue>{avgPatientAge}</CardValue>
           <CardLabel>Anos</CardLabel>
         </Card>
@@ -229,7 +238,9 @@ const Dashboard = () => {
       <SectionTitle>Indicadores Financeiros</SectionTitle>
       <DashboardContainer>
         <Card>
+          <Link to={"/produtos"} style={{ textDecoration: 'none', color: 'inherit' }}>
           <CardTitle>Produtos por Categoria</CardTitle>
+          </Link>
           <ChartContainer>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
@@ -248,7 +259,7 @@ const Dashboard = () => {
         </Card>
 
         <Card>
-          <Link to={"/billing"} style={{ textDecoration: 'none', color: 'inherit' }}>
+          <Link to={"/faturamento"} style={{ textDecoration: 'none', color: 'inherit' }}>
           <CardTitle>Faturamento do Mês</CardTitle>
           </Link>
           <CardValue>R$ {currentMonthBilling.toFixed(2)}</CardValue>
@@ -256,19 +267,25 @@ const Dashboard = () => {
         </Card>
 
         <Card>
+          <Link to={"/pedidos"} style={{ textDecoration: 'none', color: 'inherit' }}>
           <CardTitle>Pedidos por Dia</CardTitle>
+          </Link>
           <CardValue>{orderThroughput}</CardValue>
           <CardLabel>Média de pedidos diários</CardLabel>
         </Card>
 
         <Card>
+          <Link to={"/pedidos"} style={{ textDecoration: 'none', color: 'inherit' }}>
           <CardTitle>Gasto Médio por Paciente</CardTitle>
+          </Link>
           <CardValue>R$ {avgSpendingPerPatient.toFixed(2)}</CardValue>
           <CardLabel>Valor médio por paciente</CardLabel>
         </Card>
 
         <Card style={{ gridColumn: '1 / -1' }}>
+        <Link to={"/categorias"} style={{ textDecoration: 'none', color: 'inherit' }}>
           <CardTitle>Produtos Mais Pedidos por Categoria</CardTitle>
+        </Link>
           <ChartContainer>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
