@@ -148,4 +148,29 @@ SET VALOR_TOTAL = (
 )
 WHERE FATURA.DATA_EMISSAO = '2025-04-21 20:59:19.208995'; -- Substitua pela data desejada
 
+DELIMITER $$
+CREATE PROCEDURE GET_MAIS_PEDIDOS_POR_CATEGORIA()
+BEGIN
+    SELECT
+        cp.NOME AS categoria,
+        p.NOME AS produto,
+        COUNT(pp.ID_PRODUTO) AS total_pedidos
+    FROM PRODUTO_PEDIDO pp
+    JOIN PRODUTO p ON pp.ID_PRODUTO = p.ID_PRODUTO
+    JOIN CATEGORIA_PRODUTO cp ON p.ID_CATEGORIA_PRODUTO = cp.ID_CATEGORIA
+    GROUP BY cp.ID_CATEGORIA, cp.NOME, p.ID_PRODUTO, p.NOME
+    HAVING COUNT(pp.ID_PRODUTO) = (
+        SELECT MAX(sub.cnt)
+        FROM (
+            SELECT COUNT(pp2.ID_PRODUTO) AS cnt
+            FROM PRODUTO_PEDIDO pp2
+            JOIN PRODUTO p2 ON pp2.ID_PRODUTO = p2.ID_PRODUTO
+            WHERE p2.ID_CATEGORIA_PRODUTO = p.ID_CATEGORIA_PRODUTO
+            GROUP BY pp2.ID_PRODUTO
+        ) AS sub
+    );
+END$$
+DELIMITER ;
+
+-- Chamada da procedure
 
