@@ -29,7 +29,10 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "NODE_OPTIONS=--openssl-legacy-provider react-scripts start"
+    "start": "cd react && npm start",
+    "admin": "cd admin && npm start",
+    "spring": "cd santajoana && mvn spring-boot:run",
+    "dev": "concurrently \"npm run admin\" \"npm run spring\" \"npm start\""
   },
   "eslintConfig": {
     "extends": [
