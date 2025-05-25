@@ -1,20 +1,5 @@
-🗓️ Dia 1 – Estrutura Base + Login
-🔧 Back-end: Estrutura e Login
- Criar função de login (repository, mediator, controller)
+------------------Testes------------------
 
- Corrigir backend para criar fatura e estadia ao logar paciente
-
- Permitir cadastro de camareira
-
- Adicionar tratamento para erro de constraint de referência (FK inexistente)
-
-🖥️ Front-end
- Tela de cadastro/login e perfil
-
- Início da persistência do login (token/localStorage)
-
-🗓️ Dia 2 – Testes e Perfil
-✅ Testes de Integridade de Dados
  CPF duplicado → 409
 
  CRE duplicado → 409
@@ -35,51 +20,8 @@
 
  Fatura com paciente de alta → 400
 
-⚠️ Corrigir o código onde os testes falharem!
 
-👤 Tela de Perfil
- Implementar tela simples que consome o endpoint de do usuário paciente
-
-🗓️ Dia 3 – Pedidos, Fatura e Carrinho
-🧾 Endpoint e Tela de Fatura
- Backend: listar pedidos da fatura agrupados por dia
-
- Tela de fatura (com agrupamento e datas)
-
-🛒 Carrinho
- Finalizar lógica no localStorage
-
- Conectar com criação de pedidos
-
-🗓️ Dia 4 – Cardápio, Filtros e Refinamento
-🍽️ Tela de Cardápio
- Backend: adicionar filtro por categoria (?categoria=...)
-
- Frontend: implementar filtro visual
-
-📦 Tela de Pedidos do Paciente
- Mostrar pedidos do paciente com informações corretas
-
- Filtros por data/categoria (mínimo viável)
-
-📘 Questões de Modelagem
- Justificar por que não foi usada herança:
-
-Regras de negócio distintas
-
-Entidades não compartilham comportamento suficiente
-
-Preferência por composição e menor acoplamento
-
-✨ Bônus: Fechamento
-Se sobrar tempo:
-
- Refatorar código com feedback dos testes
-
- Revisar modelo conceitual e lógico atualizado
-
- Melhorar UX (mensagens, validações visuais, loading, etc.)
-
+------------------------------------
 
 criar uma view dos quartos disponiveis e dos quartos ocupados
 
@@ -90,3 +32,5 @@ vamos criar um quarto temporario
 A primeiro momento é melhor ter uma função de atualizar o preço do produto ao inves de um trigger
 pra tabela da fatura
 
+
+------------------------------------------------------------------------
