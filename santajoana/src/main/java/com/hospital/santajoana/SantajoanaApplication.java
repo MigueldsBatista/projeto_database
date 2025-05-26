@@ -24,7 +24,7 @@ public class SantajoanaApplication {
 			String[] beanNames = ctx.getBeanDefinitionNames();
 
 			System.out.println("Total number of beans: " + beanNames.length);
-
+			// ajeitando a merda que fiz
 			// Paciente paciente =
 			//  new Paciente(
 			// 	"Miguel", "53604042801", LocalDate.now(), StatusPaciente.INTERNADO
