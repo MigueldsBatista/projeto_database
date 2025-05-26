@@ -24,14 +24,17 @@ public class FaturaRepository extends BaseRepository<Fatura, LocalDateTime> {
         DIA("DIA"),
         MES("MES"),
         ANO("ANO");
-        
+
         private final String descricao;
+
         AggregateMethods(String descricao) {
             this.descricao = descricao;
         }
+
         public String getDescricao() {
             return descricao;
         }
+
         public static AggregateMethods fromString(String descricao) {
             for (AggregateMethods method : AggregateMethods.values()) {
                 if (method.descricao.equalsIgnoreCase(descricao)) {
@@ -50,32 +53,32 @@ public class FaturaRepository extends BaseRepository<Fatura, LocalDateTime> {
             java.time.LocalDateTime dataEntradaEstadiaLocal = dataEntradaEstadia != null ? dataEntradaEstadia.toLocalDateTime() : null;
 
             Long idMetodoPagamento = rs.getLong("ID_METODO_PAGAMENTO");
-            
+
             // Verificar se valores decimais são nulos
             java.math.BigDecimal valorTotal = rs.getBigDecimal("VALOR_TOTAL");
             if (rs.wasNull()) {
                 valorTotal = null;
             }
-            
+
             // Verificar status de pagamento
             String statusStr = rs.getString("STATUS_PAGAMENTO");
             StatusPagamento statusPagamento = statusStr != null ? StatusPagamento.fromString(statusStr) : null;
-            
+
             // Verificar timestamps e converter para LocalDateTime se não forem nulos
             Timestamp dataPagamento = rs.getTimestamp("DATA_PAGAMENTO");
             java.time.LocalDateTime dataPagamentoLocal = dataPagamento != null ? dataPagamento.toLocalDateTime() : null;
-            
+
             Timestamp dataEmissao = rs.getTimestamp("DATA_EMISSAO");
             java.time.LocalDateTime dataEmissaoLocal = dataEmissao != null ? dataEmissao.toLocalDateTime() : null;
 
             return new Fatura(
-                dataEntradaEstadiaLocal,
+                    dataEntradaEstadiaLocal,
                     dataEmissaoLocal,
                     valorTotal,
                     statusPagamento,
                     idMetodoPagamento,
                     dataPagamentoLocal
-                    );
+            );
         });
     }
 
@@ -113,37 +116,26 @@ public class FaturaRepository extends BaseRepository<Fatura, LocalDateTime> {
         return findBySql(sql, descricao);
     }
 
-
-    //TODO - TRIGGER
-    //SHOWABLE
-    public void updateValorTotal(LocalDateTime dataEmissao){
-        String updateSql = """
-                UPDATE FATURA
-                SET VALOR_TOTAL = (
-                    SELECT SUM(PRODUTO_PEDIDO.QUANTIDADE * PRODUTO.PRECO)
-                    FROM PEDIDO
-                    JOIN PRODUTO_PEDIDO ON PEDIDO.DATA_PEDIDO = PRODUTO_PEDIDO.DATA_PEDIDO
-                    JOIN PRODUTO ON PRODUTO_PEDIDO.ID_PRODUTO = PRODUTO.ID_PRODUTO
-                    WHERE PEDIDO.DATA_ENTRADA_ESTADIA = FATURA.DATA_ENTRADA_ESTADIA
-                )
-                WHERE FATURA.DATA_EMISSAO = ?""";
-        jdbcTemplate.update(updateSql, dataEmissao);
+    /**
+     * Atualiza o valor total da fatura chamando a stored procedure atualizar_valor_fatura.
+     * @param dataPedido Data do pedido para o qual a fatura deve ser atualizada.
+     */
+    public void updateValorTotal(LocalDateTime dataPedido) {
+        String callSql = "CALL atualizar_valor_fatura(?)";
+        jdbcTemplate.update(callSql, Timestamp.valueOf(dataPedido));
     }
-
 
     public Fatura findByDataPedido(LocalDateTime dataPedido) {
         String sql = "SELECT * FROM FATURA INNER JOIN PEDIDO ON FATURA.DATA_ENTRADA_ESTADIA = PEDIDO.DATA_ENTRADA_ESTADIA WHERE PEDIDO.DATA_PEDIDO = ?";
         return findBySql(sql, dataPedido).stream().findFirst().orElse(null);
     }
 
-    //TODO - Na segunda entrega isso aq vira um procedure, e uma function
     /**
      * Encontra a média de gastos por fatura para um paciente específico
      * @return A média de gastos por fatura para o paciente
      */
-    //SHOWABLE
     public BigDecimal findAvgPacienteGastoFatura() {
-        
+
         String sql = """
                 SELECT 
                     AVG(VALOR_TOTAL) AS MEDIA
@@ -152,18 +144,16 @@ public class FaturaRepository extends BaseRepository<Fatura, LocalDateTime> {
                     FATURA.DATA_ENTRADA_ESTADIA = ESTADIA.DATA_ENTRADA
                     """;
         RowMapper<BigDecimal> rowMapper = (rs, rowNum) -> rs.getBigDecimal("MEDIA");
-        
+
         return this.jdbcTemplate.queryForObject(sql, rowMapper);
     }
 
-    //TODO - Na segunda entrega isso aq vira um procedure, e uma function
-    //SHOWABLE
     /**
      * Encontra a média de gastos por fatura para um paciente específico
      * @return A média de gastos por fatura para o paciente
      */
     public BigDecimal findMonthTotalFaturamento() {
-        
+
         String sql = """
                 SELECT 
                     SUM(VALOR_TOTAL) AS TOTAL
@@ -171,52 +161,54 @@ public class FaturaRepository extends BaseRepository<Fatura, LocalDateTime> {
                     WHERE MONTH(FATURA.DATA_PAGAMENTO) = MONTH(CURRENT_DATE())
                 """;
         RowMapper<BigDecimal> rowMapper = (rs, rowNum) -> rs.getBigDecimal("TOTAL");
-        
+
         return this.jdbcTemplate.queryForObject(sql, rowMapper);
     }
-/**
- * Busca o faturamento total agregado por período
- * @param startDateTime Data inicial do período
- * @param endDateTime Data final do período
- * @param aggregateMethod Método de agregação (DIA, MES, ANO)
- * @return Lista de faturas agregadas por período com valores totalizados
- */
-public List<AggregatedFatura> findAggregatedTotalFaturamento(LocalDateTime startDateTime, LocalDateTime endDateTime, AggregateMethods aggregateMethod) {
-    
-    String groupByClause;
-    
-    switch (aggregateMethod) {
-        case DIA:
-            groupByClause = "GROUP BY YEAR(`DATA_PAGAMENTO`), MONTH(`DATA_PAGAMENTO`), DAY(`DATA_PAGAMENTO`)";
-            break;
-        case MES:
-            groupByClause = "GROUP BY YEAR(`DATA_PAGAMENTO`), MONTH(`DATA_PAGAMENTO`)";
-            break;
-        case ANO:
-            groupByClause = "GROUP BY YEAR(`DATA_PAGAMENTO`)";
-            break;
-        default:
-            throw new IllegalArgumentException("Método de agregação inválido: " + aggregateMethod);
+
+    /**
+     * Busca o faturamento total agregado por período
+     * @param startDateTime Data inicial do período
+     * @param endDateTime Data final do período
+     * @param aggregateMethod Método de agregação (DIA, MES, ANO)
+     * @return Lista de faturas agregadas por período com valores totalizados
+     */
+    public List<AggregatedFatura> findAggregatedTotalFaturamento(LocalDateTime startDateTime, LocalDateTime endDateTime,
+                                                                   AggregateMethods aggregateMethod) {
+
+        String groupByClause;
+
+        switch (aggregateMethod) {
+            case DIA:
+                groupByClause = "GROUP BY YEAR(`DATA_PAGAMENTO`), MONTH(`DATA_PAGAMENTO`), DAY(`DATA_PAGAMENTO`)";
+                break;
+            case MES:
+                groupByClause = "GROUP BY YEAR(`DATA_PAGAMENTO`), MONTH(`DATA_PAGAMENTO`)";
+                break;
+            case ANO:
+                groupByClause = "GROUP BY YEAR(`DATA_PAGAMENTO`)";
+                break;
+            default:
+                throw new IllegalArgumentException("Método de agregação inválido: " + aggregateMethod);
+        }
+
+        String sql = String.format("""
+                SELECT 
+                    MIN(`DATA_PAGAMENTO`) AS startDate,
+                    MAX(`DATA_PAGAMENTO`) AS endDate,
+                    SUM(`VALOR_TOTAL`) AS total
+                FROM `FATURA`
+                WHERE `DATA_PAGAMENTO` BETWEEN ? AND ?
+                %s
+                """, groupByClause);
+
+        RowMapper<AggregatedFatura> rowMapper = (rs, rowNum) -> {
+            AggregatedFatura agg = new AggregatedFatura();
+            agg.setStartDate(rs.getTimestamp("startDate").toLocalDateTime());
+            agg.setEndDate(rs.getTimestamp("endDate").toLocalDateTime());
+            agg.setTotal(rs.getBigDecimal("total"));
+            return agg;
+        };
+
+        return jdbcTemplate.query(sql, rowMapper, Timestamp.valueOf(startDateTime), Timestamp.valueOf(endDateTime));
     }
-    
-    String sql = String.format("""
-        SELECT 
-            MIN(`DATA_PAGAMENTO`) AS startDate,
-            MAX(`DATA_PAGAMENTO`) AS endDate,
-            SUM(`VALOR_TOTAL`) AS total
-        FROM `FATURA`
-        WHERE `DATA_PAGAMENTO` BETWEEN ? AND ?
-        %s
-    """, groupByClause);
-
-    RowMapper<AggregatedFatura> rowMapper = (rs, rowNum) -> {
-        AggregatedFatura agg = new AggregatedFatura();
-        agg.setStartDate(rs.getTimestamp("startDate").toLocalDateTime());
-        agg.setEndDate(rs.getTimestamp("endDate").toLocalDateTime());
-        agg.setTotal(rs.getBigDecimal("total"));
-        return agg;
-    };
-
-    return jdbcTemplate.query(sql, rowMapper, Timestamp.valueOf(startDateTime), Timestamp.valueOf(endDateTime));
-}
 }
