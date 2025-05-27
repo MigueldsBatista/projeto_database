@@ -10,3 +10,28 @@ services:
       - ./my.cnf:/etc/mysql/conf.d/my.cnf
     ports:
       - '3307:3306'
+
+  backend:
+    build: .
+    ports:
+      - '8080:8080'
+    depends_on:
+      - mysql
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/hospital_db
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=06102005
+
+  frontend:
+    build: ../client
+    ports:
+      - '3000:80'
+    depends_on:
+      - backend
+
+  admin:
+    build: ../admin
+    ports:
+      - '3001:80'
+    depends_on:
+      - backend

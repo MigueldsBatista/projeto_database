@@ -1,4 +1,3 @@
-
 const APP_NAME = 'Hospital Santa Joana';
 const API_URL = 'http://localhost:8080';
 
@@ -154,7 +153,7 @@ function checkAuth() {
                        window.location.pathname.includes('register.html');
     
     if (!user && !isAuthPage) {
-        window.location.href = 'login.html';
+        window.location.href = 'html/login.html';
         return null;
     }
     

@@ -209,7 +209,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             productCard.setAttribute('data-id', item.id);
             
             // Use placeholder image if no image available
-            const imageSrc = item.image || 'img/placeholder.png';
+            const imageSrc = item.image || '../img/placeholder.png';
             
             productCard.innerHTML = `
                 <div class="product-image">

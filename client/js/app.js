@@ -353,3 +353,5 @@ function initApp() {
     }
 }
 document.addEventListener('DOMContentLoaded', initApp);
+
+// Update any references to HTML files to use 'html/' prefix, e.g. 'html/index.html'

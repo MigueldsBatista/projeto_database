@@ -109,7 +109,7 @@ INSERT INTO CAMAREIRA (CRE, NOME, CPF, DATA_NASCIMENTO, TELEFONE, ENDERECO, CARG
 -- Insert data into CAMAREIRA
 INSERT INTO PACIENTE (NOME, CPF, DATA_NASCIMENTO, TELEFONE, ENDERECO, EMAIL, SENHA) VALUES
 ('Amanda Castro', '12349567891', '1977-03-25', '11787654321', 'Rua das Orquídeas, 012, Curitiba', 'amanda.castro@email.com', 'senha123'),
-('Henrique Cardoso', '23458678902', '1986-06-30', '11776543210', 'Avenida das Américas, 345, Rio de Janeiro', 'henrique.cardoso@email.com', 'senha123'),
+('Miguel Batista', '23458678902', '1986-06-30', '11776543210', 'Avenida das Américas, 345, Rio de Janeiro', 'msb2@cesar.school', '123'),
 ('Juliana Santos', '34567989013', '1992-02-15', '11765432109', 'Rua dos Cravos, 678, Salvador', 'juliana.santos@email.com', 'senha123'),
 ('Felipe Oliveira', '45676890124', '1973-10-05', '11754321098', 'Avenida Paulista, 901, São Paulo', 'felipe.oliveira@email.com', 'senha123'),
 ('Mariana Ferreira', '56785901235', '1984-07-20', '11743210987', 'Rua das Rosas, 234, Fortaleza', 'mariana.ferreira@email.com', 'senha123'),
