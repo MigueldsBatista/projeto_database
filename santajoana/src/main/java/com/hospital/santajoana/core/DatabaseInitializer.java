@@ -76,7 +76,7 @@ public class DatabaseInitializer {
                 System.err.println("SQL statement: " + sql);
             }
         }
-        // Add procedure creation for MySQL only
+        // Add procedure and trigger creation for MySQL only
         if (!isH2) {
             try {
                 jdbcTemplate.execute("DROP PROCEDURE IF EXISTS atualizar_valor_fatura");
@@ -98,6 +98,20 @@ public class DatabaseInitializer {
                 System.out.println("Procedure atualizar_valor_fatura created or replaced.");
             } catch (Exception e) {
                 System.err.println("Error creating procedure atualizar_valor_fatura: " + e.getMessage());
+            }
+            try {
+                // Criação da trigger para atualizar o valor da fatura após inserir um pedido
+                jdbcTemplate.execute("DROP TRIGGER IF EXISTS trg_after_insert_pedido");
+                String trigger = "CREATE TRIGGER trg_after_insert_pedido " +
+                        "AFTER INSERT ON PEDIDO " +
+                        "FOR EACH ROW " +
+                        "BEGIN " +
+                        "  CALL atualizar_valor_fatura(NEW.DATA_PEDIDO); " +
+                        "END;";
+                jdbcTemplate.execute(trigger);
+                System.out.println("Trigger trg_after_insert_pedido created or replaced.");
+            } catch (Exception e) {
+                System.err.println("Error creating trigger trg_after_insert_pedido: " + e.getMessage());
             }
         }
     }
