@@ -285,6 +285,25 @@ function setupLogoutButton() {
     }
 }
 
+function updateCategoryMenu(categories) {
+    const categoriesContainer = document.querySelector('.categories');
+    if (!categoriesContainer) return;
+    categoriesContainer.innerHTML = '';
+    categories.forEach(category => {
+        const div = document.createElement('div');
+        div.className = 'category-item';
+        div.setAttribute('data-category', category.id.toString());
+        div.innerHTML = `
+            <div class="category-icon"><i class="fas ${category.icone || 'fa-utensils'}"></i></div>
+            <p>${category.nome}</p>
+        `;
+        div.addEventListener('click', function() {
+            window.location.href = `menu.html?category=${category.id}`;
+        });
+        categoriesContainer.appendChild(div);
+    });
+}
+
 
 
 

@@ -185,7 +185,7 @@ public abstract class BaseControllerTest {
                 });
     }
     protected CategoriaProduto createDefaultCategoriaProduto() throws Exception {
-        CategoriaProduto categoriaProduto = new CategoriaProduto("Almoço", "Refeições do almoço");
+        CategoriaProduto categoriaProduto = new CategoriaProduto("Almoço", "Refeições do almoço", "icone-almoco.png");
         String categoriaProdutoJson = saveCategoriaProdutoEntity(categoriaProduto)
             .andReturn()
             .getResponse()
@@ -193,7 +193,7 @@ public abstract class BaseControllerTest {
         return objectMapper.readValue(categoriaProdutoJson, CategoriaProduto.class);
     }
     protected CategoriaProduto createDefaultCategoriaProduto(String name) throws Exception {
-        CategoriaProduto categoriaProduto = new CategoriaProduto(name, "Refeições do almoço");
+        CategoriaProduto categoriaProduto = new CategoriaProduto(name, "Refeições do almoço", "icone-almoco.png");
         String categoriaProdutoJson = saveCategoriaProdutoEntity(categoriaProduto)
             .andReturn()
             .getResponse()

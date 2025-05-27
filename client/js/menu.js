@@ -100,20 +100,18 @@ document.addEventListener('DOMContentLoaded', async function() {
                 headers: { 'Accept': 'application/json' },
                 mode: 'cors'
             });
-            
             if (!response.ok) {
                 console.error('Failed to fetch categories. Status:', response.status);
                 throw new Error(`Failed to fetch categories: ${response.status}`);
             }
-            
             const data = await response.json();
             return data;
         } catch (error) {
             console.error('Error fetching categories:', error);
-            return null;
+            return [];
         }
     }
-    
+
     async function fetchProducts() {
         try {
             console.log('Fetching products from:', `${API_URL}/api/produtos`);
@@ -148,49 +146,39 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
     
     function updateCategoryTabs(categories) {
-        const tabsContainer = document.querySelector('.tabs-container');
+        const tabsContainer = document.querySelector('.category-tabs');
         if (!tabsContainer) return;
-        
-        // Keep the "All" tab as the first item
-        const allTab = tabsContainer.querySelector('.tab-item[data-category="all"]');
-        
-        // Clear existing tabs except "All"
+        // Limpa tabs existentes
         tabsContainer.innerHTML = '';
-        if (allTab) tabsContainer.appendChild(allTab);
-        
-        // Add category tabs
+        // Adiciona tab "Todos"
+        const allTab = document.createElement('button');
+        allTab.className = 'tab-item';
+        allTab.setAttribute('data-category', 'all');
+        allTab.textContent = 'Todos';
+        tabsContainer.appendChild(allTab);
+        // Adiciona tabs dinâmicas
         categories.forEach(category => {
-            const tab = document.createElement('div');
+            const tab = document.createElement('button');
             tab.className = 'tab-item';
             tab.setAttribute('data-category', category.id.toString());
             tab.textContent = category.nome;
-            
             tabsContainer.appendChild(tab);
         });
     }
     
     function displayProducts(categoryId) {
-        console.log('Displaying products for category:', categoryId);
-        console.log('All products available:', allProducts);
-        
         let filteredItems;
-        
         if (categoryId === 'all') {
             filteredItems = allProducts;
         } else {
-            // Filter by category ID and handle both string and number comparisons
             const categoryIdNum = parseInt(categoryId);
             filteredItems = allProducts.filter(item => {
-                console.log('Checking item:', item.nome, 'with category:', item.categoriaId);
                 return (
-                    item.categoriaId === categoryIdNum || 
-                    (item.categoria && item.categoria.id === categoryIdNum) ||
-                    item.categoriaId === null
+                    item.categoriaId === categoryIdNum ||
+                    (item.categoria && item.categoria.id === categoryIdNum)
                 );
             });
         }
-        
-        console.log('Filtered items:', filteredItems);
         renderProducts(filteredItems);
     }
     

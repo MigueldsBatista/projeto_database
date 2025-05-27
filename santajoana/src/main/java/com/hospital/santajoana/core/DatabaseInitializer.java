@@ -153,7 +153,8 @@ public class DatabaseInitializer {
             "CREATE TABLE IF NOT EXISTS CATEGORIA_PRODUTO ("
             + categoriaProdutoIdCol + " INT PRIMARY KEY AUTO_INCREMENT,"
             + "NOME VARCHAR(50) NOT NULL UNIQUE,"
-            + "DESCRICAO VARCHAR(255)"
+            + "DESCRICAO VARCHAR(255),"
+            + "ICONE VARCHAR(50) NULL"
             + ")",
             // PRODUTO
             "CREATE TABLE IF NOT EXISTS PRODUTO ("

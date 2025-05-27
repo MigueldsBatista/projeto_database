@@ -26,12 +26,12 @@ INSERT INTO CATEGORIA_QUARTO (NOME, DESCRICAO) VALUES
 ('Outro', 'Outros tipos de quartos hospitalares');
 
 -- Insert data into CATEGORIA_PRODUTO
-INSERT INTO CATEGORIA_PRODUTO (NOME, DESCRICAO) VALUES
-('Café da Manhã', 'Refeições servidas pela manhã'),
-('Almoço', 'Refeições servidas ao meio-dia'),
-('Jantar', 'Refeições servidas à noite'),
-('Sobremesa', 'Itens doces após as refeições principais'),
-('Lanche', 'Pequenas refeições entre as principais');
+INSERT INTO CATEGORIA_PRODUTO (NOME, DESCRICAO, ICONE) VALUES
+('Café da Manhã', 'Refeições servidas pela manhã', 'fa-mug-hot'),
+('Almoço', 'Refeições servidas ao meio-dia', 'fa-utensils'),
+('Jantar', 'Refeições servidas à noite', 'fa-drumstick-bite'),
+('Sobremesa', 'Itens doces após as refeições principais', 'fa-ice-cream'),
+('Lanche', 'Pequenas refeições entre as principais', 'fa-bread-slice');
 
 -- Insert data into QUARTO
 INSERT INTO QUARTO (NUMERO, `ID_CATEGORIA_QUARTO`) VALUES

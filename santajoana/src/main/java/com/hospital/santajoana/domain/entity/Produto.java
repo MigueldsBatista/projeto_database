@@ -24,6 +24,7 @@ public class Produto extends Entity<Long> {
     private Integer carboidratosG;
     private Integer gordurasG;
     private Integer sodioMg;
+    
 
   
     public Produto(String nome, String descricao, BigDecimal preco) {

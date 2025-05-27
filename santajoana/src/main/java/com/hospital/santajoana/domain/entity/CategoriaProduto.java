@@ -13,5 +13,6 @@ public class CategoriaProduto extends Entity<Long> {
 
     private String nome;
     private String descricao;
+    private String icone;
 
 }

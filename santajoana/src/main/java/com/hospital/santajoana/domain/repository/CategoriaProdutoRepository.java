@@ -13,7 +13,8 @@ public class CategoriaProdutoRepository extends BaseRepository<CategoriaProduto,
         super("CATEGORIA_PRODUTO", "ID_CATEGORIA", jdbcTemplate, (rs, rowNum) -> {
             CategoriaProduto categoriaProduto = new CategoriaProduto(
                 rs.getString("NOME"),
-                rs.getString("DESCRICAO")
+                rs.getString("DESCRICAO"),
+                rs.getString("ICONE")
             );
             categoriaProduto.setId(rs.getLong("ID_CATEGORIA"));
             return categoriaProduto;
