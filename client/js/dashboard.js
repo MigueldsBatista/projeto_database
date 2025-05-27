@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         
         if (!user) {
             // If no user data, redirect to login page
-            window.location.href = 'html/login.html';
+            window.location.href = 'login.html';
             return;
         }
         
@@ -192,14 +192,14 @@ function displayRecentOrders(orders) {
         
         // Add click event to view order details
         orderCard.addEventListener('click', function() {
-            window.location.href = `html/order-details.html?id=${order.id || order.dataPedido}`;
+            window.location.href = `order-details.html?id=${order.id || order.dataPedido}`;
         });
     });
     
     // Add "View All" button if there are more than 3 orders
     if (orders.length > 3) {
         const viewAllBtn = document.createElement('a');
-        viewAllBtn.href = 'html/orders.html';
+        viewAllBtn.href = 'orders.html';
         viewAllBtn.className = 'btn-text view-all-btn';
         viewAllBtn.textContent = 'Ver todos os pedidos';
         recentOrdersContainer.appendChild(viewAllBtn);
@@ -211,14 +211,14 @@ function setupQuickActions() {
     const newOrderBtn = document.getElementById('new-order-btn');
     if (newOrderBtn) {
         newOrderBtn.addEventListener('click', () => {
-            window.location.href = 'html/menu.html';
+            window.location.href = 'menu.html';
         });
     }
     
     const viewInvoiceBtn = document.getElementById('view-invoice-btn');
     if (viewInvoiceBtn) {
         viewInvoiceBtn.addEventListener('click', () => {
-            window.location.href = 'html/invoice.html';
+            window.location.href = 'invoice.html';
         });
     }
     
@@ -279,7 +279,7 @@ function setupLogoutButton() {
                 localStorage.removeItem('profileImage');
                 
                 // Redirect to login
-                window.location.href = 'html/login.html';
+                window.location.href = 'login.html';
             }
         });
     }

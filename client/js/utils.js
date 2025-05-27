@@ -153,7 +153,7 @@ function checkAuth() {
                        window.location.pathname.includes('register.html');
     
     if (!user && !isAuthPage) {
-        window.location.href = 'html/login.html';
+        window.location.href = 'login.html';
         return null;
     }
     

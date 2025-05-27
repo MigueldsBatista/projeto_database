@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }));
             
             // Redirect to order confirmation page
-            window.location.href = `html/order-confirmation.html?id=${encodeURIComponent(savedOrder.dataPedido)}`;
+            window.location.href = `order-confirmation.html?id=${encodeURIComponent(savedOrder.dataPedido)}`;
             
         } catch (error) {
             console.error('Error submitting order:', error);
