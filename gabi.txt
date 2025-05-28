@@ -1,0 +1,5 @@
+arquivo mostrando o procedure e aonde é chamado o call updateValorTotal
+arquivo mostrando o trigger
+
+
+metodo mais complexo -> findAggregatedTotalFaturamento

@@ -1,112 +1,143 @@
-# Hospital Santa Joana - Aplicação Frontend
+# Hospital Santa Joana - Sistema de Gestão Hospitalar
 
-## Visão Geral
-Este repositório contém a aplicação web frontend para o portal de serviços a pacientes do Hospital Santa Joana. A aplicação fornece aos pacientes internados uma maneira conveniente de pedir refeições, visualizar suas faturas, acompanhar pedidos e gerenciar seus perfis.
+Bem-vindo ao repositório do sistema de gestão hospitalar do Hospital Santa Joana! Este projeto oferece uma solução completa para gerenciamento de pacientes, pedidos de refeições, faturas, quartos e muito mais, com frontend web moderno e backend robusto.
 
-## Requisitos de Configuração
+---
+
+## ✨ Visão Geral
+
+- **Frontend:** SPA responsiva para pacientes, com pedidos de refeições, histórico, faturas e perfil.
+- **Backend:** API RESTful em Java Spring Boot, persistência MySQL.
+- **Admin:** Painel administrativo (React) para gestão de produtos, categorias, quartos, pacientes, etc.
+- **Infraestrutura:** Docker Compose para orquestração de containers.
+
+---
+
+## 🚀 Começando Rápido
+
+### 1. Clone o repositório
+```bash
+git clone https://github.com/MigueldsBatista/projeto_database.git
+cd projeto_database
+```
+
+### 2. Suba o backend (API + banco de dados)
+```bash
+cd santajoana
+# Edite o compose.yaml se quiser customizar portas
+sudo docker compose up -d
+```
+Aguarde até o backend estar disponível em http://localhost:8080
+
+### 3. Popule o banco de dados
+```bash
+mysql -h 127.0.0.1 -P 3307 -u admin -p < populate_database.sql
+```
+Ou use um client gráfico (DBeaver, MySQL Workbench, etc) e rode o script `populate_database.sql`.
+
+### 4. Inicie o frontend
+- **Via Live Server (VS Code):**
+  1. Abra a pasta `client/` no VS Code
+  2. Clique com o direito em `index.html` > "Abrir com Live Server"
+  3. Acesse `http://127.0.0.1:5500/index.html`
+- **Via Docker/Nginx:**
+  1. Ajuste o `nginx.conf` se necessário
+  2. Rode o container conforme instruções do Dockerfile
+
+---
+
+## 🏗️ Estrutura do Projeto
+
+```
+projeto_database/
+├── santajoana/      # Backend Java Spring Boot + banco
+├── client/          # Frontend web (HTML, CSS, JS)
+├── admin/           # Painel administrativo (React)
+├── populate_database.sql  # Script para popular o banco
+├── modelo_fisico.sql      # Modelo físico do banco
+└── README.md
+```
+
+### Estrutura do Frontend
+```
+client/
+├── css/             # Estilos
+├── js/              # Scripts JS
+├── img/             # Imagens
+├── html/            # Páginas HTML
+│   ├── index.html
+│   ├── dashboard.html
+│   ├── menu.html
+│   ├── cart.html
+│   ├── orders.html
+│   ├── order-details.html
+│   ├── invoice.html
+│   ├── profile.html
+│   └── login.html
+└── ...
+```
+
+---
+
+## ⚙️ Configuração Detalhada
 
 ### Pré-requisitos
-- [Visual Studio Code](https://code.visualstudio.com/) (editor recomendado)
-- [Extensão Live Server para VS Code](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer)
-- [Docker](https://www.docker.com/get-started) (para o backend)
-- [Docker Compose](https://docs.docker.com/compose/install/) (para o backend)
+- Docker e Docker Compose
+- MySQL Client (para popular o banco)
+- Visual Studio Code + Live Server (opcional, para frontend)
 
-### Clonando o Repositório
-1. Abra um terminal e navegue até o diretório onde você deseja clonar o projeto
-2. Execute o comando:
-   ```bash
-   git clone https://github.com/MigueldsBatista/projeto_database.git
-   ```
-3. Navegue para a pasta do projeto clonado:
-   ```bash
-   cd projeto_database
-   ```
+### Backend
+- O backend sobe via Docker Compose e expõe a API em `http://localhost:8080`.
+- O banco MySQL roda em `localhost:3307` (veja compose.yaml).
+- O script `populate_database.sql` insere dados essenciais (categorias, produtos, pacientes, quartos, etc).
 
-### Configuração do Backend
-O frontend se conecta a uma API backend que precisa estar em execução primeiro. Siga estas etapas para iniciar o backend:
+### Frontend
+- O frontend espera a API em `http://localhost:8080` (ajuste em `js/utils.js` se necessário).
+- Use Live Server ou um servidor web estático para rodar a interface.
 
-1. Navegue até o diretório backend:
-   ```bash
-   cd backend
-   ```
-
-2. Construa e inicie os contêineres Docker:
-   ```bash
-   docker-compose up -d
-   ```
-
-3. Verifique se o backend está em execução:
-   - Acesse `http://localhost:8080` no seu navegador
-   - Você deve ver a documentação da API ou uma página de boas-vindas
-   - Se mostrar "Connection refused", aguarde um minuto, pois os contêineres podem ainda estar iniciando
-
-### Populando o Banco de Dados
-**IMPORTANTE**: É necessário popular o banco de dados antes de usar a aplicação devido a regras de negócio específicas:
-
-1. O sistema possui uma regra que exige quartos disponíveis para criar novas estadias de pacientes
-2. Execute o script de população do banco de dados:
-   ```bash
-   mysql -h 127.0.0.1 -P 3307 -u admin -p < populate_database.sql
-   ```
-   Ou conecte-se ao banco de dados usando uma ferramenta como MySQL Workbench, DBeaver ou HeidiSQL e execute o conteúdo do arquivo `populate_database.sql`
-3. O script vai inserir:
-   - Categorias de quartos e produtos
-   - Quartos disponíveis para internação
-   - Pacientes cadastrados para teste
-   - Produtos para o cardápio
-   - Dados de exemplo para pedidos, faturas, etc.
-
-### Configuração do Frontend
-
-#### Usando o Live Server (Recomendado)
-1. Abra a pasta frontend no Visual Studio Code:
-   ```bash
-   code frontend
-   ```
-
-2. Instale a extensão Live Server se ainda não estiver instalada:
-   - Vá para Extensões (Ctrl+Shift+X)
-   - Pesquise por "Live Server"
-   - Clique em Instalar na extensão por Ritwick Dey
-
-3. Inicie o Live Server:
-   - Clique com o botão direito em `index.html`
-   - Selecione "Abrir com Live Server"
-   - Ou clique no botão "Go Live" na barra de status inferior
-
-4. A aplicação deve abrir em seu navegador padrão em `127.0.0.1:5500/index.html`
-
-#### Usando Outro Servidor Web
-Se você preferir usar outro servidor web (como Apache ou Nginx), basta copiar o conteúdo da pasta frontend para o diretório web do seu servidor.
-
-## Configuração da API
-
-O frontend está configurado para se conectar a uma API backend em `http://localhost:8080`. Se seu backend estiver rodando em uma porta ou URL diferente, você precisará atualizar isso em:
-
-```javascript
-// js/utils.js
-const API_URL = 'http://localhost:8080';
+### Admin
+- O painel admin roda em React (pasta `admin/`).
+- Instale dependências e rode com:
+```bash
+cd admin
+npm install
+npm start
 ```
 
-## Fluxo de Desenvolvimento
+---
 
-1. Certifique-se de que o backend está rodando via Docker
-2. Inicie o frontend usando o Live Server
-3. Comece o desenvolvimento - o Live Server atualizará automaticamente quando os arquivos forem modificados
+## 🧩 Funcionalidades
+- Cadastro e login de pacientes
+- Pedido de refeições por categoria
+- Carrinho de compras
+- Histórico e detalhes de pedidos
+- Visualização de fatura e status de pagamento
+- Perfil do paciente
+- Painel admin para gestão de produtos, categorias, quartos, pacientes, faturas, etc
 
-## Estrutura de Diretórios
-```
-frontend/
-├── css/             # Arquivos de estilo
-├── js/              # Arquivos JavaScript
-├── img/             # Recursos de imagem
-├── index.html       # Ponto de entrada
-├── dashboard.html   # Painel do paciente
-├── menu.html        # Cardápio de alimentos
-├── cart.html        # Carrinho de compras
-├── orders.html      # Histórico de pedidos
-├── order-details.html  # Detalhes do pedido
-├── invoice.html     # Fatura do paciente
-├── profile.html     # Perfil do usuário
-└── login.html       # Página de autenticação
-```
+---
+
+## 🛠️ Dicas de Desenvolvimento
+- O backend pode demorar alguns segundos para subir completamente.
+- Sempre popule o banco antes de testar o frontend.
+- Para customizar endpoints ou portas, edite `compose.yaml` e os arquivos de configuração JS.
+- O frontend é desacoplado: pode ser servido por qualquer servidor web.
+
+---
+
+## 🐞 Troubleshooting
+- **Backend não sobe:** Verifique logs do Docker (`docker compose logs -f`)
+- **API não responde:** Confirme se o container está rodando e a porta está correta
+- **Frontend não carrega dados:** Veja se a API está acessível em `http://localhost:8080`
+- **Problemas de CORS:** Use Live Server ou ajuste o backend para aceitar requisições do frontend
+- **Banco vazio:** Rode novamente o script `populate_database.sql`
+
+---
+
+## 📄 Licença
+Este projeto é acadêmico e livre para uso e adaptação.
+
+---
+
+## 👨‍💻 Contato
+Dúvidas ou sugestões? Abra uma issue ou entre em contato pelo GitHub!
