@@ -101,17 +101,17 @@ public class DatabaseInitializer {
             }
             try {
                 // Criação da trigger para atualizar o valor da fatura após inserir um pedido
-                jdbcTemplate.execute("DROP TRIGGER IF EXISTS trg_after_insert_pedido");
-                String trigger = "CREATE TRIGGER trg_after_insert_pedido " +
-                        "AFTER INSERT ON PEDIDO " +
+                jdbcTemplate.execute("DROP TRIGGER IF EXISTS trg_after_insert_produto_pedido");
+                String trigger = "CREATE TRIGGER trg_after_insert_produto_pedido " +
+                        "AFTER INSERT ON PRODUTO_PEDIDO " +
                         "FOR EACH ROW " +
                         "BEGIN " +
                         "  CALL atualizar_valor_fatura(NEW.DATA_PEDIDO); " +
                         "END;";
                 jdbcTemplate.execute(trigger);
-                System.out.println("Trigger trg_after_insert_pedido created or replaced.");
+                System.out.println("Trigger trg_after_insert_produto_pedido created or replaced.");
             } catch (Exception e) {
-                System.err.println("Error creating trigger trg_after_insert_pedido: " + e.getMessage());
+                System.err.println("Error creating trigger trg_after_insert_produto_pedido: " + e.getMessage());
             }
         }
     }
